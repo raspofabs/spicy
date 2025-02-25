@@ -5,6 +5,11 @@ attempting to follow an ASPICE process.
 Spicy tries to help by letting you know where there are missing documents,
 missing links, and missing fields in your documentation.
 
+
+# Installation
+
+uv tool install . -e
+
 # Operation
 
 Configure the tool with the locations of:
