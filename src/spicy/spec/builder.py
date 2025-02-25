@@ -5,18 +5,14 @@ from collections import defaultdict
 from pathlib import Path
 from typing import DefaultDict, List
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, render_node
+from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
 from .spec_element import SpecElement
+from .spec_stakeholder_need import StakeholderNeed
+from .spec_stakeholder_requirement import StakeholderRequirement
 
 logger = logging.getLogger("SpecBuilder")
 
-
-# CDU_STK_NEED_1_get_a_cookie
-from .spec_stakeholder_need import StakeholderNeed
-
-#### CDU_STK_REQ_1_cookie_orders
-from .spec_stakeholder_requirement import StakeholderRequirement
 
 #### CDU_SYS_REQ_1_1_cookie_ordering
 #### CDU_SYS_INT_VER_1_setup_cookie_server

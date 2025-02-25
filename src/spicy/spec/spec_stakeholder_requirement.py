@@ -1,6 +1,6 @@
 """Stakeholder requirement spec element."""
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, render_node
+from spicy.md_read import render_node
 
 from .spec_element import SpecElement
 
