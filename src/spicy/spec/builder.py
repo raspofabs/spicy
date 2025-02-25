@@ -5,11 +5,26 @@ from collections import defaultdict
 from pathlib import Path
 from typing import DefaultDict, Dict, List
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, split_list_item
+from spicy.md_read import SyntaxTreeNode, get_text_from_node, render_node
 
 from .spec_element import SpecElement
 
 logger = logging.getLogger("SpecBuilder")
+
+
+class StakeHolderNeed(SpecElement):
+    """Handles stakeholder needs parsing."""
+
+    def __init__(self, *args):
+        """Construct super and placeholder fields."""
+        self.super().__init__(*args)
+        self.content = []
+
+    def parse_node(self, node):
+        """Parse a SyntaxTreeNode for SpecElement."""
+        print(f"Parsing as stakeholder need: {node.pretty(show_text=True)}")
+        self.content.append(render_node(node))
+
 
 #### CDU_STK_NEED_1_get_a_cookie
 #### CDU_STK_REQ_1_cookie_orders
