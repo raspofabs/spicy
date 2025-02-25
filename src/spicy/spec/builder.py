@@ -1,0 +1,72 @@
+"""Construct SpecElements as they are read."""
+
+import logging
+from collections import defaultdict
+from pathlib import Path
+from typing import DefaultDict, Dict, List
+
+from spicy.md_read import SyntaxTreeNode, get_text_from_node, split_list_item
+
+from .spec_element import SpecElement
+
+logger = logging.getLogger("SpecBuilder")
+
+
+class SpecElementBuilder:
+    """Gather information on spec elements and create them."""
+
+    def __init__(self, name: str, ordering_id: int, file_path: Path):
+        """Construct the basic properties."""
+        self.name = name
+        self.ordering_id = ordering_id
+        self.file_path = file_path
+        self.content: DefaultDict[str, List[str]] = defaultdict(list)
+        self.impact = None
+        self.detectability = None
+        self.usage_sections: Dict[str, str] = {}
+
+    def build(self) -> SpecElement:
+        """Build a SpecElement from the gathered data."""
+        return SpecElement(
+            self.name,
+            self.ordering_id,
+            self.file_path,
+        )
+
+    @property
+    def location(self):
+        """Return a string for the location of the spec element."""
+        return f"{self.file_path}:{self.ordering_id}:{self.name}"
+
+    def _section_add_paragraph(self, section_id: str, content: str):
+        """Append content to section information."""
+        self.content[section_id].append(content)
+
+    @staticmethod
+    def _parse_syntax_tree_to_spec_elements(
+        project_prefix: str, tree_root: SyntaxTreeNode, from_file: Path
+    ) -> List[SpecElement]:
+        """Parse a markdown-it node tree into a list of spec elements."""
+        spec_element_builders: List[SpecElementBuilder] = []
+        num_specs = 0
+        element_prefix = project_prefix.upper() + "_"
+
+        builder = None
+
+        for node in tree_root.children:
+            # print(node.pretty())
+            if node.type == "heading":
+                node_text = get_text_from_node(node)
+                print(f"Heading: {node} - {node_text}")
+                if element_prefix in node_text:
+                    spec_name = element_prefix + node_text.strip().split(element_prefix)[1]
+                    num_specs += 1
+                    builder = SpecElementBuilder(spec_name, num_specs, from_file)
+                    spec_element_builders.append(builder)
+
+            if builder:
+                if node.type == "paragraph":
+                    text_content = get_text_from_node(node)
+                    if builder is not None:
+                        builder._section_add_paragraph("content", text_content)
+        return [spec.build() for spec in spec_element_builders]

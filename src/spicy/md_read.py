@@ -4,13 +4,18 @@ from typing import Tuple
 
 from markdown_it import MarkdownIt
 from markdown_it.tree import SyntaxTreeNode
+from mdformat.renderer import MDRenderer
 
-# Loading function
+# create the markdown objects for general use
+
+md = MarkdownIt()
+md_renderer = MDRenderer()
+
+# Loading functions
 
 
 def parse_text_to_syntax_tree(text: str) -> SyntaxTreeNode:
     """Return SyntaxTreeNode for the root of the markdown text."""
-    md = MarkdownIt()
     tokens = list(md.parse(text))
     return SyntaxTreeNode(tokens)
 
@@ -23,6 +28,11 @@ def load_syntax_tree(markdown_file_path: Path) -> SyntaxTreeNode:
 
 
 # SyntaxTreeNode interpretation functions
+
+
+def render_node(node: SyntaxTreeNode) -> str:
+    """Return the text of a md node."""
+    return md_renderer.render(node.to_tokens(), md.options, {})
 
 
 def get_text_from_node(node: SyntaxTreeNode) -> str:

@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 dependencies = [
     "click>=8.1.8",
     "markdown-it-py>=3.0.0",
+    "mdformat>=0.7.22",
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
     "pytest-forked>=1.6.0",
