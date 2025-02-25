@@ -3,7 +3,7 @@
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import DefaultDict, Dict, List
+from typing import DefaultDict, List
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node, render_node
 
@@ -12,22 +12,12 @@ from .spec_element import SpecElement
 logger = logging.getLogger("SpecBuilder")
 
 
-class StakeHolderNeed(SpecElement):
-    """Handles stakeholder needs parsing."""
+# CDU_STK_NEED_1_get_a_cookie
+from .spec_stakeholder_need import StakeholderNeed
 
-    def __init__(self, *args):
-        """Construct super and placeholder fields."""
-        self.super().__init__(*args)
-        self.content = []
-
-    def parse_node(self, node):
-        """Parse a SyntaxTreeNode for SpecElement."""
-        print(f"Parsing as stakeholder need: {node.pretty(show_text=True)}")
-        self.content.append(render_node(node))
-
-
-#### CDU_STK_NEED_1_get_a_cookie
 #### CDU_STK_REQ_1_cookie_orders
+from .spec_stakeholder_requirement import StakeholderRequirement
+
 #### CDU_SYS_REQ_1_1_cookie_ordering
 #### CDU_SYS_INT_VER_1_setup_cookie_server
 #### CDU_SYS_VER_1_order_a_cookie
@@ -41,23 +31,28 @@ class StakeHolderNeed(SpecElement):
 class SpecElementBuilder:
     """Gather information on spec elements and create them."""
 
+    SPEC_CLASSES = [
+        StakeholderNeed,
+        StakeholderRequirement,
+    ]
+
     def __init__(self, name: str, ordering_id: int, file_path: Path):
         """Construct the basic properties."""
         self.name = name
         self.ordering_id = ordering_id
         self.file_path = file_path
         self.content: DefaultDict[str, List[str]] = defaultdict(list)
-        self.impact = None
-        self.detectability = None
-        self.usage_sections: Dict[str, str] = {}
 
-    def build(self) -> SpecElement:
-        """Build a SpecElement from the gathered data."""
-        return SpecElement(
+        self.spec_class = SpecElementBuilder._class_for_header(name)
+        self.spec_element = self.spec_class(
             self.name,
             self.ordering_id,
             self.file_path,
         )
+
+    def build(self) -> SpecElement:
+        """Build a SpecElement from the gathered data."""
+        return self.spec_element
 
     @property
     def location(self):
@@ -96,3 +91,11 @@ class SpecElementBuilder:
                     if builder is not None:
                         builder._section_add_paragraph("content", text_content)
         return [spec.build() for spec in spec_element_builders]
+
+    @staticmethod
+    def _class_for_header(name: str):
+        for spec_class in SpecElementBuilder.SPEC_CLASSES:
+            if spec_class.is_spec_heading(name):
+                return spec_class
+        else:
+            return SpecElement

@@ -22,6 +22,12 @@ class SpecElement:
         self.ordering_id = ordering_id
         self.file_path = file_path
 
+    @staticmethod
+    def is_spec_heading(header_text: str) -> bool:
+        """Return whether the header_node relates to this class of spec."""
+        # always false for base class
+        return False
+
     def render_issues(self, render_function: Optional[Callable] = None) -> bool:
         """Render issues with this spec."""
         return False

@@ -1,4 +1,6 @@
 from spicy.spec import SpecElement, gather_spec_elements
+from spicy.spec.spec_stakeholder_need import StakeholderNeed
+from spicy.spec.spec_stakeholder_requirement import StakeholderRequirement
 
 
 def test_simple_spec(test_data_path):
@@ -22,3 +24,9 @@ def test_complete_spec(test_data_path):
     assert all(map(lambda x: issubclass(type(x), SpecElement), spec_list))
 
     assert any(map(lambda x: x.name == "CDU_STK_NEED_1_get_a_cookie", spec_list))
+
+    for spec in spec_list:
+        if spec.name == "CDU_STK_NEED_1_get_a_cookie":
+            assert isinstance(spec, StakeholderNeed)
+        if spec.name == "CDU_STK_REQ_1_cookie_orders":
+            assert isinstance(spec, StakeholderRequirement)
