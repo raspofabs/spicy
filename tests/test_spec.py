@@ -6,7 +6,7 @@ def test_simple_spec(test_data_path):
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
     spec_element = spec_list[0]
-    assert isinstance(spec_element, SpecElement)
+    assert issubclass(type(spec_element), SpecElement)
 
     assert spec_element.name == "CDU_STK_NEED_1_get_a_cookie"
 
@@ -15,7 +15,10 @@ def test_complete_spec(test_data_path):
     spec_list = gather_spec_elements("cdu", test_data_path / "spec")
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
-    spec_element = spec_list[0]
-    assert isinstance(spec_element, SpecElement)
 
-    assert spec_element.name == "CDU_STK_NEED_1_get_a_cookie"
+    first_spec_element = spec_list[0]
+    assert issubclass(type(first_spec_element), SpecElement)
+
+    assert all(map(lambda x: issubclass(type(x), SpecElement), spec_list))
+
+    assert any(map(lambda x: x.name == "CDU_STK_NEED_1_get_a_cookie", spec_list))

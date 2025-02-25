@@ -11,6 +11,17 @@ from .spec_element import SpecElement
 
 logger = logging.getLogger("SpecBuilder")
 
+#### CDU_STK_NEED_1_get_a_cookie
+#### CDU_STK_REQ_1_cookie_orders
+#### CDU_SYS_REQ_1_1_cookie_ordering
+#### CDU_SYS_INT_VER_1_setup_cookie_server
+#### CDU_SYS_VER_1_order_a_cookie
+#### CDU_SYS_ARCH_1_cookie_storage
+#### CDU_SWREQ_1_cookie_ordering
+#### CDU_SWARCH_1_cookie_database
+#### CDU_SWINT_1_cookie_database_crud
+#### CDU_SWQUAL_1_cookie_ordering
+
 
 class SpecElementBuilder:
     """Gather information on spec elements and create them."""
