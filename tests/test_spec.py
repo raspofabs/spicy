@@ -1,6 +1,6 @@
+import pytest
 from spicy.spec import SpecElement, gather_spec_elements
-from spicy.spec.spec_stakeholder_need import StakeholderNeed
-from spicy.spec.spec_stakeholder_requirement import StakeholderRequirement
+from spicy.spec.builder import StakeholderNeed, StakeholderRequirement, SystemRequirement
 
 
 def test_simple_spec(test_data_path):
@@ -25,8 +25,19 @@ def test_complete_spec(test_data_path):
 
     assert any(map(lambda x: x.name == "CDU_STK_NEED_1_get_a_cookie", spec_list))
 
-    for spec in spec_list:
-        if spec.name == "CDU_STK_NEED_1_get_a_cookie":
-            assert isinstance(spec, StakeholderNeed)
-        if spec.name == "CDU_STK_REQ_1_cookie_orders":
-            assert isinstance(spec, StakeholderRequirement)
+
+spec_parts_data = [
+    ("CDU_STK_NEED_1_get_a_cookie", StakeholderNeed),
+    ("CDU_STK_REQ_1_cookie_orders", StakeholderRequirement),
+    ("CDU_SYS_REQ_1_1_cookie_ordering", SystemRequirement),
+]
+
+
+@pytest.mark.parametrize("expected_name, expected_class", spec_parts_data)
+def test_spec_parts(test_data_path, expected_name, expected_class):
+    spec_list = gather_spec_elements("cdu", test_data_path / "spec")
+
+    spec_by_name = {x.name: x for x in spec_list}
+
+    assert expected_name in spec_by_name
+    assert isinstance(spec_by_name[expected_name], expected_class)

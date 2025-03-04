@@ -10,11 +10,11 @@ from spicy.md_read import SyntaxTreeNode, get_text_from_node
 from .spec_element import SpecElement
 from .spec_stakeholder_need import StakeholderNeed
 from .spec_stakeholder_requirement import StakeholderRequirement
+from .spec_system_requirement import SystemRequirement
 
 logger = logging.getLogger("SpecBuilder")
 
 
-#### CDU_SYS_REQ_1_1_cookie_ordering
 #### CDU_SYS_INT_VER_1_setup_cookie_server
 #### CDU_SYS_VER_1_order_a_cookie
 #### CDU_SYS_ARCH_1_cookie_storage
@@ -30,6 +30,7 @@ class SpecElementBuilder:
     SPEC_CLASSES = [
         StakeholderNeed,
         StakeholderRequirement,
+        SystemRequirement,
     ]
 
     def __init__(self, name: str, ordering_id: int, file_path: Path):
