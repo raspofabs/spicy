@@ -1,6 +1,6 @@
 import pytest
 from spicy.spec import SpecElement, gather_spec_elements
-from spicy.spec.builder import StakeholderNeed, StakeholderRequirement, SystemRequirement
+from spicy.spec.builder import StakeholderNeed, StakeholderRequirement, SystemArchitecture, SystemRequirement
 
 
 def test_simple_spec(test_data_path):
@@ -30,6 +30,7 @@ spec_parts_data = [
     ("CDU_STK_NEED_1_get_a_cookie", StakeholderNeed),
     ("CDU_STK_REQ_1_cookie_orders", StakeholderRequirement),
     ("CDU_SYS_REQ_1_1_cookie_ordering", SystemRequirement),
+    ("CDU_SYS_ARCH_1_cookie_storage", SystemArchitecture),
 ]
 
 
