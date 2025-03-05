@@ -6,7 +6,7 @@ from typing import Callable, List, Optional
 
 import click
 
-from .use_cases import UseCase, gather_use_cases
+from .use_cases import UseCase, get_use_cases_from_files
 
 
 def get_use_case_files(root_path: Optional[Path] = None) -> List[Path]:
@@ -15,15 +15,6 @@ def get_use_case_files(root_path: Optional[Path] = None) -> List[Path]:
     if glob_root.is_file():
         return [glob_root]
     return sorted(glob_root.glob("*.md"))
-
-
-def get_use_cases_from_files(file_paths: List[Path]) -> List[UseCase]:
-    """Return the combined use cases from all the md files."""
-    use_cases: List[UseCase] = []
-
-    for filename in file_paths:
-        use_cases.extend(gather_use_cases(filename))
-    return use_cases
 
 
 def render_issues(use_cases: List[UseCase], render_function: Optional[Callable] = None):

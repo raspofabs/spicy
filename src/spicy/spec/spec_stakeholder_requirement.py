@@ -1,5 +1,7 @@
 """Stakeholder requirement spec element."""
 
+from typing import List
+
 from spicy.md_read import render_node
 
 from .spec_element import SpecElement
@@ -12,6 +14,10 @@ class StakeholderRequirement(SpecElement):
         """Construct super and placeholder fields."""
         super().__init__(*args)
         self.content = []
+
+    def fulfils(self) -> List[str]:
+        """Return a list of names of stakeholder needs this requirement fulfils."""
+        return []
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:

@@ -8,6 +8,7 @@ from typing import DefaultDict, List
 from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
 from .spec_element import SpecElement
+from .spec_software_requirement import SoftwareRequirement
 from .spec_stakeholder_need import StakeholderNeed
 from .spec_stakeholder_requirement import StakeholderRequirement
 from .spec_system_architecture import SystemArchitecture
@@ -32,6 +33,7 @@ class SpecElementBuilder:
         StakeholderRequirement,
         SystemRequirement,
         SystemArchitecture,
+        SoftwareRequirement,
     ]
 
     def __init__(self, name: str, ordering_id: int, file_path: Path):
@@ -76,7 +78,7 @@ class SpecElementBuilder:
             # print(node.pretty())
             if node.type == "heading":
                 node_text = get_text_from_node(node)
-                print(f"Heading: {node} - {node_text}")
+                # print(f"Heading: {node} - {node_text}")
                 if element_prefix in node_text:
                     spec_name = element_prefix + node_text.strip().split(element_prefix)[1]
                     num_specs += 1

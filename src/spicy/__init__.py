@@ -6,24 +6,16 @@ from typing import Callable, List, Optional
 
 import click
 
-from .spec import SpecElement, gather_spec_elements
+from .spec import SpecElement, get_specs_from_files
+from .use_cases import get_use_cases_from_files
 
 
 def get_spec_files(root_path: Optional[Path] = None) -> List[Path]:
     """Fetch a list of all the use-case files under a root path."""
-    glob_root = root_path or Path("src/02_spec")
+    glob_root = root_path or Path("src/")
     if glob_root.is_file():
         return [glob_root]
-    return sorted(glob_root.glob("*.md"))
-
-
-def get_specs_from_files(file_paths: List[Path]) -> List[SpecElement]:
-    """Return the combined use cases from all the md files."""
-    specs: List[SpecElement] = []
-
-    for filename in file_paths:
-        specs.extend(gather_spec_elements("CDU", filename))
-    return specs
+    return sorted(glob_root.glob("**/*.md"))
 
 
 def render_issues(specs: List[SpecElement], render_function: Optional[Callable] = None):
@@ -39,8 +31,10 @@ def render_issues(specs: List[SpecElement], render_function: Optional[Callable] 
 
 
 @click.command()
+@click.argument("project-prefix", required=True, type=str)
 @click.argument("path-override", required=False, default=None, type=Path)
 def run(
+    project_prefix: str,
     path_override: Optional[Path],
 ):
     """Find paths to read, then print out the TCLs of all the use-cases."""
@@ -50,7 +44,11 @@ def run(
         filenames = get_spec_files()
 
     print(f"Have {len(filenames)} files to read.")
-    specs = get_specs_from_files(filenames)
+    specs = get_specs_from_files(project_prefix, filenames)
+    use_cases = get_use_cases_from_files(filenames)
+    for spec in specs:
+        print(f"{spec.name}")
+    print(f"Have {len(specs)} specs.")
     if render_issues(specs):
         sys.exit(1)
 

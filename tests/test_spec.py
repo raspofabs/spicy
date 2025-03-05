@@ -10,7 +10,7 @@ def test_simple_spec(test_data_path):
     spec_element = spec_list[0]
     assert issubclass(type(spec_element), SpecElement)
 
-    assert spec_element.name == "CDU_STK_NEED_1_get_a_cookie"
+    assert spec_element.name == "CDU_STK_NEED_get_a_cookie"
 
 
 def test_complete_spec(test_data_path):
@@ -23,14 +23,14 @@ def test_complete_spec(test_data_path):
 
     assert all(map(lambda x: issubclass(type(x), SpecElement), spec_list))
 
-    assert any(map(lambda x: x.name == "CDU_STK_NEED_1_get_a_cookie", spec_list))
+    assert any(map(lambda x: x.name == "CDU_STK_NEED_get_a_cookie", spec_list))
 
 
 spec_parts_data = [
-    ("CDU_STK_NEED_1_get_a_cookie", StakeholderNeed),
-    ("CDU_STK_REQ_1_cookie_orders", StakeholderRequirement),
-    ("CDU_SYS_REQ_1_1_cookie_ordering", SystemRequirement),
-    ("CDU_SYS_ARCH_1_cookie_storage", SystemArchitecture),
+    ("CDU_STK_NEED_get_a_cookie", StakeholderNeed),
+    ("CDU_STK_REQ_cookie_orders", StakeholderRequirement),
+    ("CDU_SYS_REQ_cookie_ordering", SystemRequirement),
+    ("CDU_SYS_ELEMENT_cookie_storage", SystemArchitecture),
 ]
 
 

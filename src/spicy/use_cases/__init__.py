@@ -13,3 +13,12 @@ def gather_use_cases(from_file: Path) -> List[UseCase]:
     """Use markdown-it to get all the elements of the markdown files in the project."""
     node = load_syntax_tree(from_file)
     return UseCaseBuilder._parse_syntax_tree_to_use_cases(node, from_file)
+
+
+def get_use_cases_from_files(file_paths: List[Path]) -> List[UseCase]:
+    """Return the combined use cases from all the md files."""
+    use_cases: List[UseCase] = []
+
+    for filename in file_paths:
+        use_cases.extend(gather_use_cases(filename))
+    return use_cases

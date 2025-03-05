@@ -9,11 +9,11 @@ CDU is the Cookie Delivery Unit.
 CDU is a complete system for resolving the lack of
 cookies for Key Industry Data Specialists (Kids)
 
-#### CDU_STK_NEED_1_get_a_cookie
+#### CDU_STK_NEED_get_a_cookie
 
 The **KIDS** need the **CDU** to provide them with cookies.
 
-#### CDU_STK_NEED_2_bag_for_cookies
+#### CDU_STK_NEED_bag_for_cookies
 
 The **KIDS** need the **CDU** to provide cookies in bags.
 
@@ -26,15 +26,15 @@ Requirements statements are of the form, "The <entity> shall ..."
 The need they fulfil is linked because some needs can only be satisfied by a
 combination of requirements.
 
-#### CDU_STK_REQ_1_cookie_orders
+#### CDU_STK_REQ_cookie_orders
 
 **CDU** shall provide a cookie ordering mechanism.
 
 Implements:
 
-- [CDU_STK_NEED_1_get_a_cookie](#cdu_stk_need_1_get_a_cookie)
+- [CDU_STK_NEED_get_a_cookie](#cdu_stk_need_get_a_cookie)
 
-#### CDU_STK_REQ_2_cookie_availability
+#### CDU_STK_REQ_cookie_availability
 
 **CDU** shall fulfil cookie orders at short notice.
 
@@ -46,9 +46,9 @@ for cookies in the last hour.
 
 Implements:
 
-- [CDU_STK_NEED_1_get_a_cookie](#cdu_stk_need_1_get_a_cookie)
+- [CDU_STK_NEED_get_a_cookie](#cdu_stk_need_get_a_cookie)
 
-#### CDU_STK_REQ_3_bags_for_cookies
+#### CDU_STK_REQ_bags_for_cookies
 
 **CDU** shall deliver cookies in _paper_ bags.
 
@@ -57,4 +57,4 @@ the essential cookie-ness of cookies.
 
 Implements:
 
-- [CDU_STK_NEED_2_bag_for_cookies](#cdu_stk_need_2_bag_for_cookies)
+- [CDU_STK_NEED_bag_for_cookies](#cdu_stk_need_bag_for_cookies)
