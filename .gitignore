@@ -1,2 +1,5 @@
 htmlcov
 .venv
+.ruff_files
+.test_files
+.spec_check_files
