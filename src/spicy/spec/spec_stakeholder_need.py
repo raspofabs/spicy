@@ -22,6 +22,6 @@ class StakeholderNeed(SpecElement):
         return False
 
     def parse_node(self, node):
-        """Parse a SyntaxTreeNode for SpecElement."""
+        """Parse a SyntaxTreeNode."""
         print(f"Parsing as stakeholder need: {node.pretty(show_text=True)}")
         self.content.append(render_node(node))

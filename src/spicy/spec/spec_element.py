@@ -30,6 +30,10 @@ class SpecElement:
         # always false for base class
         return False
 
+    def parse_node(self, node):
+        """Parse a SyntaxTreeNode."""
+        print(f"Unable to parse, unknown element type: {node.pretty(show_text=True)}")
+
     def render_issues(self, render_function: Optional[Callable] = None) -> bool:
         """Render issues with this spec."""
         return False

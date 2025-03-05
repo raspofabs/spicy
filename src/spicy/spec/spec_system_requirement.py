@@ -28,6 +28,16 @@ class SystemRequirement(SpecElement):
         return False
 
     def parse_node(self, node):
-        """Parse a SyntaxTreeNode for SpecElement."""
+        """Parse a SyntaxTreeNode."""
         print(f"Parsing as system requirement: {node.pretty(show_text=True)}")
         self.content.append(render_node(node))
+
+
+# Look for a table of required descriptions
+# - **Location:**
+# - **Versioning:**
+# - **Inputs:**
+# - **Outputs:**
+# - **Interfaces:**
+# - **Sequential coupling:**
+# - **Phases:**

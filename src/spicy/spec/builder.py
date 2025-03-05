@@ -63,6 +63,10 @@ class SpecElementBuilder:
         """Append content to section information."""
         self.content[section_id].append(content)
 
+    def parse_node(self, node: SyntaxTreeNode) -> None:
+        """Ask the current spec_element to parse the node."""
+        self.spec_element.parse_node(node)
+
     @staticmethod
     def _parse_syntax_tree_to_spec_elements(
         project_prefix: str, tree_root: SyntaxTreeNode, from_file: Path
@@ -84,8 +88,9 @@ class SpecElementBuilder:
                     num_specs += 1
                     builder = SpecElementBuilder(spec_name, num_specs, from_file)
                     spec_element_builders.append(builder)
-
+                    continue
             if builder:
+                builder.parse_node(node)
                 if node.type == "paragraph":
                     text_content = get_text_from_node(node)
                     if builder is not None:
