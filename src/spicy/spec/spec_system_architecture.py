@@ -1,4 +1,4 @@
-"""Stakeholder requirement spec element."""
+"""System element spec element."""
 
 from typing import List
 
@@ -12,17 +12,21 @@ class SystemArchitecture(SpecElement):
 
     def __init__(self, *args):
         """Construct super and placeholder fields."""
-        super().__init__(*args)
+        super().__init__(*args, spec_type="System Element")
         self.content = []
 
     def fulfils(self) -> List[str]:
-        """Return a list of names of stakeholder requirements this element fulfils."""
+        """Return a list of names of system requirements this element fulfils."""
         return []
+
+    def is_software_element(self) -> bool:
+        """Return whether this element is a software element."""
+        return True
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:
         """Return whether the header_node relates to this class of spec."""
-        # e.g. CDU_SYS_ARCH_1_cookie_storage
+        # e.g. CDU_SYS_ELEMENT_cookie_storage
         if "_SYS_ELEMENT_" in header_text:
             return True
         return False

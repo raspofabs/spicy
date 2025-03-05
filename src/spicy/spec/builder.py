@@ -8,6 +8,7 @@ from typing import DefaultDict, List
 from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
 from .spec_element import SpecElement
+from .spec_software_component import SoftwareComponent
 from .spec_software_requirement import SoftwareRequirement
 from .spec_stakeholder_need import StakeholderNeed
 from .spec_stakeholder_requirement import StakeholderRequirement
@@ -19,8 +20,6 @@ logger = logging.getLogger("SpecBuilder")
 
 #### CDU_SYS_INT_VER_1_setup_cookie_server
 #### CDU_SYS_VER_1_order_a_cookie
-#### CDU_SWREQ_1_cookie_ordering
-#### CDU_SWARCH_1_cookie_database
 #### CDU_SWINT_1_cookie_database_crud
 #### CDU_SWQUAL_1_cookie_ordering
 
@@ -34,6 +33,7 @@ class SpecElementBuilder:
         SystemRequirement,
         SystemArchitecture,
         SoftwareRequirement,
+        SoftwareComponent,
     ]
 
     def __init__(self, name: str, ordering_id: int, file_path: Path):

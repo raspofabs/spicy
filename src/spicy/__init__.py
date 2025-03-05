@@ -47,7 +47,7 @@ def run(
     specs = get_specs_from_files(project_prefix, filenames)
     use_cases = get_use_cases_from_files(filenames)
     for spec in specs:
-        print(f"{spec.name}")
+        print(f"{spec.name} - {spec.spec_type}")
     print(f"Have {len(specs)} specs.")
     if render_issues(specs):
         sys.exit(1)

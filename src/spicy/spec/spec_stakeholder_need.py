@@ -10,13 +10,13 @@ class StakeholderNeed(SpecElement):
 
     def __init__(self, *args):
         """Construct super and placeholder fields."""
-        super().__init__(*args)
+        super().__init__(*args, spec_type="Stakeholder Need")
         self.content = []
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:
         """Return whether the header_node relates to this class of spec."""
-        # e.g. CDU_STK_REQ_1_cookie_orders
+        # e.g. CDU_STK_NEED_get_a_cookie
         if "_STK_NEED_" in header_text:
             return True
         return False

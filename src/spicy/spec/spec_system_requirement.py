@@ -1,4 +1,4 @@
-"""Stakeholder requirement spec element."""
+"""System requirement spec element."""
 
 from typing import List
 
@@ -12,11 +12,11 @@ class SystemRequirement(SpecElement):
 
     def __init__(self, *args):
         """Construct super and placeholder fields."""
-        super().__init__(*args)
+        super().__init__(*args, spec_type="System Requirement")
         self.content = []
 
     def fulfils(self) -> List[str]:
-        """Return a list of names of system elements this system requirement satisfy fulfils."""
+        """Return a list of names of stakeholder requirements this system requirement resolves."""
         return []
 
     @staticmethod

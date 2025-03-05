@@ -15,10 +15,12 @@ class SpecElement:
         name: str,
         ordering_id: int,
         file_path: Path,
+        *,
+        spec_type: str = "base",
     ):
         """Construct the basic properties."""
         self.name = name
-        self.spec_type = "base"
+        self.spec_type = spec_type
         self.ordering_id = ordering_id
         self.file_path = file_path
 
