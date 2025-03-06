@@ -4,11 +4,13 @@ from spicy.md_read import list_item_parts, load_syntax_tree, parse_text_to_synta
 
 
 def test_load_markdown_to_syntax_tree(test_data_path):
+    """Test a simple md file load and parse."""
     node = load_syntax_tree(test_data_path / "use_cases" / "01_simple_valid.md")
     assert node is not None
 
 
 def test_list_item_parts():
+    """Test parsing of list items."""
     root_node = parse_text_to_syntax_tree("- **title:** text content `inline code` more text.")
     print(root_node.pretty(indent=2, show_text=True))
     assert root_node.type == "root"
@@ -31,6 +33,8 @@ def test_list_item_parts():
 
 
 def test_read_and_re_render():
+    """Test the ability to write out what we read."""
+
     def to_text(lines: List[str]) -> str:
         return "\n".join(lines + [""])
 

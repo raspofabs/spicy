@@ -1,5 +1,6 @@
 """Render any issues found with the collection of specs and use-cases."""
 
+import logging
 from functools import partial
 from typing import Any, Callable, List, Optional
 
@@ -13,6 +14,8 @@ from .spec.builder import (
     SystemRequirement,
 )
 from .use_cases import UseCase
+
+logger = logging.getLogger(__name__)
 
 
 def render_issues(specs: List[SpecElement], use_cases: List[UseCase], render_function: Optional[Callable] = None):
@@ -33,32 +36,32 @@ def render_issues(specs: List[SpecElement], use_cases: List[UseCase], render_fun
 
     # check all use cases are connected to at least one stakeholder need
     stakeholder_needs = list(just(StakeholderNeed)(specs))
-    print(f"Have {len(stakeholder_needs)} stakeholder needs")
+    logger.info(f"Have {len(stakeholder_needs)} stakeholder needs")
 
     stakeholder_needs_names = {n.name for n in stakeholder_needs}
     for use_case in use_cases:
         if not use_case.fulfils():
-            print(f"Use case {use_case.name} fulfils nothing.")
+            render_function(f"Use case {use_case.name} fulfils nothing ({use_case.fulfils()}).")
         if disconnected := set(use_case.fulfils()) - stakeholder_needs_names:
-            print(f"Use case {use_case.name} fulfils unexpected need {disconnected}.")
+            render_function(f"Use case {use_case.name} fulfils unexpected need {disconnected}.")
         # if not any(use_case in stk_need.use_cases() for stk_need in stakeholder_needs):
         # print(f"Use case {use_case.name} is not needed.")
 
     # check all stakeholder needs are refined into at least one stakeholder requirements
     stakeholder_reqs = list(just(StakeholderRequirement)(specs))
-    print(f"Have {len(stakeholder_reqs)} stakeholder requirements")
+    logger.info(f"Have {len(stakeholder_reqs)} stakeholder requirements")
     # check all stakeholder requirements are fulfilled by at least one system requirement
     system_reqs = list(just(SystemRequirement)(specs))
-    print(f"Have {len(system_reqs)} system requirements")
+    logger.info(f"Have {len(system_reqs)} system requirements")
     # check all system requirements are captured by at least one system element
     system_elements = list(just(SystemElement)(specs))
-    print(f"Have {len(system_elements)} system elements")
+    logger.info(f"Have {len(system_elements)} system elements")
     # check all system elements which are software elements derive to at least one software requirement
     software_requirements = list(just(SoftwareRequirement)(specs))
-    print(f"Have {len(software_requirements)} software requirements")
+    logger.info(f"Have {len(software_requirements)} software requirements")
     # check all software requirements are satisfied by at least one software component
     software_components = list(just(SoftwareComponent)(specs))
-    print(f"Have {len(software_components)} software components")
+    logger.info(f"Have {len(software_components)} software components")
     # check all software components have at least one software unit design
     # check all software units have at least one unit test
     # check all software components have integration tests

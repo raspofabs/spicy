@@ -28,6 +28,9 @@ class UseCaseBuilder:
         self.impact = None
         self.detectability = None
         self.usage_sections: Dict[str, str] = {}
+        self.needs_fulfilled: List[str] = []
+
+        self.state = ""
 
     def build(self) -> UseCase:
         """Build a UseCase from the gathered data."""
@@ -40,6 +43,7 @@ class UseCaseBuilder:
             self.impact,
             self.detectability,
             self.usage_sections,
+            self.needs_fulfilled,
         )
 
     @property
@@ -49,7 +53,20 @@ class UseCaseBuilder:
 
     def _section_add_paragraph(self, section_id: str, content: str):
         """Append content to section information."""
-        self.content[section_id].append(content)
+        if content.startswith("Fulfils:"):
+            self.state = "expect_fulfils"
+        else:
+            self.content[section_id].append(content)
+
+    def _add_code_block(self, section_id: str, code_block_node: SyntaxTreeNode):
+        """Use the code block or paste it into content."""
+        if self.state == "expect_fulfils":
+            content = code_block_node.content
+            self.needs_fulfilled.extend(line.strip() for line in content.split())
+            logger.debug(f"{self.name} Adding needs, now: {self.needs_fulfilled}")
+            self.state = ""
+        else:
+            self.content[section_id].append(code_block_node.content)
 
     def _read_usage_bullets(self, usage_list: SyntaxTreeNode):
         """Consume the usage list and create the usage slot data."""
@@ -88,17 +105,16 @@ class UseCaseBuilder:
                 assert not used_h2, f"{builder.location} reuses {last_h2} in {from_file}"
                 used_h2 = True
                 use_case_builders.append(builder)
-
-            if builder:
+            elif builder:
                 if child.type == "paragraph":
                     text_content = get_text_from_node(child)
                     if builder is not None:
                         builder._section_add_paragraph(in_section, text_content)
-                if child.type == "bullet_list":
+                elif child.type == "bullet_list":
                     if in_section == "usage":
                         if builder is not None:
                             builder._read_usage_bullets(child)
-                if child.type == "code_block":
+                elif child.type == "code_block":
                     content = child.content
                     if content.startswith(TOOL_IMPACT_CLASS):
                         assert in_section == "tool_impact", f"Tool impact in {in_section}"
@@ -106,7 +122,7 @@ class UseCaseBuilder:
                         assert impact in ["", "TI1", "TI2"], f"In {builder.location} == {impact=}"
                         if builder is not None:
                             builder.impact = impact
-                    if content.startswith(DETECTABILITY_CLASS):
+                    elif content.startswith(DETECTABILITY_CLASS):
                         assert in_section == "detectability", f"Detectabilty in {in_section}"
                         detectability = content.split(DETECTABILITY_CLASS)[1].strip()
                         assert detectability in [
@@ -117,6 +133,8 @@ class UseCaseBuilder:
                         ], f"In {from_file}:{current_use_case} == {impact=}"
                         if builder is not None:
                             builder.detectability = detectability
+                    else:
+                        builder._add_code_block(in_section, child)
         return [case.build() for case in use_case_builders]
 
 

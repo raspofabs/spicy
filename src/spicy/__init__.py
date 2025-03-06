@@ -1,5 +1,6 @@
 """Spicy is like needs, but for mdbook."""
 
+import logging
 import sys
 from pathlib import Path
 from typing import List, Optional
@@ -9,6 +10,8 @@ import click
 from .check_spec_issues import render_issues
 from .spec import get_specs_from_files
 from .use_cases import get_use_cases_from_files
+
+logger = logging.getLogger(__name__)
 
 
 def get_spec_files(root_path: Optional[Path] = None) -> List[Path]:
@@ -27,17 +30,19 @@ def run(
     path_override: Optional[Path],
 ):
     """Find paths to read, then print out the TCLs of all the use-cases."""
+    logging.basicConfig(level=logging.INFO)
+
     if path_override is not None:
         filenames = get_spec_files(path_override)
     else:
         filenames = get_spec_files()
 
-    print(f"Have {len(filenames)} files to read.")
+    logger.info(f"Have {len(filenames)} files to read.")
     specs = get_specs_from_files(project_prefix, filenames)
     use_cases = get_use_cases_from_files(filenames)
     # for spec in specs:
-    # print(f"{spec.name} - {spec.spec_type}")
-    print(f"Have {len(specs)} specs.")
+    # logger.info(f"{spec.name} - {spec.spec_type}")
+    logger.info(f"Have {len(specs)} specs.")
     if render_issues(specs, use_cases):
         sys.exit(1)
 

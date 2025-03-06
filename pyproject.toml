@@ -24,3 +24,6 @@ spicecheck = "spicy.check_use_cases:run"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.ruff.lint]
+select = ["D103", "D400"]

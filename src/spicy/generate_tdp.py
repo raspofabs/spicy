@@ -1,5 +1,6 @@
 """Create a TDP from the documentation."""
 
+import logging
 import sys
 from pathlib import Path
 from typing import List, Optional
@@ -30,7 +31,7 @@ def render_issues(use_cases: List[UseCase]):
     """Render unresolved issues for each use-case."""
     any_errors = False
     for use_case in use_cases:
-        if use_case.render_issues():
+        if use_case.render_issues(print):
             any_errors = True
     return any_errors
 
@@ -41,6 +42,8 @@ def run(
     path_override: Optional[Path],
 ):
     """Find paths to read, then print out the TCLs of all the use-cases."""
+    logging.basicConfig(level=logging.INFO)
+
     if path_override is not None:
         filenames = get_use_case_files(path_override)
     else:

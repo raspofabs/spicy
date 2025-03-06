@@ -80,10 +80,10 @@ class SpecElementBuilder:
         builder = None
 
         for node in tree_root.children:
-            # print(node.pretty())
+            # logger.info(node.pretty())
             if node.type == "heading":
                 node_text = get_text_from_node(node)
-                # print(f"Heading: {node} - {node_text}")
+                # logger.info(f"Heading: {node} - {node_text}")
                 if element_prefix in node_text:
                     spec_name = element_prefix + node_text.strip().split(element_prefix)[1]
                     spec_heading_level = node.tag

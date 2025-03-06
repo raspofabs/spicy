@@ -1,5 +1,6 @@
 """Check requirements for a TDP."""
 
+import logging
 import sys
 from pathlib import Path
 from typing import Callable, List, Optional
@@ -34,6 +35,8 @@ def render_issues(use_cases: List[UseCase], render_function: Optional[Callable] 
 def run(
     path_override: Optional[Path],
 ):
+    """Run a use case check."""
+    logging.basicConfig(level=logging.INFO)
     """Find paths to read, then print out the TCLs of all the use-cases."""
     if path_override is not None:
         filenames = get_use_case_files(path_override)

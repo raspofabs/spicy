@@ -2,10 +2,11 @@ from spicy.use_cases import UseCase, gather_use_cases
 
 
 def test_valid_use_case(test_data_path):
+    """Positive test the tooling using good data."""
     use_case_list = gather_use_cases(test_data_path / "use_cases" / "01_simple_valid.md")
     assert isinstance(use_case_list, list)
     assert len(use_case_list) > 0
-    use_case = use_case_list[0]
+    use_case = list(case for case in use_case_list if case.name == "FEAT_COOKIE_ORDERING_PAGE")[0]
     assert isinstance(use_case, UseCase)
 
     assert use_case.name == "FEAT_COOKIE_ORDERING_PAGE"
@@ -30,10 +31,11 @@ def test_valid_use_case(test_data_path):
 
 
 def test_invalid_use_case(test_data_path):
+    """Negative test the tooling using the invalid data."""
     use_case_list = gather_use_cases(test_data_path / "use_cases" / "02_mostly_invalid.md")
     assert isinstance(use_case_list, list)
     assert len(use_case_list) > 0
-    use_case = use_case_list[0]
+    use_case = list(case for case in use_case_list if case.name == "FEAT_INVALID")[0]
     assert isinstance(use_case, UseCase)
 
     assert use_case.name == "FEAT_INVALID"

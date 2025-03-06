@@ -10,6 +10,7 @@ from spicy.spec.builder import (
 
 
 def test_simple_spec(test_data_path):
+    """Test a very simple spec."""
     spec_list = gather_spec_elements("cdu", test_data_path / "spec" / "spec_sys1_stakeholder_requirements.md")
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
@@ -20,6 +21,7 @@ def test_simple_spec(test_data_path):
 
 
 def test_complete_spec(test_data_path):
+    """Test a set of spec files."""
     spec_list = gather_spec_elements("cdu", test_data_path / "spec")
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
@@ -43,6 +45,7 @@ spec_parts_data = [
 
 @pytest.mark.parametrize("expected_name, expected_class", spec_parts_data)
 def test_spec_parts(test_data_path, expected_name, expected_class):
+    """Test that spec parts are detected correctly."""
     spec_list = gather_spec_elements("cdu", test_data_path / "spec")
 
     spec_by_name = {x.name: x for x in spec_list}

@@ -50,6 +50,7 @@ class UseCase:
         impact: Optional[str],
         detectability: Optional[str],
         usage_sections: Dict[str, str],
+        needs_fulfilled: List[str],
     ):
         """Construct the basic properties."""
         self.name = name
@@ -60,6 +61,7 @@ class UseCase:
         self.impact = impact
         self.detectability = detectability
         self.usage_sections = usage_sections
+        self.fulfils_needs = needs_fulfilled
 
     @property
     def tcl(self):
@@ -68,7 +70,7 @@ class UseCase:
 
     def fulfils(self) -> List[str]:
         """Return a list of all the needs this use-case fulfils."""
-        return []
+        return self.fulfils_needs
 
     def render_issues(self, render_function: Callable) -> bool:
         """Render issues with missing properties."""

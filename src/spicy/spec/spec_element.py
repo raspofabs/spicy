@@ -32,7 +32,7 @@ class SpecElement:
 
     def parse_node(self, node):
         """Parse a SyntaxTreeNode."""
-        print(f"Unable to parse, unknown element type: {node.pretty(show_text=True)}")
+        logger.info(f"Unable to parse, unknown element type: {node.pretty(show_text=True)}")
 
     def render_issues(self, render_function: Callable) -> bool:
         """Render issues with this spec."""
