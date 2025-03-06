@@ -1,8 +1,9 @@
 """Create a TDP from the documentation."""
 
 import logging
+from collections import defaultdict
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, DefaultDict, Dict, List, Optional
 
 from .mappings import tcl_map
 
@@ -40,18 +41,18 @@ usage_section_map = {
 class UseCase:
     """Gather information on use-cases and feedback on missing elements."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0913 - only the dedicated builder object builds this.
         self,
         name: str,
         ordering_id: int,
         file_path: Path,
         title: str,
-        content: DefaultDict[str, List[str]],
-        impact: Optional[str],
-        detectability: Optional[str],
-        usage_sections: Dict[str, str],
-        needs_fulfilled: List[str],
-    ):
+        content: defaultdict[str, list[str]],
+        impact: str | None,
+        detectability: str | None,
+        usage_sections: dict[str, str],
+        needs_fulfilled: list[str],
+    ) -> None:
         """Construct the basic properties."""
         self.name = name
         self.ordering_id = ordering_id
@@ -64,11 +65,11 @@ class UseCase:
         self.fulfils_needs = needs_fulfilled
 
     @property
-    def tcl(self):
+    def tcl(self) -> str | None:
         """Return the tcl class based on the tool impact and error detectability."""
         return tcl_map(self.impact, self.detectability)
 
-    def fulfils(self) -> List[str]:
+    def fulfils(self) -> list[str]:
         """Return a list of all the needs this use-case fulfils."""
         return self.fulfils_needs
 
@@ -82,7 +83,7 @@ class UseCase:
             return True
         return False
 
-    def get_issues(self) -> List[str]:
+    def get_issues(self) -> list[str]:
         """Return a list of problems with this use case."""
         issues = []
         if self.impact is None:
@@ -91,30 +92,22 @@ class UseCase:
             issues.append("no detectability")
 
         # usage section check
-        no_usage = []
-        for slot, _lookup in usage_section_map.items():
-            if slot not in self.usage_sections:
-                no_usage.append(slot)
+        no_usage = [slot for slot in usage_section_map if slot not in self.usage_sections]
         if no_usage:
             issues.append(f"{len(no_usage)} no usage: {','.join(no_usage)}")
 
         # section check
-        no_section = []
-        for _lookup, slot in section_map.items():
-            if slot not in self.content:
-                if slot in ["usage"]:
-                    continue
-                no_section.append(slot)
+        no_section = [slot for slot in section_map.values() if slot not in self.content and slot not in ["usage"]]
         if no_section:
             issues.append(f"{len(no_section)} no section information for :{','.join(no_section)}")
 
         return issues
 
-    def description_text(self) -> List[str]:
+    def description_text(self) -> list[str]:
         """Return a list of lines describing the use-case."""
         return self.content.get("prologue", [])
 
-    def features_text(self) -> List[str]:
+    def features_text(self) -> list[str]:
         """Return a list of lines describing the features of the use-case."""
         return self.content.get("features", [])
 
@@ -126,10 +119,10 @@ class UseCase:
         """Return a list of lines describing the outputs of the use-case."""
         return self.usage_sections.get("outputs", "")
 
-    def impact_rationale(self) -> List[str]:
+    def impact_rationale(self) -> list[str]:
         """Return a list of lines describing the tool impact of the use-case."""
         return self.content.get("tool_impact", [])
 
-    def detectability_rationale(self) -> List[str]:
+    def detectability_rationale(self) -> list[str]:
         """Return a list of lines describing the error detectability of the use-case."""
         return self.content.get("detectability", [])

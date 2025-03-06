@@ -1,5 +1,7 @@
 """Test the spec parser."""
 
+from pathlib import Path
+
 import pytest
 
 from spicy.spec import SpecElement, gather_spec_elements
@@ -12,7 +14,7 @@ from spicy.spec.builder import (
 )
 
 
-def test_simple_spec(test_data_path):
+def test_simple_spec(test_data_path: Path) -> None:
     """Test a very simple spec."""
     spec_list = gather_spec_elements("cdu", test_data_path / "spec" / "spec_sys1_stakeholder_requirements.md")
     assert isinstance(spec_list, list)
@@ -23,7 +25,7 @@ def test_simple_spec(test_data_path):
     assert spec_element.name == "CDU_STK_NEED_get_a_cookie"
 
 
-def test_complete_spec(test_data_path):
+def test_complete_spec(test_data_path: Path) -> None:
     """Test a set of spec files."""
     spec_list = gather_spec_elements("cdu", test_data_path / "spec")
     assert isinstance(spec_list, list)
@@ -46,8 +48,8 @@ spec_parts_data = [
 ]
 
 
-@pytest.mark.parametrize("expected_name, expected_class", spec_parts_data)
-def test_spec_parts(test_data_path, expected_name, expected_class):
+@pytest.mark.parametrize(("expected_name", "expected_class"), spec_parts_data)
+def test_spec_parts(test_data_path: Path, expected_name: str, expected_class: type) -> None:
     """Test that spec parts are detected correctly."""
     spec_list = gather_spec_elements("cdu", test_data_path / "spec")
 

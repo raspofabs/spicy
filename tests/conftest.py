@@ -6,6 +6,6 @@ import pytest
 
 
 @pytest.fixture
-def test_data_path():
+def test_data_path() -> Path:
     """Return the path to the test data directory."""
     return Path(__file__).parent / "test_data"

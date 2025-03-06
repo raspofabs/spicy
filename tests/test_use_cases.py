@@ -1,14 +1,16 @@
 """Test the use-cases parser."""
 
+from pathlib import Path
+
 from spicy.use_cases import UseCase, gather_use_cases
 
 
-def test_valid_use_case(test_data_path):
+def test_valid_use_case(test_data_path: Path) -> None:
     """Positive test the tooling using good data."""
     use_case_list = gather_use_cases(test_data_path / "use_cases" / "01_simple_valid.md")
     assert isinstance(use_case_list, list)
     assert len(use_case_list) > 0
-    use_case = [case for case in use_case_list if case.name == "FEAT_COOKIE_ORDERING_PAGE"][0]
+    use_case = next(case for case in use_case_list if case.name == "FEAT_COOKIE_ORDERING_PAGE")
     assert isinstance(use_case, UseCase)
 
     assert use_case.name == "FEAT_COOKIE_ORDERING_PAGE"
@@ -25,19 +27,19 @@ def test_valid_use_case(test_data_path):
 
     issue_lines = []
 
-    def writer(line):
+    def writer(line: str) -> None:
         issue_lines.append(line)
 
     use_case.render_issues(writer)
     assert not issue_lines
 
 
-def test_invalid_use_case(test_data_path):
+def test_invalid_use_case(test_data_path: Path) -> None:
     """Negative test the tooling using the invalid data."""
     use_case_list = gather_use_cases(test_data_path / "use_cases" / "02_mostly_invalid.md")
     assert isinstance(use_case_list, list)
     assert len(use_case_list) > 0
-    use_case = [case for case in use_case_list if case.name == "FEAT_INVALID"][0]
+    use_case = next(case for case in use_case_list if case.name == "FEAT_INVALID")
     assert isinstance(use_case, UseCase)
 
     assert use_case.name == "FEAT_INVALID"
@@ -54,7 +56,7 @@ def test_invalid_use_case(test_data_path):
 
     issue_lines = []
 
-    def writer(line):
+    def writer(line: str) -> None:
         issue_lines.append(line)
 
     use_case.render_issues(writer)
