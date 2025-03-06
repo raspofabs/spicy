@@ -1,6 +1,6 @@
 """System requirement spec element."""
 
-from typing import Callable, List
+from collections.abc import Callable
 
 from spicy.md_read import render_node
 
@@ -15,7 +15,7 @@ class SystemRequirement(SpecElement):
         super().__init__(*args, spec_type="System Requirement")
         self.content = []
 
-    def fulfils(self) -> List[str]:
+    def fulfils(self) -> list[str]:
         """Return a list of names of stakeholder requirements this system requirement resolves."""
         return []
 

@@ -3,14 +3,13 @@
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 import click
 
 from .use_cases import UseCase, gather_use_cases
 
 
-def get_use_case_files(root_path: Optional[Path] = None) -> List[Path]:
+def get_use_case_files(root_path: Path | None = None) -> list[Path]:
     """Fetch a list of all the use-case files under a root path."""
     glob_root = root_path or Path("src/03_use_cases")
     if glob_root.is_file():
@@ -18,16 +17,16 @@ def get_use_case_files(root_path: Optional[Path] = None) -> List[Path]:
     return sorted(glob_root.glob("*.md"))
 
 
-def get_use_cases_from_files(file_paths: List[Path]) -> List[UseCase]:
+def get_use_cases_from_files(file_paths: list[Path]) -> list[UseCase]:
     """Return the combined use cases from all the md files."""
-    use_cases: List[UseCase] = []
+    use_cases: list[UseCase] = []
 
     for filename in file_paths:
         use_cases.extend(gather_use_cases(filename))
     return use_cases
 
 
-def render_issues(use_cases: List[UseCase]):
+def render_issues(use_cases: list[UseCase]):
     """Render unresolved issues for each use-case."""
     any_errors = False
     for use_case in use_cases:
@@ -39,7 +38,7 @@ def render_issues(use_cases: List[UseCase]):
 @click.command()
 @click.argument("path-override", required=False, default=None, type=Path)
 def run(
-    path_override: Optional[Path],
+    path_override: Path | None,
 ):
     """Find paths to read, then print out the TCLs of all the use-cases."""
     logging.basicConfig(level=logging.INFO)

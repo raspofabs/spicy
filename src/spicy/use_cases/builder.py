@@ -3,7 +3,6 @@
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import DefaultDict, Dict, List
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node, split_list_item
 
@@ -24,11 +23,11 @@ class SingleUseCaseBuilder:
         self.ordering_id = ordering_id
         self.file_path = file_path
         self.title = title
-        self.content: DefaultDict[str, List[str]] = defaultdict(list)
+        self.content: defaultdict[str, list[str]] = defaultdict(list)
         self.impact = None
         self.detectability = None
-        self.usage_sections: Dict[str, str] = {}
-        self.needs_fulfilled: List[str] = []
+        self.usage_sections: dict[str, str] = {}
+        self.needs_fulfilled: list[str] = []
 
         self.state = ""
 
@@ -82,7 +81,7 @@ class UseCasesBuilder:
     def __init__(self, from_file: Path):
         """Construct the basic properties."""
         self.from_file = from_file
-        self.use_case_builders: List[SingleUseCaseBuilder] = []
+        self.use_case_builders: list[SingleUseCaseBuilder] = []
         self.last_h2 = ""
         self.last_h3 = ""
         self.used_h2 = False
@@ -156,7 +155,7 @@ class UseCasesBuilder:
                 self._handle_code_block(node)
 
 
-def parse_syntax_tree_to_use_cases(node: SyntaxTreeNode, from_file: Path) -> List[UseCase]:
+def parse_syntax_tree_to_use_cases(node: SyntaxTreeNode, from_file: Path) -> list[UseCase]:
     """Parse a markdown-it node tree into a list of use cases."""
     builder = UseCasesBuilder(from_file)
     for child in node.children:
@@ -183,7 +182,7 @@ def _is_use_case(node: SyntaxTreeNode):
         return True
 
 
-def _list_item_is_variant(parts: List[SyntaxTreeNode], variant: str):
+def _list_item_is_variant(parts: list[SyntaxTreeNode], variant: str):
     """Return whether the list item is this variant."""
     try:
         title_node = parts[1]

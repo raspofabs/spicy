@@ -14,7 +14,7 @@ from .use_cases import get_use_cases_from_files
 logger = logging.getLogger(__name__)
 
 
-def get_spec_files(root_path: Optional[Path] = None) -> List[Path]:
+def get_spec_files(root_path: Path | None = None) -> list[Path]:
     """Fetch a list of all the use-case files under a root path."""
     glob_root = root_path or Path("src/")
     if glob_root.is_file():
@@ -27,7 +27,7 @@ def get_spec_files(root_path: Optional[Path] = None) -> List[Path]:
 @click.argument("path-override", required=False, default=None, type=Path)
 def run(
     project_prefix: str,
-    path_override: Optional[Path],
+    path_override: Path | None,
 ):
     """Find paths to read, then print out the TCLs of all the use-cases."""
     logging.basicConfig(level=logging.INFO)

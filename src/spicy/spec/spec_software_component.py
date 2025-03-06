@@ -1,6 +1,6 @@
 """Software component spec element."""
 
-from typing import Callable, List
+from collections.abc import Callable
 
 from spicy.md_read import render_node
 
@@ -15,7 +15,7 @@ class SoftwareComponent(SpecElement):
         super().__init__(*args, spec_type="Software Component")
         self.content = []
 
-    def fulfils(self) -> List[str]:
+    def fulfils(self) -> list[str]:
         """Return a list of names of software requirements this software component resolves."""
         return []
 

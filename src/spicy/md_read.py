@@ -1,6 +1,5 @@
 """Support reading markdown files into usable syntax trees."""
 from pathlib import Path
-from typing import Tuple
 
 from markdown_it import MarkdownIt
 from markdown_it.tree import SyntaxTreeNode
@@ -61,7 +60,7 @@ def list_item_parts(node: SyntaxTreeNode):
         return None
 
 
-def split_list_item(node: SyntaxTreeNode) -> Tuple[str, str]:
+def split_list_item(node: SyntaxTreeNode) -> tuple[str, str]:
     """Split a list_item node into it's leading title and trailing content."""
     parts = list_item_parts(node)
     if parts is None:

@@ -1,8 +1,9 @@
 """Render any issues found with the collection of specs and use-cases."""
 
 import logging
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, List, Optional
+from typing import Any
 
 from .spec import SpecElement
 from .spec.builder import (
@@ -18,7 +19,7 @@ from .use_cases import UseCase
 logger = logging.getLogger(__name__)
 
 
-def render_issues(specs: List[SpecElement], use_cases: List[UseCase], render_function: Optional[Callable] = None):
+def render_issues(specs: list[SpecElement], use_cases: list[UseCase], render_function: Callable | None = None):
     """Render unresolved issues for each use-case."""
     render_function = render_function or print
     any_errors = False

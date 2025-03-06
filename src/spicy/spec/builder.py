@@ -3,7 +3,6 @@
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import DefaultDict, List
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
@@ -41,7 +40,7 @@ class SpecElementBuilder:
         self.name = name
         self.ordering_id = ordering_id
         self.file_path = file_path
-        self.content: DefaultDict[str, List[str]] = defaultdict(list)
+        self.content: defaultdict[str, list[str]] = defaultdict(list)
 
         self.spec_class = SpecElementBuilder._class_for_header(name)
         self.spec_element = self.spec_class(
@@ -69,10 +68,12 @@ class SpecElementBuilder:
 
     @staticmethod
     def _parse_syntax_tree_to_spec_elements(
-        project_prefix: str, tree_root: SyntaxTreeNode, from_file: Path
-    ) -> List[SpecElement]:
+        project_prefix: str,
+        tree_root: SyntaxTreeNode,
+        from_file: Path,
+    ) -> list[SpecElement]:
         """Parse a markdown-it node tree into a list of spec elements."""
-        spec_element_builders: List[SpecElementBuilder] = []
+        spec_element_builders: list[SpecElementBuilder] = []
         spec_heading_level = "h1"  # default heading is top level
         num_specs = 0
         element_prefix = project_prefix.upper() + "_"
@@ -91,7 +92,7 @@ class SpecElementBuilder:
                     builder = SpecElementBuilder(spec_name, num_specs, from_file)
                     spec_element_builders.append(builder)
                     continue
-                elif spec_heading_level <= node.tag:
+                if spec_heading_level <= node.tag:
                     # higher level or equal means we're no longer in that spec
                     builder = None
             if builder:
@@ -107,5 +108,4 @@ class SpecElementBuilder:
         for spec_class in SpecElementBuilder.SPEC_CLASSES:
             if spec_class.is_spec_heading(name):
                 return spec_class
-        else:
-            return SpecElement
+        return SpecElement

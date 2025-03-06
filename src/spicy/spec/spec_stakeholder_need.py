@@ -1,6 +1,6 @@
 """Stakeholder need spec element."""
 
-from typing import Callable
+from collections.abc import Callable
 
 from spicy.md_read import render_node
 

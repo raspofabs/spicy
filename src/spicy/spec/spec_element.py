@@ -1,8 +1,8 @@
 """Base spec element."""
 
 import logging
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 logger = logging.getLogger("SpecElement")
 
