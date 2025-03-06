@@ -46,6 +46,16 @@ def render_issues(specs: List[SpecElement], use_cases: List[UseCase], render_fun
     # check all use cases are connected to at least one stakeholder need
     stakeholder_needs = list(just(StakeholderNeed)(specs))
     print(f"Have {len(stakeholder_needs)} stakeholder needs")
+
+    stakeholder_needs_names = {n.name for n in stakeholder_needs}
+    for use_case in use_cases:
+        if not use_case.fulfils():
+            print(f"Use case {use_case.name} fulfils nothing.")
+        if disconnected := set(use_case.fulfils()) - stakeholder_needs_names:
+            print(f"Use case {use_case.name} fulfils unexpected need {disconnected}.")
+        # if not any(use_case in stk_need.use_cases() for stk_need in stakeholder_needs):
+        # print(f"Use case {use_case.name} is not needed.")
+
     # check all stakeholder needs are refined into at least one stakeholder requirements
     stakeholder_reqs = list(just(StakeholderRequirement)(specs))
     print(f"Have {len(stakeholder_reqs)} stakeholder requirements")
@@ -93,8 +103,8 @@ def run(
     print(f"Have {len(filenames)} files to read.")
     specs = get_specs_from_files(project_prefix, filenames)
     use_cases = get_use_cases_from_files(filenames)
-    for spec in specs:
-        print(f"{spec.name} - {spec.spec_type}")
+    # for spec in specs:
+    # print(f"{spec.name} - {spec.spec_type}")
     print(f"Have {len(specs)} specs.")
     if render_issues(specs, use_cases):
         sys.exit(1)

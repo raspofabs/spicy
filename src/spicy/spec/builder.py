@@ -73,6 +73,7 @@ class SpecElementBuilder:
     ) -> List[SpecElement]:
         """Parse a markdown-it node tree into a list of spec elements."""
         spec_element_builders: List[SpecElementBuilder] = []
+        spec_heading_level = "h1"  # default heading is top level
         num_specs = 0
         element_prefix = project_prefix.upper() + "_"
 
@@ -85,10 +86,14 @@ class SpecElementBuilder:
                 # print(f"Heading: {node} - {node_text}")
                 if element_prefix in node_text:
                     spec_name = element_prefix + node_text.strip().split(element_prefix)[1]
+                    spec_heading_level = node.tag
                     num_specs += 1
                     builder = SpecElementBuilder(spec_name, num_specs, from_file)
                     spec_element_builders.append(builder)
                     continue
+                elif spec_heading_level <= node.tag:
+                    # higher level or equal means we're no longer in that spec
+                    builder = None
             if builder:
                 builder.parse_node(node)
                 if node.type == "paragraph":

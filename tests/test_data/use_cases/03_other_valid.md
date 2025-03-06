@@ -1,0 +1,47 @@
+# Ordering a cookie
+
+<!-- toc -->
+
+The **KIDS** need to be able to order cookies from the cookie ordering page.
+
+## Bake cookies to order
+
+    ID: FEAT_COOKIE_BAKING
+
+A **CDU** operator will use the oven to bake some cookies.
+
+Fulfils:
+
+    CDU_STK_REQ_cookie_availability
+
+### Features, functions, and technical properties
+
+The oven bakes cookies.
+
+### Description of usage
+
+- **Purpose:**
+    To turn a cookie debt into cookies.
+- **Inputs:**
+    Ingredients, electricity, and love.
+- **Outputs:**
+    A life-affirming, warm and delicious batch of cookies.
+- **Usage procedure:**
+    Put uncooked cookies in oven.
+    Wait.
+    Take out the cooked cookies and shove them into the fully qualified **CDU** cookie dumpster.
+- **Environmental constraints:**
+    The **Operator** must be tall enough to open the oven door.
+
+### Impact analysis of feature
+
+    TI class: TI2
+
+If the oven fails, everyone is doomed to a life without cookies.
+
+### Detectability analysis of feature
+
+    TD class: TD1
+
+The only people who cannot detect a cookie failure are those who hate cookies.
+And those people are not allowed to be operators.

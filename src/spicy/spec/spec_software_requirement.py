@@ -29,7 +29,7 @@ class SoftwareRequirement(SpecElement):
 
     def parse_node(self, node):
         """Parse a SyntaxTreeNode."""
-        print(f"Parsing as software requirement: {node.pretty(show_text=True)}")
+        # print(f"Parsing as software requirement: {node.pretty(show_text=True)}")
         self.content.append(render_node(node))
 
     def render_issues(self, render_function: Callable) -> bool:

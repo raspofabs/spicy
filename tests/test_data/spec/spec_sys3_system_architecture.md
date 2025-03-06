@@ -1,6 +1,6 @@
-# Requirements
+# System elements
 
-## Static aspects
+For each element, we need the static aspects, the dynamic aspects, and more.
 
 #### CDU_SYS_ELEMENT_cookie_storage
 
@@ -57,15 +57,10 @@ The **CDU** has an operational oven in which cookies can be baked.
 
 The oven has:
 
-- low-stock alerts
-- order listing - where orders can also be confirmed as fulfilled.
-- baking order listing - including confirming baking in progress, or complete.
-- bag stock listng, including ordering and receipt confirmation.
+- information on how long it will take until cookies are finished baking.
+- a capacity.
 
-The front page shows the alerts for any low-stock items, so operators will know to act.
-Open orders which are fulfilled can be marked as such here by an operator.
-Any time an operator begins baking, or finishes baking, the fact can be added to the database.
-Any time an operator orders bags, or receives them, the fact can be added to the database.
+Any time an operator begins baking, the oven will be in-use.
+Any time an operator finishes baking, the oven will be free-to-use.
 
-- [CDU_SYS_REQ_bag_ordering](#cdu_sys_req_bag_ordering)
 - [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)

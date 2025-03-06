@@ -10,7 +10,10 @@ The **KIDS** need to be able to order cookies from the cookie ordering page.
 
 A **KIDS** will use the web page to order a cookie.
 
-Relates to: CDU_STK_REQ_1_cookie_orders
+Fulfils:
+
+    CDU_STK_REQ_cookie_orders
+    CDU_STK_REQ_cookie_availability
 
 ### Features, functions, and technical properties
 
