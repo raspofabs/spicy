@@ -43,7 +43,7 @@ def test_read_and_re_render():
     assert rendered == test_text
 
     # make sure there is a block-quote
-    assert any(map(lambda x: x.type == "blockquote", root_node.children))
+    assert any(x.type == "blockquote" for x in root_node.children)
 
     # find it and assert it matches
     quoted_text = to_text(quoted_content)

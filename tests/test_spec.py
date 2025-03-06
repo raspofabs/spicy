@@ -27,9 +27,9 @@ def test_complete_spec(test_data_path):
     first_spec_element = spec_list[0]
     assert issubclass(type(first_spec_element), SpecElement)
 
-    assert all(map(lambda x: issubclass(type(x), SpecElement), spec_list))
+    assert all(issubclass(type(x), SpecElement) for x in spec_list)
 
-    assert any(map(lambda x: x.name == "CDU_STK_NEED_get_a_cookie", spec_list))
+    assert any(x.name == "CDU_STK_NEED_get_a_cookie" for x in spec_list)
 
 
 spec_parts_data = [
