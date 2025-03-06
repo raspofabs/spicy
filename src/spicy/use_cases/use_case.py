@@ -66,10 +66,8 @@ class UseCase:
         """Return the tcl class based on the tool impact and error detectability."""
         return tcl_map(self.impact, self.detectability)
 
-    def render_issues(self, render_function: Optional[Callable] = None) -> bool:
+    def render_issues(self, render_function: Callable) -> bool:
         """Render issues with missing properties."""
-        render_function = render_function or print
-
         issues = []
         if self.impact is None:
             issues.append("no impact")

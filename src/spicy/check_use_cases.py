@@ -22,7 +22,7 @@ def render_issues(use_cases: List[UseCase], render_function: Optional[Callable] 
     render_function = render_function or print
     any_errors = False
     for use_case in use_cases:
-        if use_case.render_issues():
+        if use_case.render_issues(render_function):
             any_errors = True
     if not any_errors:
         render_function("No issues found.")

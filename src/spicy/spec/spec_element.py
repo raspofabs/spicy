@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable
 
 logger = logging.getLogger("SpecElement")
 
@@ -34,6 +34,7 @@ class SpecElement:
         """Parse a SyntaxTreeNode."""
         print(f"Unable to parse, unknown element type: {node.pretty(show_text=True)}")
 
-    def render_issues(self, render_function: Optional[Callable] = None) -> bool:
+    def render_issues(self, render_function: Callable) -> bool:
         """Render issues with this spec."""
-        return False
+        render_function(f"Spec {self.name} is of an unknown type.")
+        return True

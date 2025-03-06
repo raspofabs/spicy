@@ -1,5 +1,7 @@
 """Stakeholder need spec element."""
 
+from typing import Callable
+
 from spicy.md_read import render_node
 
 from .spec_element import SpecElement
@@ -25,3 +27,7 @@ class StakeholderNeed(SpecElement):
         """Parse a SyntaxTreeNode."""
         print(f"Parsing as stakeholder need: {node.pretty(show_text=True)}")
         self.content.append(render_node(node))
+
+    def render_issues(self, render_function: Callable) -> bool:
+        """Render issues with this spec."""
+        return False

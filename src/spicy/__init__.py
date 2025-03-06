@@ -7,7 +7,7 @@ from typing import Callable, List, Optional
 import click
 
 from .spec import SpecElement, get_specs_from_files
-from .use_cases import get_use_cases_from_files
+from .use_cases import UseCase, get_use_cases_from_files
 
 
 def get_spec_files(root_path: Optional[Path] = None) -> List[Path]:
@@ -18,15 +18,38 @@ def get_spec_files(root_path: Optional[Path] = None) -> List[Path]:
     return sorted(glob_root.glob("**/*.md"))
 
 
-def render_issues(specs: List[SpecElement], render_function: Optional[Callable] = None):
+def render_issues(specs: List[SpecElement], use_cases: List[UseCase], render_function: Optional[Callable] = None):
     """Render unresolved issues for each use-case."""
     render_function = render_function or print
     any_errors = False
     for spec in specs:
-        if spec.render_issues():
+        if spec.render_issues(render_function):
+            any_errors = True
+    for use_case in use_cases:
+        if use_case.render_issues(render_function):
             any_errors = True
     if not any_errors:
         render_function("No issues found.")
+
+    # check all use cases are connected to at least one stakeholder need
+    # check all stakeholder needs are refined into at least one stakeholder requirements
+    # check all stakeholder requirements are fulfilled by at least one system requirement
+    # check all system requirements are captured by at least one system element
+    # check all system elements which are software elements derive to at least one software requirement
+    # check all software requirements are satisfied by at least one software component
+    # check all software components have at least one software unit design
+    # check all software units have at least one unit test
+    # check all software components have integration tests
+    # check all software requiremnets have qualification tests
+    # check all system elements have integration tests
+    # check all system requirements have system qualification tests
+
+    # bidirectional traceability does not require that all elements are
+    # bi-directionally dependent, only that any stakeholder needs must be
+    # traceable back and forth. Additional tests, software components, even
+    # software requirements, can be introduced with rationale not originating
+    # from the stakeholder needs.
+
     return any_errors
 
 
@@ -49,7 +72,7 @@ def run(
     for spec in specs:
         print(f"{spec.name} - {spec.spec_type}")
     print(f"Have {len(specs)} specs.")
-    if render_issues(specs):
+    if render_issues(specs, use_cases):
         sys.exit(1)
 
 

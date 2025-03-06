@@ -1,6 +1,6 @@
 """Software component spec element."""
 
-from typing import List
+from typing import Callable, List
 
 from spicy.md_read import render_node
 
@@ -31,3 +31,7 @@ class SoftwareComponent(SpecElement):
         """Parse a SyntaxTreeNode."""
         print(f"Parsing as software component: {node.pretty(show_text=True)}")
         self.content.append(render_node(node))
+
+    def render_issues(self, render_function: Callable) -> bool:
+        """Render issues with this spec."""
+        return False
