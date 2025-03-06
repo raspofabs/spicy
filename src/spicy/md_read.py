@@ -1,9 +1,13 @@
 """Support reading markdown files into usable syntax trees."""
+
+import logging
 from pathlib import Path
 
 from markdown_it import MarkdownIt
 from markdown_it.tree import SyntaxTreeNode
 from mdformat.renderer import MDRenderer
+
+logger = logging.getLogger(__name__)
 
 # create the markdown objects for general use
 
@@ -79,3 +83,11 @@ def split_list_item(node: SyntaxTreeNode) -> tuple[str, str]:
     text_parts = filter(lambda x: x.strip(), map(get_text_from_node, content_parts))
     # return as a single string.
     return get_text_from_node(title_node), " ".join(text_parts)
+
+
+def read_bullet_list(node: SyntaxTreeNode) -> list[str]:
+    """Return the lines of the bullet_list item."""
+    if node.type != "bullet_list":
+        msg = f"Node is wrong type: {node.type}"
+        raise TypeError(msg)
+    return [item.children[0] for item in node.children]

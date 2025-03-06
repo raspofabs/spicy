@@ -58,3 +58,15 @@ the essential cookie-ness of cookies.
 Implements:
 
 - [CDU_STK_NEED_bag_for_cookies](#cdu_stk_need_bag_for_cookies)
+
+#### CDU_STK_REQ_cookie_flavours
+
+**CDU** shall provide a variety of flavours
+
+Implements:
+
+- [CDU_STK_NEED_variety](#cdu_stk_need_variety)
+
+#### CDU_STK_REQ_milk
+
+**CDU** shall provide milk

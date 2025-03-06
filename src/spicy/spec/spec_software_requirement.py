@@ -30,7 +30,7 @@ class SoftwareRequirement(SpecElement):
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
-        logger.info("Parsing as software requirement: %s", node.pretty(show_text=True))
+        logger.debug("Parsing as software requirement: %s", node.pretty(show_text=True))
         self.content.append(render_node(node))
 
     def get_issues(self) -> list[str]:
