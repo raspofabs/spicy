@@ -15,7 +15,7 @@ TOOL_IMPACT_CLASS = "TI class:"
 DETECTABILITY_CLASS = "TD class:"
 
 
-class UseCaseBuilder:
+class SingleUseCaseBuilder:
     """Gather information on use-cases and feedback on missing elements."""
 
     def __init__(self, name: str, ordering_id: int, file_path: Path, title: str):
@@ -75,67 +75,93 @@ class UseCaseBuilder:
             if slot_content:
                 self.usage_sections[slot] = slot_content
 
-    @staticmethod
-    def _parse_syntax_tree_to_use_cases(node: SyntaxTreeNode, from_file: Path) -> List[UseCase]:
-        """Parse a markdown-it node tree into a list of use cases."""
-        use_case_builders: List[UseCaseBuilder] = []
-        last_h2 = ""
-        last_h3 = ""
-        used_h2 = False
-        num_cases = 0
 
-        builder = None
-        current_use_case = None
-        in_section = "none"
+class UseCasesBuilder:
+    """Gather information on use-cases and feedback on missing elements."""
 
-        for child in node.children:
-            if child.type == "heading":
-                if child.tag == "h2":
-                    last_h2 = child.children[0].children[0].content
-                    used_h2 = False
-                if child.tag == "h3":
-                    last_h3 = child.children[0].children[0].content
-                    in_section = section_map.get(last_h3, in_section)
+    def __init__(self, from_file: Path):
+        """Construct the basic properties."""
+        self.from_file = from_file
+        self.use_case_builders: List[SingleUseCaseBuilder] = []
+        self.last_h2 = ""
+        self.last_h3 = ""
+        self.used_h2 = False
+        self.num_cases = 0
 
-            if _is_use_case(child):
-                use_case_name = child.content.strip().split("ID: ")[1]
-                in_section = "prologue"
-                num_cases += 1
-                builder = UseCaseBuilder(use_case_name, num_cases, from_file, last_h2)
-                assert not used_h2, f"{builder.location} reuses {last_h2} in {from_file}"
-                used_h2 = True
-                use_case_builders.append(builder)
-            elif builder:
-                if child.type == "paragraph":
-                    text_content = get_text_from_node(child)
-                    if builder is not None:
-                        builder._section_add_paragraph(in_section, text_content)
-                elif child.type == "bullet_list":
-                    if in_section == "usage":
-                        if builder is not None:
-                            builder._read_usage_bullets(child)
-                elif child.type == "code_block":
-                    content = child.content
-                    if content.startswith(TOOL_IMPACT_CLASS):
-                        assert in_section == "tool_impact", f"Tool impact in {in_section}"
-                        impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
-                        assert impact in ["", "TI1", "TI2"], f"In {builder.location} == {impact=}"
-                        if builder is not None:
-                            builder.impact = impact
-                    elif content.startswith(DETECTABILITY_CLASS):
-                        assert in_section == "detectability", f"Detectabilty in {in_section}"
-                        detectability = content.split(DETECTABILITY_CLASS)[1].strip()
-                        assert detectability in [
-                            "",
-                            "TD1",
-                            "TD2",
-                            "TD3",
-                        ], f"In {from_file}:{current_use_case} == {impact=}"
-                        if builder is not None:
-                            builder.detectability = detectability
-                    else:
-                        builder._add_code_block(in_section, child)
-        return [case.build() for case in use_case_builders]
+        self.builder = None
+        self.current_use_case = None
+        self.in_section = "none"
+
+    def _handle_heading(self, node):
+        if node.tag == "h2":
+            self.last_h2 = node.children[0].children[0].content
+            self.used_h2 = False
+        if node.tag == "h3":
+            self.last_h3 = node.children[0].children[0].content
+            self.in_section = section_map.get(self.last_h3, self.in_section)
+
+    def _handle_use_case_node(self, node):
+        use_case_name = node.content.strip().split("ID: ")[1]
+        self.in_section = "prologue"
+        self.num_cases += 1
+        self.builder = SingleUseCaseBuilder(use_case_name, self.num_cases, self.from_file, self.last_h2)
+        assert not self.used_h2, f"{self.builder.location} reuses {self.last_h2} in {self.from_file}"
+        self.used_h2 = True
+        self.use_case_builders.append(self.builder)
+
+    def _handle_paragraph(self, node):
+        text_content = get_text_from_node(node)
+        if self.builder is not None:
+            self.builder._section_add_paragraph(self.in_section, text_content)
+
+    def _handle_bullet_list(self, node):
+        if self.in_section == "usage":
+            if self.builder is not None:
+                self.builder._read_usage_bullets(node)
+
+    def _handle_code_block(self, node):
+        content = node.content
+        if content.startswith(TOOL_IMPACT_CLASS):
+            assert self.in_section == "tool_impact", f"Tool impact in {self.in_section}"
+            impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
+            assert impact in ["", "TI1", "TI2"], f"In {self.builder.location} == {impact=}"
+            if self.builder is not None:
+                self.builder.impact = impact
+        elif content.startswith(DETECTABILITY_CLASS):
+            assert self.in_section == "detectability", f"Detectabilty in {self.in_section}"
+            detectability = content.split(DETECTABILITY_CLASS)[1].strip()
+            assert detectability in [
+                "",
+                "TD1",
+                "TD2",
+                "TD3",
+            ], f"In {self.from_file}:{self.current_use_case} == {impact=}"
+            if self.builder is not None:
+                self.builder.detectability = detectability
+        else:
+            self.builder._add_code_block(self.in_section, node)
+
+    def parse_node(self, node):
+        """Parse a single node."""
+        if node.type == "heading":
+            self._handle_heading(node)
+        if _is_use_case(node):
+            self._handle_use_case_node(node)
+        elif self.builder:
+            if node.type == "paragraph":
+                self._handle_paragraph(node)
+            elif node.type == "bullet_list":
+                self._handle_bullet_list(node)
+            elif node.type == "code_block":
+                self._handle_code_block(node)
+
+
+def parse_syntax_tree_to_use_cases(node: SyntaxTreeNode, from_file: Path) -> List[UseCase]:
+    """Parse a markdown-it node tree into a list of use cases."""
+    builder = UseCasesBuilder(from_file)
+    for child in node.children:
+        builder.parse_node(child)
+    return [case.build() for case in builder.use_case_builders]
 
 
 # private functions

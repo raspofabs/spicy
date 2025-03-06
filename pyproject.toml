@@ -25,5 +25,16 @@ spicecheck = "spicy.check_use_cases:run"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.black]
+line-length = 120
+
+[tool.isort]
+line_length = 120
+profile = "black"
+
+[tool.ruff]
+line-length = 120
+
 [tool.ruff.lint]
-select = ["D103", "D400"]
+select = ["E", "B", "C", "D1", "D20", "D300", "D4"]
+ignore = ["D203"]

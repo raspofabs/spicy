@@ -1,4 +1,7 @@
+"""Test the spec parser."""
+
 import pytest
+
 from spicy.spec import SpecElement, gather_spec_elements
 from spicy.spec.builder import (
     SoftwareRequirement,

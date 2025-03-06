@@ -74,6 +74,16 @@ class UseCase:
 
     def render_issues(self, render_function: Callable) -> bool:
         """Render issues with missing properties."""
+        issues = self.get_issues()
+        if issues:
+            render_function(f"Issues in {self.file_path.name}, {self.name}")
+            for issue in issues:
+                render_function(f"\t{issue}")
+            return True
+        return False
+
+    def get_issues(self) -> List[str]:
+        """Return a list of problems with this use case."""
         issues = []
         if self.impact is None:
             issues.append("no impact")
@@ -82,15 +92,15 @@ class UseCase:
 
         # usage section check
         no_usage = []
-        for slot, lookup in usage_section_map.items():
+        for slot, _lookup in usage_section_map.items():
             if slot not in self.usage_sections:
                 no_usage.append(slot)
         if no_usage:
             issues.append(f"{len(no_usage)} no usage: {','.join(no_usage)}")
 
-        # setion check
+        # section check
         no_section = []
-        for lookup, slot in section_map.items():
+        for _lookup, slot in section_map.items():
             if slot not in self.content:
                 if slot in ["usage"]:
                     continue
@@ -98,12 +108,7 @@ class UseCase:
         if no_section:
             issues.append(f"{len(no_section)} no section information for :{','.join(no_section)}")
 
-        if issues:
-            render_function(f"Issues in {self.file_path.name}, {self.name}")
-            for issue in issues:
-                render_function(f"\t{issue}")
-            return True
-        return False
+        return issues
 
     def description_text(self) -> List[str]:
         """Return a list of lines describing the use-case."""
