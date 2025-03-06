@@ -12,7 +12,7 @@ from .spec_software_component import SoftwareComponent
 from .spec_software_requirement import SoftwareRequirement
 from .spec_stakeholder_need import StakeholderNeed
 from .spec_stakeholder_requirement import StakeholderRequirement
-from .spec_system_architecture import SystemArchitecture
+from .spec_system_element import SystemElement
 from .spec_system_requirement import SystemRequirement
 
 logger = logging.getLogger("SpecBuilder")
@@ -31,7 +31,7 @@ class SpecElementBuilder:
         StakeholderNeed,
         StakeholderRequirement,
         SystemRequirement,
-        SystemArchitecture,
+        SystemElement,
         SoftwareRequirement,
         SoftwareComponent,
     ]

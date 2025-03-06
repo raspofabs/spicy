@@ -7,7 +7,7 @@ from spicy.md_read import render_node
 from .spec_element import SpecElement
 
 
-class SystemArchitecture(SpecElement):
+class SystemElement(SpecElement):
     """Handles system architecture parsing."""
 
     def __init__(self, *args):

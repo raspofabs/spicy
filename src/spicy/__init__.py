@@ -1,12 +1,21 @@
 """Spicy is like needs, but for mdbook."""
 
 import sys
+from functools import partial
 from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 import click
 
 from .spec import SpecElement, get_specs_from_files
+from .spec.builder import (
+    SoftwareComponent,
+    SoftwareRequirement,
+    StakeholderNeed,
+    StakeholderRequirement,
+    SystemElement,
+    SystemRequirement,
+)
 from .use_cases import UseCase, get_use_cases_from_files
 
 
@@ -31,12 +40,27 @@ def render_issues(specs: List[SpecElement], use_cases: List[UseCase], render_fun
     if not any_errors:
         render_function("No issues found.")
 
+    def just(checked_class: Any):
+        return partial(filter, lambda x: isinstance(x, checked_class))
+
     # check all use cases are connected to at least one stakeholder need
+    stakeholder_needs = list(just(StakeholderNeed)(specs))
+    print(f"Have {len(stakeholder_needs)} stakeholder needs")
     # check all stakeholder needs are refined into at least one stakeholder requirements
+    stakeholder_reqs = list(just(StakeholderRequirement)(specs))
+    print(f"Have {len(stakeholder_reqs)} stakeholder requirements")
     # check all stakeholder requirements are fulfilled by at least one system requirement
+    system_reqs = list(just(SystemRequirement)(specs))
+    print(f"Have {len(system_reqs)} system requirements")
     # check all system requirements are captured by at least one system element
+    system_elements = list(just(SystemElement)(specs))
+    print(f"Have {len(system_elements)} system elements")
     # check all system elements which are software elements derive to at least one software requirement
+    software_requirements = list(just(SoftwareRequirement)(specs))
+    print(f"Have {len(software_requirements)} software requirements")
     # check all software requirements are satisfied by at least one software component
+    software_components = list(just(SoftwareComponent)(specs))
+    print(f"Have {len(software_components)} software components")
     # check all software components have at least one software unit design
     # check all software units have at least one unit test
     # check all software components have integration tests
