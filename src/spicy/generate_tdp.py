@@ -26,12 +26,18 @@ def get_use_cases_from_files(file_paths: list[Path]) -> list[UseCase]:
     return use_cases
 
 
-def render_issues(use_cases: list[UseCase]):
+def render_issues(use_cases: list[UseCase]) -> bool:
     """Render unresolved issues for each use-case."""
     any_errors = False
     for use_case in use_cases:
-        if use_case.render_issues(print):
-            any_errors = True
+        issues = use_case.get_issues()
+        if not issues:
+            continue
+        first_issue, *other_issues = issues
+        print(first_issue)  # noqa: T201
+        for issue in other_issues:
+            print("\t" + issue)  # noqa: T201
+        any_errors = True
     return any_errors
 
 
@@ -39,15 +45,11 @@ def render_issues(use_cases: list[UseCase]):
 @click.argument("path-override", required=False, default=None, type=Path)
 def run(
     path_override: Path | None,
-):
+) -> None:
     """Find paths to read, then print out the TCLs of all the use-cases."""
     logging.basicConfig(level=logging.INFO)
 
-    if path_override is not None:
-        filenames = get_use_case_files(path_override)
-    else:
-        filenames = get_use_case_files()
-
+    filenames = get_use_case_files(path_override)
     use_cases = get_use_cases_from_files(filenames)
     if render_issues(use_cases):
         sys.exit(1)

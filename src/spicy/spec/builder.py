@@ -26,16 +26,16 @@ logger = logging.getLogger("SpecBuilder")
 class SpecElementBuilder:
     """Gather information on spec elements and create them."""
 
-    SPEC_CLASSES = [
+    SPEC_CLASSES = (
         StakeholderNeed,
         StakeholderRequirement,
         SystemRequirement,
         SystemElement,
         SoftwareRequirement,
         SoftwareComponent,
-    ]
+    )
 
-    def __init__(self, name: str, ordering_id: int, file_path: Path):
+    def __init__(self, name: str, ordering_id: int, file_path: Path) -> None:
         """Construct the basic properties."""
         self.name = name
         self.ordering_id = ordering_id
@@ -54,11 +54,11 @@ class SpecElementBuilder:
         return self.spec_element
 
     @property
-    def location(self):
+    def location(self) -> str:
         """Return a string for the location of the spec element."""
         return f"{self.file_path}:{self.ordering_id}:{self.name}"
 
-    def _section_add_paragraph(self, section_id: str, content: str):
+    def section_add_paragraph(self, section_id: str, content: str) -> None:
         """Append content to section information."""
         self.content[section_id].append(content)
 
@@ -67,7 +67,7 @@ class SpecElementBuilder:
         self.spec_element.parse_node(node)
 
     @staticmethod
-    def _parse_syntax_tree_to_spec_elements(
+    def parse_syntax_tree_to_spec_elements(
         project_prefix: str,
         tree_root: SyntaxTreeNode,
         from_file: Path,
@@ -81,10 +81,10 @@ class SpecElementBuilder:
         builder = None
 
         for node in tree_root.children:
-            # logger.info(node.pretty())
+            logger.debug("%s", node.pretty())
             if node.type == "heading":
                 node_text = get_text_from_node(node)
-                # logger.info(f"Heading: {node} - {node_text}")
+                logger.debug("Heading: %s - %s", node, node_text)
                 if element_prefix in node_text:
                     spec_name = element_prefix + node_text.strip().split(element_prefix)[1]
                     spec_heading_level = node.tag
@@ -100,11 +100,11 @@ class SpecElementBuilder:
                 if node.type == "paragraph":
                     text_content = get_text_from_node(node)
                     if builder is not None:
-                        builder._section_add_paragraph("content", text_content)
+                        builder.section_add_paragraph("content", text_content)
         return [spec.build() for spec in spec_element_builders]
 
     @staticmethod
-    def _class_for_header(name: str):
+    def _class_for_header(name: str) -> type:
         for spec_class in SpecElementBuilder.SPEC_CLASSES:
             if spec_class.is_spec_heading(name):
                 return spec_class

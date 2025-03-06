@@ -1,10 +1,11 @@
 """Base spec element."""
 
 import logging
-from collections.abc import Callable
 from pathlib import Path
 
-logger = logging.getLogger("SpecElement")
+from spicy.md_read import SyntaxTreeNode
+
+logger = logging.getLogger(__name__)
 
 
 class SpecElement:
@@ -17,7 +18,7 @@ class SpecElement:
         file_path: Path,
         *,
         spec_type: str = "base",
-    ):
+    ) -> None:
         """Construct the basic properties."""
         self.name = name
         self.spec_type = spec_type
@@ -25,16 +26,15 @@ class SpecElement:
         self.file_path = file_path
 
     @staticmethod
-    def is_spec_heading(header_text: str) -> bool:
+    def is_spec_heading(_header_text: str) -> bool:
         """Return whether the header_node relates to this class of spec."""
-        # always false for base class
+        # Always False for base class
         return False
 
-    def parse_node(self, node):
+    def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
-        logger.info(f"Unable to parse, unknown element type: {node.pretty(show_text=True)}")
+        logger.info("Unable to parse, unknown element type: %s", node.pretty(show_text=True))
 
-    def render_issues(self, render_function: Callable) -> bool:
-        """Render issues with this spec."""
-        render_function(f"Spec {self.name} is of an unknown type.")
-        return True
+    def get_issues(self) -> list[str]:
+        """Get issues with this spec."""
+        return [f"Spec {self.name} is of an unknown type."]

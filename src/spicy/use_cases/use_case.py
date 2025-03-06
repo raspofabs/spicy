@@ -2,7 +2,6 @@
 
 import logging
 from collections import defaultdict
-from collections.abc import Callable
 from pathlib import Path
 
 from .mappings import tcl_map
@@ -73,16 +72,6 @@ class UseCase:
         """Return a list of all the needs this use-case fulfils."""
         return self.fulfils_needs
 
-    def render_issues(self, render_function: Callable) -> bool:
-        """Render issues with missing properties."""
-        issues = self.get_issues()
-        if issues:
-            render_function(f"Issues in {self.file_path.name}, {self.name}")
-            for issue in issues:
-                render_function(f"\t{issue}")
-            return True
-        return False
-
     def get_issues(self) -> list[str]:
         """Return a list of problems with this use case."""
         issues = []
@@ -101,6 +90,8 @@ class UseCase:
         if no_section:
             issues.append(f"{len(no_section)} no section information for :{','.join(no_section)}")
 
+        if issues:
+            issues = [f"Issues in {self.file_path.name}, {self.name}", *issues]
         return issues
 
     def description_text(self) -> list[str]:

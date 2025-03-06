@@ -25,13 +25,8 @@ def test_valid_use_case(test_data_path: Path) -> None:
     assert use_case.detectability == "TD1"
     assert use_case.tcl == "TCL1"
 
-    issue_lines = []
-
-    def writer(line: str) -> None:
-        issue_lines.append(line)
-
-    use_case.render_issues(writer)
-    assert not issue_lines
+    issues = use_case.get_issues()
+    assert not issues
 
 
 def test_invalid_use_case(test_data_path: Path) -> None:
@@ -54,17 +49,12 @@ def test_invalid_use_case(test_data_path: Path) -> None:
     assert use_case.detectability is None
     assert use_case.tcl == "<undefined>"
 
-    issue_lines = []
-
-    def writer(line: str) -> None:
-        issue_lines.append(line)
-
-    use_case.render_issues(writer)
-    assert issue_lines
+    issues = use_case.get_issues()
+    assert issues
 
     # fragile tests
-    assert f"Issues in {use_case.file_path.name}, {use_case.name}" in issue_lines
-    assert "\tno impact" in issue_lines
-    assert "\tno detectability" in issue_lines
-    assert "\t5 no usage: inputs,outputs,purpose,usage,environment" in issue_lines
-    assert "\t4 no section information for :prologue,features,tool_impact,detectability" in issue_lines
+    assert f"Issues in {use_case.file_path.name}, {use_case.name}" in issues
+    assert "no impact" in issues
+    assert "no detectability" in issues
+    assert "5 no usage: inputs,outputs,purpose,usage,environment" in issues
+    assert "4 no section information for :prologue,features,tool_impact,detectability" in issues

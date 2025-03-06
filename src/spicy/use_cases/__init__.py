@@ -1,7 +1,6 @@
 """Collecting use case data from a file or directory."""
 
 from pathlib import Path
-from typing import List
 
 from spicy.md_read import load_syntax_tree
 

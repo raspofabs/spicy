@@ -3,7 +3,6 @@
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 import click
 
@@ -28,21 +27,16 @@ def get_spec_files(root_path: Path | None = None) -> list[Path]:
 def run(
     project_prefix: str,
     path_override: Path | None,
-):
+) -> None:
     """Find paths to read, then print out the TCLs of all the use-cases."""
     logging.basicConfig(level=logging.INFO)
 
-    if path_override is not None:
-        filenames = get_spec_files(path_override)
-    else:
-        filenames = get_spec_files()
+    filenames = get_spec_files(path_override)
 
-    logger.info(f"Have {len(filenames)} files to read.")
+    logger.info("Have %s files to read.", len(filenames))
     specs = get_specs_from_files(project_prefix, filenames)
     use_cases = get_use_cases_from_files(filenames)
-    # for spec in specs:
-    # logger.info(f"{spec.name} - {spec.spec_type}")
-    logger.info(f"Have {len(specs)} specs.")
+    logger.info("Have %s specs.", len(specs))
     if render_issues(specs, use_cases):
         sys.exit(1)
 

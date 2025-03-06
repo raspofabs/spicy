@@ -46,18 +46,27 @@ def get_text_from_node(node: SyntaxTreeNode) -> str:
     return buffer
 
 
-def list_item_parts(node: SyntaxTreeNode):
+def check_node_is(node: SyntaxTreeNode, type_name: str, message: str) -> None:
+    """Check a node is a specific type, raise an IndexError if not."""
+    if node.type != type_name:
+        msg = message + f" - was {node.type}"
+        raise IndexError(msg)
+
+
+def list_item_parts(node: SyntaxTreeNode) -> list[SyntaxTreeNode] | None:
     """Return the item parts for a list node."""
+    check_node_is(node, "list_item", "node must be a list_item")
     try:
-        assert node.type == "list_item", f"node must be a list_item - was {node.type}"
         paragraph_node = node.children[0]
-        assert paragraph_node.type == "paragraph", f"first child node must be a paragraph - was {paragraph_node.type}"
-        inline_node = paragraph_node.children[0]
-        assert inline_node.type == "inline", f"paragraph must start with inline node - was {inline_node.type}"
-        return inline_node.children
     except IndexError:
-        # don't have the necessary parts
         return None
+    check_node_is(paragraph_node, "paragraph", "first child node must be a paragraph")
+    try:
+        inline_node = paragraph_node.children[0]
+    except IndexError:
+        return None
+    check_node_is(inline_node, "inline", "paragraph must start with inline node")
+    return inline_node.children
 
 
 def split_list_item(node: SyntaxTreeNode) -> tuple[str, str]:

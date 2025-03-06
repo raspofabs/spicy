@@ -17,15 +17,15 @@ DETECTABILITY_CLASS = "TD class:"
 class SingleUseCaseBuilder:
     """Gather information on use-cases and feedback on missing elements."""
 
-    def __init__(self, name: str, ordering_id: int, file_path: Path, title: str):
+    def __init__(self, name: str, ordering_id: int, file_path: Path, title: str) -> None:
         """Construct the basic properties."""
         self.name = name
         self.ordering_id = ordering_id
         self.file_path = file_path
         self.title = title
         self.content: defaultdict[str, list[str]] = defaultdict(list)
-        self.impact = None
-        self.detectability = None
+        self.impact: str | None = None
+        self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
         self.needs_fulfilled: list[str] = []
 
@@ -46,28 +46,28 @@ class SingleUseCaseBuilder:
         )
 
     @property
-    def location(self):
+    def location(self) -> str:
         """Return a string for the location of the use case."""
         return f"{self.file_path}:{self.ordering_id}:{self.name}"
 
-    def _section_add_paragraph(self, section_id: str, content: str):
+    def section_add_paragraph(self, section_id: str, content: str) -> None:
         """Append content to section information."""
         if content.startswith("Fulfils:"):
             self.state = "expect_fulfils"
         else:
             self.content[section_id].append(content)
 
-    def _add_code_block(self, section_id: str, code_block_node: SyntaxTreeNode):
+    def add_code_block(self, section_id: str, code_block_node: SyntaxTreeNode) -> None:
         """Use the code block or paste it into content."""
         if self.state == "expect_fulfils":
             content = code_block_node.content
             self.needs_fulfilled.extend(line.strip() for line in content.split())
-            logger.debug(f"{self.name} Adding needs, now: {self.needs_fulfilled}")
+            logger.debug("%s Adding needs %s", self.name, self.needs_fulfilled)
             self.state = ""
         else:
             self.content[section_id].append(code_block_node.content)
 
-    def _read_usage_bullets(self, usage_list: SyntaxTreeNode):
+    def read_usage_bullets(self, usage_list: SyntaxTreeNode) -> None:
         """Consume the usage list and create the usage slot data."""
         for slot, lookup in usage_section_map.items():
             slot_content = _get_usage_subsection(usage_list, lookup)
@@ -78,7 +78,7 @@ class SingleUseCaseBuilder:
 class UseCasesBuilder:
     """Gather information on use-cases and feedback on missing elements."""
 
-    def __init__(self, from_file: Path):
+    def __init__(self, from_file: Path) -> None:
         """Construct the basic properties."""
         self.from_file = from_file
         self.use_case_builders: list[SingleUseCaseBuilder] = []
@@ -87,11 +87,12 @@ class UseCasesBuilder:
         self.used_h2 = False
         self.num_cases = 0
 
-        self.builder = None
+        self.builder: SingleUseCaseBuilder | None = None
         self.current_use_case = None
         self.in_section = "none"
+        self.issues: list[str] = []
 
-    def _handle_heading(self, node):
+    def _handle_heading(self, node: SyntaxTreeNode) -> None:
         if node.tag == "h2":
             self.last_h2 = node.children[0].children[0].content
             self.used_h2 = False
@@ -99,54 +100,57 @@ class UseCasesBuilder:
             self.last_h3 = node.children[0].children[0].content
             self.in_section = section_map.get(self.last_h3, self.in_section)
 
-    def _handle_use_case_node(self, node):
+    def _handle_use_case_node(self, node: SyntaxTreeNode) -> None:
         use_case_name = node.content.strip().split("ID: ")[1]
         self.in_section = "prologue"
         self.num_cases += 1
         self.builder = SingleUseCaseBuilder(use_case_name, self.num_cases, self.from_file, self.last_h2)
-        assert not self.used_h2, f"{self.builder.location} reuses {self.last_h2} in {self.from_file}"
+        if self.used_h2:
+            self.issues.append(f"{self.builder.location} reuses {self.last_h2} in {self.from_file}")
         self.used_h2 = True
         self.use_case_builders.append(self.builder)
 
-    def _handle_paragraph(self, node):
+    def _handle_paragraph(self, node: SyntaxTreeNode) -> None:
         text_content = get_text_from_node(node)
         if self.builder is not None:
-            self.builder._section_add_paragraph(self.in_section, text_content)
+            self.builder.section_add_paragraph(self.in_section, text_content)
 
-    def _handle_bullet_list(self, node):
-        if self.in_section == "usage":
-            if self.builder is not None:
-                self.builder._read_usage_bullets(node)
+    def _handle_bullet_list(self, node: SyntaxTreeNode) -> None:
+        if self.builder is None:
+            return
+        if self.in_section == "usage" and self.builder is not None:
+            self.builder.read_usage_bullets(node)
 
-    def _handle_code_block(self, node):
+    def _handle_code_block(self, node: SyntaxTreeNode) -> None:
+        if self.builder is None:
+            return
         content = node.content
         if content.startswith(TOOL_IMPACT_CLASS):
-            assert self.in_section == "tool_impact", f"Tool impact in {self.in_section}"
-            impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
-            assert impact in ["", "TI1", "TI2"], f"In {self.builder.location} == {impact=}"
+            if self.in_section != "tool_impact":
+                self.issues.append(f"Tool impact in {self.in_section}")
+            self.impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
+            if self.impact not in ["", "TI1", "TI2"]:
+                self.issues.append(f"In {self.builder.location} == {self.impact=}")
             if self.builder is not None:
-                self.builder.impact = impact
+                self.builder.impact = self.impact
         elif content.startswith(DETECTABILITY_CLASS):
-            assert self.in_section == "detectability", f"Detectabilty in {self.in_section}"
-            detectability = content.split(DETECTABILITY_CLASS)[1].strip()
-            assert detectability in [
-                "",
-                "TD1",
-                "TD2",
-                "TD3",
-            ], f"In {self.from_file}:{self.current_use_case} == {impact=}"
+            if self.in_section != "detectability":
+                self.issues.append(f"Detectabilty in {self.in_section}")
+            self.detectability = content.split(DETECTABILITY_CLASS)[1].strip()
+            if self.detectability not in ["", "TD1", "TD2", "TD3"]:
+                self.issues.append(f"In {self.builder.location} == {self.detectability=}")
             if self.builder is not None:
-                self.builder.detectability = detectability
+                self.builder.detectability = self.detectability
         else:
-            self.builder._add_code_block(self.in_section, node)
+            self.builder.add_code_block(self.in_section, node)
 
-    def parse_node(self, node):
+    def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a single node."""
         if node.type == "heading":
             self._handle_heading(node)
         if _is_use_case(node):
             self._handle_use_case_node(node)
-        elif self.builder:
+        elif self.builder is not None:
             if node.type == "paragraph":
                 self._handle_paragraph(node)
             elif node.type == "bullet_list":
@@ -166,23 +170,12 @@ def parse_syntax_tree_to_use_cases(node: SyntaxTreeNode, from_file: Path) -> lis
 # private functions
 
 
-def _tcl_map(impact: str, detectability: str):
-    assert impact in [None, "TI1", "TI2"]
-    assert detectability in [None, "TD1", "TD2", "TD3"]
-    if impact is None or detectability is None:
-        return "<undefined>"
-    if impact == "TI1":
-        return "TCL1"
-    return "TCL" + detectability[-1:]
-
-
-def _is_use_case(node: SyntaxTreeNode):
+def _is_use_case(node: SyntaxTreeNode) -> bool:
     """Return true if the node is a use-case code-block."""
-    if node.type == "code_block" and node.content.strip().startswith("ID: "):
-        return True
+    return node.type == "code_block" and node.content.strip().startswith("ID: ")
 
 
-def _list_item_is_variant(parts: list[SyntaxTreeNode], variant: str):
+def _list_item_is_variant(parts: list[SyntaxTreeNode], variant: str) -> bool:
     """Return whether the list item is this variant."""
     try:
         title_node = parts[1]
@@ -191,15 +184,18 @@ def _list_item_is_variant(parts: list[SyntaxTreeNode], variant: str):
         if title_node.children[0].content == variant:
             return True
     except IndexError:
-        logger.warning(f"Malformed bullet_list item {parts}")
+        logger.warning("Malformed bullet_list item: %s", parts)
         return False
     return False
 
 
-def _get_usage_subsection(node: SyntaxTreeNode, variant: str):
+def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
     """Return the content of the bullet_list item for the specified variant."""
-    assert node.type == "bullet_list"
+    if node.type != "bullet_list":
+        msg = f"Node is wrong type: {node.type}"
+        raise TypeError(msg)
     for bullet_point in node.children:
         title, content = split_list_item(bullet_point)
         if title == variant:
             return content
+    return ""
