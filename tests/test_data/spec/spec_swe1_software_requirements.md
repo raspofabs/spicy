@@ -27,4 +27,14 @@ The **CDU** notifies the operators for new orders of cookies through an operator
 
 Implements:
 
-- [CDU_SYS_ARCH_operations_terminal](#cdu_sys_arch_operations_terminal)
+- [CDU_SYS_ELEMENT_operations_terminal](#CDU_SYS_ELEMENT_operations_terminal)
+
+## Dynamic aspects
+
+#### CDU_SW_REQ_cookie_delivery
+
+The **CDU** delivers cookies in reasonable time, or begins baking and then notifies the **KIDS** about the ETA (eating time approximation)
+
+Implements:
+
+- [CDU_SYS_ELEMENT_operations_terminal](#cdu_sys_element_operations_terminal)

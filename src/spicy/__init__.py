@@ -64,7 +64,7 @@ def render_issues(specs: List[SpecElement], use_cases: List[UseCase], render_fun
     # check all software components have at least one software unit design
     # check all software units have at least one unit test
     # check all software components have integration tests
-    # check all software requiremnets have qualification tests
+    # check all software requirements have qualification tests
     # check all system elements have integration tests
     # check all system requirements have system qualification tests
 
