@@ -38,6 +38,7 @@ class StakeholderRequirement(SpecElement):
         if node.type == "bullet_list" and self.state == "needs_list":
             need_items = read_bullet_list(node)
             self.implements_list.extend([get_text_from_node(x) for x in need_items])
+            self.state = ""
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""

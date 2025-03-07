@@ -18,7 +18,7 @@ from .use_cases import UseCase
 logger = logging.getLogger(__name__)
 
 
-def render_issues(  # noqa: C901
+def render_issues(  # noqa: C901, PLR0912
     specs: list[SpecElement],
     use_cases: list[UseCase],
     render_function: Callable | None = None,
@@ -45,21 +45,36 @@ def render_issues(  # noqa: C901
     logger.info("Have %s stakeholder needs", len(stakeholder_needs))
 
     stakeholder_needs_names = {n.name for n in stakeholder_needs}
+    unused_needs = set(stakeholder_needs_names)
+
     for use_case in use_cases:
-        if not use_case.fulfils():
-            render_function(f"Use case {use_case.name} fulfils nothing ({use_case.fulfils()}).")
-        if disconnected := set(use_case.fulfils()) - stakeholder_needs_names:
+        fulfilment = set(use_case.fulfils())
+        if not fulfilment:
+            render_function(f"Use case {use_case.name} fulfils nothing ({fulfilment}).")
+        if disconnected := fulfilment - stakeholder_needs_names:
             render_function(f"Use case {use_case.name} fulfils unexpected need {disconnected}.")
+        unused_needs = unused_needs - fulfilment
+
+    if unused_needs:
+        render_function(f"Needs without a use-case: {unused_needs}")
 
     # check all stakeholder needs are refined into at least one stakeholder requirements
     stakeholder_reqs = list(just(StakeholderRequirement)(specs))
     logger.info("Have %s stakeholder requirements", len(stakeholder_reqs))
 
+    unrefined_needs = set(stakeholder_needs_names)
+
     for stk_req in stakeholder_reqs:
-        if not stk_req.fulfils():
-            render_function(f"Stakeholder requirement {stk_req.name} fulfils nothing ({stk_req.fulfils()}).")
-        if disconnected := set(stk_req.fulfils()) - stakeholder_needs_names:
+        fulfilment = set(stk_req.fulfils())
+        if not fulfilment:
+            render_function(f"Stakeholder requirement {stk_req.name} fulfils nothing ({fulfilment}).")
+        if disconnected := fulfilment - stakeholder_needs_names:
             render_function(f"Stakeholder requirement {stk_req.name} fulfils unexpected need {disconnected}.")
+        unrefined_needs = unrefined_needs - fulfilment
+
+    if unrefined_needs:
+        render_function(f"Needs without a stakeholder requirement: {unrefined_needs}")
+
     # check all stakeholder requirements are fulfilled by at least one system requirement
     system_reqs = list(just(SystemRequirement)(specs))
     logger.info("Have %s system requirements", len(system_reqs))
