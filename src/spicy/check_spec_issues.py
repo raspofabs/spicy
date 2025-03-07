@@ -1,6 +1,7 @@
 """Render any issues found with the collection of specs and use-cases."""
 
 import logging
+from collections import Counter
 from collections.abc import Callable
 from functools import partial
 
@@ -74,7 +75,7 @@ def render_use_case_linkage_issues(
     if unused_needs:
         any_errors = True
         render_function("Needs without a use-case:")
-        for need in unused_needs:
+        for need in sorted(unused_needs):
             render_function(f"\t{need}")
     return any_errors
 
@@ -89,7 +90,11 @@ def render_stakeholder_requirement_linkage_issues(
     stakeholder_needs = list(just(StakeholderNeed)(specs))
     logger.debug("Have %s stakeholder requirements", len(stakeholder_reqs))
 
-    stakeholder_needs_names = {n.name for n in stakeholder_needs}
+    name_counts = Counter(n.name for n in stakeholder_needs)
+    for name, count in name_counts.items():
+        if count > 1:
+            render_function(f"non-unique name {name} in stakeholder needs")
+    stakeholder_needs_names = set(name_counts.keys())
     unfulfilled_needs = set(stakeholder_needs_names)
 
     for stk_req in stakeholder_reqs:
@@ -105,7 +110,7 @@ def render_stakeholder_requirement_linkage_issues(
     if unfulfilled_needs:
         any_errors = True
         render_function("Needs without a fulfilling stakeholder requirement:")
-        for need in unfulfilled_needs:
+        for need in sorted(unfulfilled_needs):
             render_function(f"\t{need}")
     return any_errors
 
@@ -120,7 +125,12 @@ def render_system_requirement_linkage_issues(
     system_reqs = list(just(SystemRequirement)(specs))
     logger.debug("Have %s system requirements", len(system_reqs))
 
-    stakeholder_reqs_names = {n.name for n in stakeholder_reqs}
+    name_counts = Counter(n.name for n in stakeholder_reqs)
+    for name, count in name_counts.items():
+        if count > 1:
+            render_function(f"non-unique name {name} in stakeholder requirements")
+
+    stakeholder_reqs_names = set(name_counts.keys())
     unrefined_stk_reqs = set(stakeholder_reqs_names)
 
     for sys_req in system_reqs:
@@ -136,7 +146,7 @@ def render_system_requirement_linkage_issues(
     if unrefined_stk_reqs:
         any_errors = True
         render_function("Stakeholder requirements without a system requirement:")
-        for unrefined_stk_req in unrefined_stk_reqs:
+        for unrefined_stk_req in sorted(unrefined_stk_reqs):
             render_function(f"\t{unrefined_stk_req}")
     return any_errors
 
@@ -203,8 +213,17 @@ def render_system_qualification_linkage_issues(
     system_qualification_tests = list(just(SystemQualificationTest)(specs))
     logger.info("Have %s system qualification tests", len(system_qualification_tests))
 
-    system_reqs_names = {n.name for n in system_reqs}
+    name_counts = Counter(n.name for n in system_reqs)
+    for name, count in name_counts.items():
+        if count > 1:
+            render_function(f"non-unique name {name} in system requirements")
+    system_reqs_names = set(name_counts.keys())
     untested_reqs = set(system_reqs_names)
+
+    name_counts = Counter(n.name for n in system_qualification_tests)
+    for name, count in name_counts.items():
+        if count > 1:
+            render_function(f"non-unique name {name} in system qualification tests")
 
     for sys_qual_test in system_qualification_tests:
         fulfilment = set(sys_qual_test.fulfils())
@@ -221,7 +240,7 @@ def render_system_qualification_linkage_issues(
     if untested_reqs:
         any_errors = True
         render_function("System requirements without a qualification test:")
-        for untested_req in untested_reqs:
+        for untested_req in sorted(untested_reqs):
             render_function(f"\t{untested_req}")
     return any_errors
 

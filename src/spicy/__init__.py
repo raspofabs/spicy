@@ -33,10 +33,10 @@ def run(
 
     filenames = get_spec_files(path_override)
 
-    logger.info("Have %s files to read.", len(filenames))
+    logger.info("Found %s files to read.", len(filenames))
     specs = get_specs_from_files(project_prefix, filenames)
     use_cases = get_use_cases_from_files(filenames)
-    logger.info("Have %s specs.", len(specs))
+    logger.info("Discovered %s spec elements.", len(specs))
     if render_issues(specs, use_cases):
         sys.exit(1)
 

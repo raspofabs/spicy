@@ -32,7 +32,7 @@ class StakeholderRequirement(SpecElement):
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
-        logger.info("Parsing as stakeholder requirement: %s", node.pretty(show_text=True))
+        logger.debug("Parsing as stakeholder requirement: %s", node.pretty(show_text=True))
         if get_text_from_node(node) == "Implements:":
             self.state = "needs_list"
         if node.type == "bullet_list" and self.state == "needs_list":

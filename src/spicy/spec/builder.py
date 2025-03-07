@@ -94,8 +94,8 @@ class SpecElementBuilder:
                     builder = SpecElementBuilder(spec_name, num_specs, from_file)
                     spec_element_builders.append(builder)
                     continue
-                if spec_heading_level <= node.tag:
-                    # higher level or equal means we're no longer in that spec
+                if spec_heading_level > node.tag:
+                    # higher (lower) level or equal means we're no longer in that spec
                     builder = None
             if builder:
                 builder.parse_node(node)
