@@ -214,7 +214,7 @@ def render_system_qualification_linkage_issues(
         if disconnected := fulfilment - system_reqs_names:
             any_errors = True
             render_function(
-                f"System qualification test {sys_qual_test.name} tests unexpected requirement {disconnected}."
+                f"System qualification test {sys_qual_test.name} tests unexpected requirement {disconnected}.",
             )
         untested_reqs = untested_reqs - fulfilment
 
