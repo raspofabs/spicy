@@ -12,13 +12,14 @@ from .spec_software_requirement import SoftwareRequirement
 from .spec_stakeholder_need import StakeholderNeed
 from .spec_stakeholder_requirement import StakeholderRequirement
 from .spec_system_element import SystemElement
+from .spec_system_qualification import SystemQualificationTest
 from .spec_system_requirement import SystemRequirement
 
 logger = logging.getLogger("SpecBuilder")
 
 
-#### CDU_SYS_INT_VER_1_setup_cookie_server
-#### CDU_SYS_VER_1_order_a_cookie
+#### CDU_SYS_INT_setup_cookie_server
+#### CDU_SYS_QUAL_order_a_cookie
 #### CDU_SWINT_1_cookie_database_crud
 #### CDU_SWQUAL_1_cookie_ordering
 
@@ -33,6 +34,7 @@ class SpecElementBuilder:
         SystemElement,
         SoftwareRequirement,
         SoftwareComponent,
+        SystemQualificationTest,
     )
 
     def __init__(self, name: str, ordering_id: int, file_path: Path) -> None:
