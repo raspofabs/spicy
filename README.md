@@ -37,3 +37,8 @@ Configure the tool with the locations of:
     - tool classification
     - qualification methods
     - qualification report
+
+
+Or, just have a .spicy file at the root.
+This file should contain a list of directories to load in.
+What format should it be?
