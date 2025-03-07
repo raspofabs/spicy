@@ -40,3 +40,13 @@ class SystemElement(SpecElement):
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
         return []
+
+
+# Look for a table of required descriptions
+# - **Location:**
+# - **Versioning:**
+# - **Inputs:**
+# - **Outputs:**
+# - **Interfaces:**
+# - **Sequential coupling:**
+# - **Phases:**
