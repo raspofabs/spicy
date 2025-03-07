@@ -35,8 +35,6 @@ def render_issues(
         for issue in use_case.get_issues():
             render_function(issue)
             any_errors = True
-    if not any_errors:
-        render_function("No issues found.")
     any_errors |= render_use_case_linkage_issues(specs, use_cases, render_function)
     any_errors |= render_stakeholder_requirement_linkage_issues(specs, render_function)
     any_errors |= render_system_requirement_linkage_issues(specs, render_function)
@@ -45,6 +43,8 @@ def render_issues(
         any_errors |= render_software_componnet_linkage_issues(specs, render_function)
         any_errors |= render_software_unit_linkage_issues(specs, render_function)
     any_errors |= render_system_qualification_linkage_issues(specs, render_function)
+    if not any_errors:
+        render_function("No spec issues found.")
     return any_errors
 
 
@@ -56,7 +56,7 @@ def render_use_case_linkage_issues(
     """Check all use cases are connected to at least one stakeholder need."""
     any_errors = False
     stakeholder_needs = list(just(StakeholderNeed)(specs))
-    logger.info("Have %s stakeholder needs", len(stakeholder_needs))
+    logger.debug("Have %s stakeholder needs", len(stakeholder_needs))
 
     stakeholder_needs_names = {n.name for n in stakeholder_needs}
     unused_needs = set(stakeholder_needs_names)
@@ -73,7 +73,9 @@ def render_use_case_linkage_issues(
 
     if unused_needs:
         any_errors = True
-        render_function(f"Needs without a use-case: {unused_needs}")
+        render_function("Needs without a use-case:")
+        for need in unused_needs:
+            render_function(f"\t{need}")
     return any_errors
 
 
@@ -85,10 +87,10 @@ def render_stakeholder_requirement_linkage_issues(
     any_errors = False
     stakeholder_reqs = list(just(StakeholderRequirement)(specs))
     stakeholder_needs = list(just(StakeholderNeed)(specs))
-    logger.info("Have %s stakeholder requirements", len(stakeholder_reqs))
+    logger.debug("Have %s stakeholder requirements", len(stakeholder_reqs))
 
     stakeholder_needs_names = {n.name for n in stakeholder_needs}
-    unrefined_needs = set(stakeholder_needs_names)
+    unfulfilled_needs = set(stakeholder_needs_names)
 
     for stk_req in stakeholder_reqs:
         fulfilment = set(stk_req.fulfils())
@@ -98,11 +100,13 @@ def render_stakeholder_requirement_linkage_issues(
         if disconnected := fulfilment - stakeholder_needs_names:
             any_errors = True
             render_function(f"Stakeholder requirement {stk_req.name} fulfils unexpected need {disconnected}.")
-        unrefined_needs = unrefined_needs - fulfilment
+        unfulfilled_needs = unfulfilled_needs - fulfilment
 
-    if unrefined_needs:
+    if unfulfilled_needs:
         any_errors = True
-        render_function(f"Needs without a stakeholder requirement: {unrefined_needs}")
+        render_function("Needs without a fulfilling stakeholder requirement:")
+        for need in unfulfilled_needs:
+            render_function(f"\t{need}")
     return any_errors
 
 
@@ -114,24 +118,26 @@ def render_system_requirement_linkage_issues(
     any_errors = False
     stakeholder_reqs = list(just(StakeholderRequirement)(specs))
     system_reqs = list(just(SystemRequirement)(specs))
-    logger.info("Have %s system requirements", len(system_reqs))
+    logger.debug("Have %s system requirements", len(system_reqs))
 
     stakeholder_reqs_names = {n.name for n in stakeholder_reqs}
-    unrefined_reqs = set(stakeholder_reqs_names)
+    unrefined_stk_reqs = set(stakeholder_reqs_names)
 
     for sys_req in system_reqs:
         fulfilment = set(sys_req.fulfils())
         if not fulfilment:
             any_errors = True
-            render_function(f"Stakeholder requirement {sys_req.name} fulfils nothing.")
+            render_function(f"System requirement {sys_req.name} fulfils nothing.")
         if disconnected := fulfilment - stakeholder_reqs_names:
             any_errors = True
-            render_function(f"Stakeholder requirement {sys_req.name} fulfils unexpected need {disconnected}.")
-        unrefined_reqs = unrefined_reqs - fulfilment
+            render_function(f"System requirement {sys_req.name} fulfils unexpected need {disconnected}.")
+        unrefined_stk_reqs = unrefined_stk_reqs - fulfilment
 
-    if unrefined_reqs:
+    if unrefined_stk_reqs:
         any_errors = True
-        render_function(f"Stakeholder reqs without a system requirement: {unrefined_reqs}")
+        render_function("Stakeholder requirements without a system requirement:")
+        for unrefined_stk_req in unrefined_stk_reqs:
+            render_function(f"\t{unrefined_stk_req}")
     return any_errors
 
 
@@ -142,7 +148,7 @@ def render_system_element_linkage_issues(
     """Check all system requirements are captured by at least one system element."""
     any_errors = False
     system_elements = list(just(SystemElement)(specs))
-    logger.info("Have %s system elements", len(system_elements))
+    logger.debug("Have %s system elements", len(system_elements))
     return any_errors
 
 
@@ -153,7 +159,7 @@ def render_software_requirement_linkage_issues(
     """Check all system elements which are software elements derive to at least one software requirement."""
     any_errors = False
     software_requirements = list(just(SoftwareRequirement)(specs))
-    logger.info("Have %s software requirements", len(software_requirements))
+    logger.debug("Have %s software requirements", len(software_requirements))
     return any_errors
 
 
@@ -164,7 +170,7 @@ def render_software_componnet_linkage_issues(
     """Check all software requirements are satisfied by at least one software component."""
     any_errors = False
     software_components = list(just(SoftwareComponent)(specs))
-    logger.info("Have %s software components", len(software_components))
+    logger.debug("Have %s software components", len(software_components))
     return any_errors
 
 
@@ -204,15 +210,19 @@ def render_system_qualification_linkage_issues(
         fulfilment = set(sys_qual_test.fulfils())
         if not fulfilment:
             any_errors = True
-            render_function(f"System qualification test {sys_qual_test.name} fulfils nothing ({fulfilment}).")
+            render_function(f"System qualification test {sys_qual_test.name} tests nothing ({fulfilment}).")
         if disconnected := fulfilment - system_reqs_names:
             any_errors = True
-            render_function(f"System qualification test {sys_qual_test.name} fulfils unexpected need {disconnected}.")
+            render_function(
+                f"System qualification test {sys_qual_test.name} tests unexpected requirement {disconnected}."
+            )
         untested_reqs = untested_reqs - fulfilment
 
     if untested_reqs:
         any_errors = True
-        render_function(f"Requirements without a qualification tests: {untested_reqs}")
+        render_function("System requirements without a qualification test:")
+        for untested_req in untested_reqs:
+            render_function(f"\t{untested_req}")
     return any_errors
 
 
