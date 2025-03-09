@@ -41,13 +41,39 @@ def render_issues(
         if count > 1:
             render_function(f"Non unique name {spec_name} has {count} instances")
 
+    # SYS.1 -> Tool Qualification
     any_errors |= render_use_case_linkage_issues(specs, use_cases, render_function)
+
+    # SYS.1 -> SYS.1
     any_errors |= render_stakeholder_requirement_linkage_issues(specs, render_function)
+
+    # SYS.1 -> SYS.2
     any_errors |= render_system_requirement_linkage_issues(specs, render_function)
+
+    # SYS.2 -> SYS.3
     any_errors |= render_system_element_linkage_issues(specs, render_function)
-    any_errors |= render_software_componnet_linkage_issues(specs, render_function)
+
+    # SYS.3 -> SWE.1
+    any_errors |= render_software_requirement_linkage_issues(specs, render_function)
+
+    # SWE.1 -> SWE.2
+    any_errors |= render_software_component_linkage_issues(specs, render_function)
+
+    # SWE.2 -> SWE.3
     any_errors |= render_software_unit_linkage_issues(specs, render_function)
+
+    # SWE.2 -> SWE.5
+    any_errors |= render_software_integration_linkage_issues(specs, render_function)
+
+    # SWE.1 -> SWE.6
+    any_errors |= render_software_qualification_linkage_issues(specs, render_function)
+
+    # SYS.3 -> SWE.4
     any_errors |= render_system_qualification_linkage_issues(specs, render_function)
+
+    # SYS.2 -> SWE.5
+    any_errors |= render_system_qualification_linkage_issues(specs, render_function)
+
     if not any_errors:
         render_function("No spec issues found.")
     return any_errors
@@ -153,8 +179,8 @@ def render_system_element_linkage_issues(
 ) -> bool:
     """Check all system requirements are captured by at least one system element."""
     any_errors = False
-    system_elements = list(just(SystemElement)(specs))
     system_reqs = list(just(SystemRequirement)(specs))
+    system_elements = list(just(SystemElement)(specs))
     logger.debug("Have %s system elements", len(system_elements))
 
     system_reqs_names = set(n.name for n in system_reqs)
@@ -180,20 +206,63 @@ def render_system_element_linkage_issues(
 
 def render_software_requirement_linkage_issues(
     specs: list[SpecElement],
-    _render_function: Callable,
+    render_function: Callable,
 ) -> bool:
     """Check all system elements which are software elements derive to at least one software requirement."""
     any_errors = False
+    system_elements = list(just(SystemElement)(specs))
     software_requirements = list(just(SoftwareRequirement)(specs))
     logger.debug("Have %s software requirements", len(software_requirements))
+
+    system_element_names = set(n.name for n in system_elements)
+    system_softeware_element_names = set(n.name for n in system_elements if n.is_software_element())
+    unrefined_system_elements = set(system_element_names)
+
+    for sys_element in system_elements:
+        fulfilment = set(sys_element.fulfils())
+        if not fulfilment:
+            any_errors = True
+            render_function(f"System element {sys_element.name} satisfies nothing.")
+        if disconnected := fulfilment - system_element_names:
+            any_errors = True
+            render_function(f"System requirement {sys_element.name} fulfils unexpected need {disconnected}.")
+        unrefined_system_elements = unrefined_system_elements - fulfilment
+
+    if unrefined_system_elements:
+        any_errors = True
+        render_function("System requirements without a system element:")
+        for unrefined_stk_req in sorted(unrefined_system_elements):
+            render_function(f"\t{unrefined_stk_req}")
     return any_errors
 
 
-def render_software_componnet_linkage_issues(
+def render_software_component_linkage_issues(
     specs: list[SpecElement],
     _render_function: Callable,
 ) -> bool:
     """Check all software requirements are satisfied by at least one software component."""
+    any_errors = False
+    software_components = list(just(SoftwareComponent)(specs))
+    logger.debug("Have %s software components", len(software_components))
+    return any_errors
+
+
+def render_software_integration_linkage_issues(
+    specs: list[SpecElement],
+    _render_function: Callable,
+) -> bool:
+    """Check all software components have integration tests."""
+    any_errors = False
+    software_components = list(just(SoftwareComponent)(specs))
+    logger.debug("Have %s software components", len(software_components))
+    return any_errors
+
+
+def render_software_qualification_linkage_issues(
+    specs: list[SpecElement],
+    _render_function: Callable,
+) -> bool:
+    """Check all software requirements have qualification tests."""
     any_errors = False
     software_components = list(just(SoftwareComponent)(specs))
     logger.debug("Have %s software components", len(software_components))
