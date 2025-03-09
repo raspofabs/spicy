@@ -122,7 +122,7 @@ def render_stakeholder_requirement_linkage_issues(
     stakeholder_needs = list(just(StakeholderNeed)(specs))
     logger.debug("Have %s stakeholder requirements", len(stakeholder_reqs))
 
-    stakeholder_needs_names = set(n.name for n in stakeholder_needs)
+    stakeholder_needs_names = {n.name for n in stakeholder_needs}
     unfulfilled_needs = set(stakeholder_needs_names)
 
     for stk_req in stakeholder_reqs:
@@ -153,7 +153,7 @@ def render_system_requirement_linkage_issues(
     system_reqs = list(just(SystemRequirement)(specs))
     logger.debug("Have %s system requirements", len(system_reqs))
 
-    stakeholder_reqs_names = set(n.name for n in stakeholder_reqs)
+    stakeholder_reqs_names = {n.name for n in stakeholder_reqs}
     unrefined_stk_reqs = set(stakeholder_reqs_names)
 
     for sys_req in system_reqs:
@@ -184,15 +184,15 @@ def render_system_element_linkage_issues(
     system_elements = list(just(SystemElement)(specs))
     logger.debug("Have %s system elements", len(system_elements))
 
-    system_reqs_names = set(n.name for n in system_reqs)
-    unsatisfied_system_reqs = set(system_reqs_names)
+    system_req_names = {n.name for n in system_reqs}
+    unsatisfied_system_reqs = set(system_req_names)
 
     for sys_element in system_elements:
         fulfilment = set(sys_element.fulfils())
         if not fulfilment:
             any_errors = True
             render_function(f"System element {sys_element.name} satisfies nothing.")
-        if disconnected := fulfilment - system_reqs_names:
+        if disconnected := fulfilment - system_req_names:
             any_errors = True
             render_function(f"System requirement {sys_element.name} fulfils unexpected need {disconnected}.")
         unsatisfied_system_reqs = unsatisfied_system_reqs - fulfilment
@@ -215,23 +215,22 @@ def render_software_requirement_linkage_issues(
     software_requirements = list(just(SoftwareRequirement)(specs))
     logger.debug("Have %s software requirements", len(software_requirements))
 
-    system_element_names = set(n.name for n in system_elements)
-    system_softeware_element_names = set(n.name for n in system_elements if n.is_software_element())
+    system_element_names = {n.name for n in system_elements}
     unrefined_system_elements = set(system_element_names)
 
-    for sys_element in system_elements:
-        fulfilment = set(sys_element.fulfils())
+    for sw_req in software_requirements:
+        fulfilment = set(sw_req.fulfils())
         if not fulfilment:
             any_errors = True
-            render_function(f"System element {sys_element.name} satisfies nothing.")
+            render_function(f"Software requirement {sw_req.name} refined from nothing.")
         if disconnected := fulfilment - system_element_names:
             any_errors = True
-            render_function(f"System requirement {sys_element.name} fulfils unexpected need {disconnected}.")
+            render_function(f"Software requirement {sw_req.name} refined from unexpected element {disconnected}.")
         unrefined_system_elements = unrefined_system_elements - fulfilment
 
     if unrefined_system_elements:
         any_errors = True
-        render_function("System requirements without a system element:")
+        render_function("System softare elements without software requirements:")
         for unrefined_stk_req in sorted(unrefined_system_elements):
             render_function(f"\t{unrefined_stk_req}")
     return any_errors
@@ -288,7 +287,7 @@ def render_system_integration_linkage_issues(
     system_integration_tests = list(just(SystemIntegrationTest)(specs))
     logger.debug("Have %s system integration tests", len(system_integration_tests))
 
-    system_element_names = set(n.name for n in system_elements)
+    system_element_names = {n.name for n in system_elements}
     untested_integrations = set(system_element_names)
 
     for sys_int_test in system_integration_tests:
@@ -321,7 +320,7 @@ def render_system_qualification_linkage_issues(
     system_qualification_tests = list(just(SystemQualificationTest)(specs))
     logger.debug("Have %s system qualification tests", len(system_qualification_tests))
 
-    system_reqs_names = set(n.name for n in system_reqs)
+    system_reqs_names = {n.name for n in system_reqs}
     untested_reqs = set(system_reqs_names)
 
     for sys_qual_test in system_qualification_tests:
@@ -349,8 +348,7 @@ def just(checked_class: type) -> Callable:
     return partial(filter, lambda x: isinstance(x, checked_class))
 
 
-# TODO:
-# check all software units have at least one unit test - how? Need source access.
+# TODO @fabs: check all software units have at least one unit test - how? Need source access.
 
 
 # bidirectional traceability does not require that all elements are
