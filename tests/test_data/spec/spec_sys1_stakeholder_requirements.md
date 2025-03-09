@@ -17,6 +17,10 @@ The **KIDS** need the **CDU** to provide them with cookies.
 
 The **KIDS** need the **CDU** to provide cookies in bags.
 
+#### CDU_STK_NEED_allergy_information
+
+The **KIDS** might need allergy advice for the cookies.
+
 # Formalised requirements
 
 Stakeholder requirements are written from

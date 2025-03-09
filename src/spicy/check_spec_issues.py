@@ -291,7 +291,7 @@ def render_system_integration_linkage_issues(
     untested_integrations = set(system_element_names)
 
     for sys_int_test in system_integration_tests:
-        fulfilment = set(sys_int_test.fulfils())
+        fulfilment = set(sys_int_test.integrates())
         if not fulfilment:
             any_errors = True
             render_function(f"System integration test {sys_int_test.name} tests nothing ({fulfilment}).")

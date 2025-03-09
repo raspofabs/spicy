@@ -7,6 +7,8 @@ For each element, we need the static aspects, the dynamic aspects, and more.
 The **CDU** maintains a cookie locker where tins of cookies are placed.
 The same locker also provides storage for the paper bags.
 
+Software element: No
+
 Implements:
 
 - [CDU_SYS_REQ_cookie_stock](#cdu_sys_req_cookie_stock)
@@ -18,6 +20,8 @@ The **CDU** runs a simple server where the **KIDS** can order cookies.
 The orders are stored in the stock_database and viewable by the **CDU** to
 determine stock levels.
 
+Software element: Yes
+
 Implements:
 
 - [CDU_SYS_REQ_cookie_ordering](#cdu_sys_req_cookie_ordering)
@@ -26,6 +30,8 @@ Implements:
 #### CDU_SYS_ELEMENT_stock_database
 
 The **CDU** keeps a database of the current cookie stock levels, the current open orders, and how many bags are in stock.
+
+Software element: Yes
 
 Implements:
 
@@ -48,6 +54,10 @@ Open orders which are fulfilled can be marked as such here by an operator.
 Any time an operator begins baking, or finishes baking, the fact can be added to the database.
 Any time an operator orders bags, or receives them, the fact can be added to the database.
 
+Software element: Yes
+
+Implements:
+
 - [CDU_SYS_REQ_bag_ordering](#cdu_sys_req_bag_ordering)
 - [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
 
@@ -62,5 +72,9 @@ The oven has:
 
 Any time an operator begins baking, the oven will be in-use.
 Any time an operator finishes baking, the oven will be free-to-use.
+
+Software element: No
+
+Implements:
 
 - [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)

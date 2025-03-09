@@ -17,13 +17,13 @@ class SystemIntegrationTest(SpecElement):
         """Construct super and placeholder fields."""
         super().__init__(name, ordering, from_file, spec_type="System integration test")
         self.content: list[str] = []
-        self.tests_list: list[str] = []
+        self.integrates_list: list[str] = []
         self.cases_list: list[str] = []
         self.state = ""
 
-    def fulfils(self) -> list[str]:
+    def integrates(self) -> list[str]:
         """Return a list of names of system requirements this system integration test resolves."""
-        return self.tests_list
+        return self.integrates_list
 
     def monitors(self) -> list[str]:
         """Return a list of names of test cases this system integration test depends on."""
@@ -38,11 +38,11 @@ class SystemIntegrationTest(SpecElement):
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
         logger.debug("Parsing as system integration test: %s", node.pretty(show_text=True))
-        if get_text_from_node(node) == "Tests:":
-            self.state = "reqs_list"
-        if node.type == "bullet_list" and self.state == "reqs_list":
+        if get_text_from_node(node) == "Integrates:":
+            self.state = "component_list"
+        if node.type == "bullet_list" and self.state == "component_list":
             tested_reqs = read_bullet_list(node)
-            self.tests_list.extend([get_text_from_node(x) for x in tested_reqs])
+            self.integrates_list.extend([get_text_from_node(x) for x in tested_reqs])
             self.state = ""
         if get_text_from_node(node) == "Cases:":
             self.state = "cases_list"
