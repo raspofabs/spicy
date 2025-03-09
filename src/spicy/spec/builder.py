@@ -9,9 +9,11 @@ from spicy.md_read import SyntaxTreeNode, get_text_from_node
 from .spec_element import SpecElement
 from .spec_software_component import SoftwareComponent
 from .spec_software_requirement import SoftwareRequirement
+from .spec_software_unit import SoftwareUnit
 from .spec_stakeholder_need import StakeholderNeed
 from .spec_stakeholder_requirement import StakeholderRequirement
 from .spec_system_element import SystemElement
+from .spec_system_integration import SystemIntegrationTest
 from .spec_system_qualification import SystemQualificationTest
 from .spec_system_requirement import SystemRequirement
 
@@ -34,6 +36,8 @@ class SpecElementBuilder:
         SystemElement,
         SoftwareRequirement,
         SoftwareComponent,
+        SoftwareUnit,
+        SystemIntegrationTest,
         SystemQualificationTest,
     )
 

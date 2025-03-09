@@ -12,6 +12,7 @@ from .spec.builder import (
     StakeholderNeed,
     StakeholderRequirement,
     SystemElement,
+    SystemIntegrationTest,
     SystemQualificationTest,
     SystemRequirement,
 )
@@ -69,7 +70,7 @@ def render_issues(
     any_errors |= render_software_qualification_linkage_issues(specs, render_function)
 
     # SYS.3 -> SWE.4
-    any_errors |= render_system_qualification_linkage_issues(specs, render_function)
+    any_errors |= render_system_integration_linkage_issues(specs, render_function)
 
     # SYS.2 -> SWE.5
     any_errors |= render_system_qualification_linkage_issues(specs, render_function)
@@ -273,19 +274,41 @@ def render_software_unit_linkage_issues(
     _specs: list[SpecElement],
     _render_function: Callable,
 ) -> bool:
-    """Render unresolved use-case linkage issues."""
-    # check all software components have at least one software unit design
-    # check all software units have at least one unit test
-    # check all software components have integration tests
-    # check all software requirements have qualification tests
-    # check all system elements have integration tests
-
-    # bidirectional traceability does not require that all elements are
-    # bi-directionally dependent, only that any stakeholder needs must be
-    # traceable back and forth. Additional tests, software components, even
-    # software requirements, can be introduced with rationale not originating
-    # from the stakeholder needs.
+    """Check all software components have at least one software unit design."""
     return False
+
+
+def render_system_integration_linkage_issues(
+    specs: list[SpecElement],
+    render_function: Callable,
+) -> bool:
+    """Check all system elements have integration tests."""
+    any_errors = False
+    system_elements = list(just(SystemElement)(specs))
+    system_integration_tests = list(just(SystemIntegrationTest)(specs))
+    logger.debug("Have %s system integration tests", len(system_integration_tests))
+
+    system_element_names = set(n.name for n in system_elements)
+    untested_integrations = set(system_element_names)
+
+    for sys_int_test in system_integration_tests:
+        fulfilment = set(sys_int_test.fulfils())
+        if not fulfilment:
+            any_errors = True
+            render_function(f"System integration test {sys_int_test.name} tests nothing ({fulfilment}).")
+        if disconnected := fulfilment - system_element_names:
+            any_errors = True
+            render_function(
+                f"System integration test {sys_int_test.name} tests unexpected element {disconnected}.",
+            )
+        untested_integrations = untested_integrations - fulfilment
+
+    if untested_integrations:
+        any_errors = True
+        render_function("System elements without a qualification test:")
+        for untested_req in sorted(untested_integrations):
+            render_function(f"\t{untested_req}")
+    return any_errors
 
 
 def render_system_qualification_linkage_issues(
@@ -324,3 +347,14 @@ def render_system_qualification_linkage_issues(
 def just(checked_class: type) -> Callable:
     """Return a function which filters by checked_class."""
     return partial(filter, lambda x: isinstance(x, checked_class))
+
+
+# TODO:
+# check all software units have at least one unit test - how? Need source access.
+
+
+# bidirectional traceability does not require that all elements are
+# bi-directionally dependent, only that any stakeholder needs must be
+# traceable back and forth. Additional tests, software components, even
+# software requirements, can be introduced with rationale not originating
+# from the stakeholder needs.
