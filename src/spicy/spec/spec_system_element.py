@@ -18,6 +18,7 @@ class SystemElement(SpecElement):
         super().__init__(name, ordering, from_file, spec_type="System Element")
         self.content: list[str] = []
         self.implements_list: list[str] = []
+        self._is_software: None | bool = None
         self.state = ""
 
     def fulfils(self) -> list[str]:
@@ -25,8 +26,10 @@ class SystemElement(SpecElement):
         return self.implements_list
 
     def is_software_element(self) -> bool:
-        """Return whether this element is a software element."""
-        return True
+        """Return whether this element is a software element, defaulting to True if not set."""
+        if self._is_software is None:
+            return True
+        return self._is_software
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:
@@ -37,8 +40,16 @@ class SystemElement(SpecElement):
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
         logger.debug("Parsing as system element: %s", node.pretty(show_text=True))
-        if get_text_from_node(node) == "Implements:":
+        text = get_text_from_node(node)
+        if text == "Implements:":
             self.state = "reqs_list"
+        if text.startswith("Software element:"):
+            if "yes" in text.lower():
+                self._is_software = True
+            elif "no" in text.lower():
+                self._is_software = False
+            else:
+                self._is_software = None
         if node.type == "bullet_list" and self.state == "reqs_list":
             implemented_reqs = read_bullet_list(node)
             self.implements_list.extend([get_text_from_node(x) for x in implemented_reqs])
@@ -46,7 +57,14 @@ class SystemElement(SpecElement):
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
-        return []
+        issues = []
+        if self._is_software is None:
+            issues.append("Whether the element is software or not is not set.")
+        if not self.implements_list:
+            issues.append("Does not implement any system requirements.")
+        if issues:
+            issues = [f"SystemElement({self.name}):", *issues]
+        return issues
 
 
 # Look for a table of required descriptions

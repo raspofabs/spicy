@@ -96,9 +96,6 @@ def render_use_case_linkage_issues(
 
     for use_case in use_cases:
         fulfilment = set(use_case.fulfils())
-        if not fulfilment:
-            any_errors = True
-            render_function(f"Use case {use_case.name} fulfils nothing ({fulfilment}).")
         if disconnected := fulfilment - stakeholder_needs_names:
             any_errors = True
             render_function(f"Use case {use_case.name} fulfils unexpected need {disconnected}.")
@@ -127,9 +124,6 @@ def render_stakeholder_requirement_linkage_issues(
 
     for stk_req in stakeholder_reqs:
         fulfilment = set(stk_req.fulfils())
-        if not fulfilment:
-            any_errors = True
-            render_function(f"Stakeholder requirement {stk_req.name} fulfils nothing ({fulfilment}).")
         if disconnected := fulfilment - stakeholder_needs_names:
             any_errors = True
             render_function(f"Stakeholder requirement {stk_req.name} fulfils unexpected need {disconnected}.")
@@ -158,9 +152,6 @@ def render_system_requirement_linkage_issues(
 
     for sys_req in system_reqs:
         fulfilment = set(sys_req.fulfils())
-        if not fulfilment:
-            any_errors = True
-            render_function(f"System requirement {sys_req.name} fulfils nothing.")
         if disconnected := fulfilment - stakeholder_reqs_names:
             any_errors = True
             render_function(f"System requirement {sys_req.name} fulfils unexpected need {disconnected}.")
@@ -189,9 +180,6 @@ def render_system_element_linkage_issues(
 
     for sys_element in system_elements:
         fulfilment = set(sys_element.fulfils())
-        if not fulfilment:
-            any_errors = True
-            render_function(f"System element {sys_element.name} satisfies nothing.")
         if disconnected := fulfilment - system_req_names:
             any_errors = True
             render_function(f"System requirement {sys_element.name} fulfils unexpected need {disconnected}.")
@@ -220,9 +208,6 @@ def render_software_requirement_linkage_issues(
 
     for sw_req in software_requirements:
         fulfilment = set(sw_req.fulfils())
-        if not fulfilment:
-            any_errors = True
-            render_function(f"Software requirement {sw_req.name} refined from nothing.")
         if disconnected := fulfilment - system_element_names:
             any_errors = True
             render_function(f"Software requirement {sw_req.name} refined from unexpected element {disconnected}.")
@@ -230,7 +215,7 @@ def render_software_requirement_linkage_issues(
 
     if unrefined_system_elements:
         any_errors = True
-        render_function("System softare elements without software requirements:")
+        render_function("System software elements without software requirements:")
         for unrefined_stk_req in sorted(unrefined_system_elements):
             render_function(f"\t{unrefined_stk_req}")
     return any_errors
@@ -292,9 +277,6 @@ def render_system_integration_linkage_issues(
 
     for sys_int_test in system_integration_tests:
         fulfilment = set(sys_int_test.integrates())
-        if not fulfilment:
-            any_errors = True
-            render_function(f"System integration test {sys_int_test.name} tests nothing ({fulfilment}).")
         if disconnected := fulfilment - system_element_names:
             any_errors = True
             render_function(
@@ -304,7 +286,7 @@ def render_system_integration_linkage_issues(
 
     if untested_integrations:
         any_errors = True
-        render_function("System elements without a qualification test:")
+        render_function("System elements without any integration tests:")
         for untested_req in sorted(untested_integrations):
             render_function(f"\t{untested_req}")
     return any_errors
@@ -325,9 +307,6 @@ def render_system_qualification_linkage_issues(
 
     for sys_qual_test in system_qualification_tests:
         fulfilment = set(sys_qual_test.fulfils())
-        if not fulfilment:
-            any_errors = True
-            render_function(f"System qualification test {sys_qual_test.name} tests nothing ({fulfilment}).")
         if disconnected := fulfilment - system_reqs_names:
             any_errors = True
             render_function(
