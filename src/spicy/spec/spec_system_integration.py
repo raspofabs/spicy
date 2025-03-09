@@ -53,4 +53,9 @@ class SystemIntegrationTest(SpecElement):
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
-        return []
+        issues = []
+        if not self.integrates_list:
+            issues.append("Does not integrate any system elements.")
+        if issues:
+            issues = [f"SystemIntegrationTest({self.name}):", *issues]
+        return issues

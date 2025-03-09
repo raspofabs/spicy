@@ -53,4 +53,9 @@ class SystemQualificationTest(SpecElement):
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
-        return []
+        issues = []
+        if not self.tests_list:
+            issues.append("Does not test any system requirements.")
+        if issues:
+            issues = [f"SystemQualificationTest({self.name}):", *issues]
+        return issues

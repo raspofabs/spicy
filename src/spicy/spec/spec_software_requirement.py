@@ -42,4 +42,9 @@ class SoftwareRequirement(SpecElement):
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
-        return []
+        issues = []
+        if not self.elements_list:
+            issues.append("Does not refine from any system element.")
+        if issues:
+            issues = [f"SoftwareRequirement({self.name}):", *issues]
+        return issues

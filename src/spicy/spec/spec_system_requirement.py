@@ -46,7 +46,12 @@ class SystemRequirement(SpecElement):
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
-        return []
+        issues = []
+        if not self.derived_from_list:
+            issues.append("Does not derive from any stakeholder requirements.")
+        if issues:
+            issues = [f"SystemRequirement({self.name}):", *issues]
+        return issues
 
 
 # Look for verification criteria

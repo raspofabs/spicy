@@ -42,7 +42,12 @@ class StakeholderRequirement(SpecElement):
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
-        return []
+        issues = []
+        if not self.implements_list:
+            issues.append("Does not implement any stakeholder needs.")
+        if issues:
+            issues = [f"StakeholderRequirement({self.name}):", *issues]
+        return issues
 
 
 # Implements:
