@@ -6,7 +6,7 @@
 
 The **CDU** maintains a persistent data store for inventory levels and unfulfilled orders.
 
-Refined from:
+Required by:
 
 - [CDU_SYS_ELEMENT_cookie_storage](#CDU_SYS_ARCH_cookie_storage)
 
@@ -17,7 +17,7 @@ The **CDU** maintains a web-page where cookies can be ordered.
 The ordering page takes as input, the **KIDS** ID and the number of cookies.
 The output is a message as an ETA, or just a confirmation if cookies are immediately available.
 
-Refined from:
+Required by:
 
 - [CDU_SYS_ELEMENT_cookie_website](#cdu_sys_arch_cookie_website)
 
@@ -25,7 +25,7 @@ Refined from:
 
 The **CDU** notifies the operators for new orders of cookies through an operator terminal.
 
-Refined from:
+Required by:
 
 - [CDU_SYS_ELEMENT_operations_terminal](#CDU_SYS_ELEMENT_operations_terminal)
 
@@ -35,6 +35,6 @@ Refined from:
 
 The **CDU** delivers cookies in reasonable time, or begins baking and then notifies the **KIDS** about the ETA (eating time approximation)
 
-Refined from:
+Required by:
 
 - [CDU_SYS_ELEMENT_operations_terminal](#cdu_sys_element_operations_terminal)

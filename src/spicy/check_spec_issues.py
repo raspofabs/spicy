@@ -203,7 +203,7 @@ def render_software_requirement_linkage_issues(
     software_requirements = list(just(SoftwareRequirement)(specs))
     logger.debug("Have %s software requirements", len(software_requirements))
 
-    system_element_names = {n.name for n in system_elements}
+    system_element_names = {n.name for n in system_elements if n.is_software_element()}
     unrefined_system_elements = set(system_element_names)
 
     for sw_req in software_requirements:

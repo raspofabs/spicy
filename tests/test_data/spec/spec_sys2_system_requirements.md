@@ -21,6 +21,10 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 
+Verification Criteria:
+
+- Check the order list is present on the operator terminal.
+
 #### CDU_SYS_REQ_cookie_stock
 
 The **CDU** shall specify a location where it is possible to
@@ -29,6 +33,10 @@ maintain a stock of cookies.
 Derived from:
 
 - [CDU_STK_REQ_cookie_availability](#cdu_stk_req_cookie_availability)
+
+Verification Criteria:
+
+- Check there is a cookie cupboard.
 
 #### CDU_SYS_REQ_calculate_nominal_stock_level
 
@@ -41,6 +49,10 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 - [CDU_STK_REQ_cookie_availability](#cdu_stk_req_cookie_availability)
+
+Verification Criteria:
+
+- Check the stock level is visible on the operator terminal.
 
 #### CDU_SYS_REQ_cookie_baking
 
