@@ -8,6 +8,10 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 
+Verification Criteria:
+
+- Check the order list on the operator terminal to verify ordering is successful.
+
 #### CDU_SYS_REQ_stock_and_order_tracking
 
 **CDU** shall maintain a list of orders and inventory
@@ -51,6 +55,11 @@ Derived from:
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 - [CDU_STK_REQ_cookie_availability](#cdu_stk_req_cookie_availability)
 
+Verification criteria:
+
+- Baking orders can be checked on the operator terminal output.
+- Quantity needs to be checked too.
+
 #### CDU_SYS_REQ_bag_stock
 
 The **CDU** shall specify a location where it is possible to
@@ -71,3 +80,8 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 - [CDU_STK_REQ_bags_for_cookies](#cdu_stk_req_bags_for_cookies)
+
+Verification Criteria:
+
+- Bag orders are notifications to order, so they can be verified by reviewing
+  the operator terminal output.

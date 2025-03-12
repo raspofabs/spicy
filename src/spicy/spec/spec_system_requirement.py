@@ -18,6 +18,7 @@ class SystemRequirement(SpecElement):
         super().__init__(name, ordering, from_file, spec_type="System Requirement")
         self.content: list[str] = []
         self.derived_from_list: list[str] = []
+        self.verification_list: list[str] = []
         self.state = ""
 
     def fulfils(self) -> list[str]:
@@ -43,10 +44,18 @@ class SystemRequirement(SpecElement):
             reqs_list = [x.strip() for x in node.content.split("\n") if x.strip()]
             self.derived_from_list.extend(reqs_list)
             self.state = ""
+        if get_text_from_node(node) == "Verification criteria:":
+            self.state = "verification_list"
+        if node.type == "bullet_list" and self.state == "verification_list":
+            elements_list = read_bullet_list(node)
+            self.verification_list.extend([get_text_from_node(x) for x in elements_list])
+            self.state = ""
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
         issues = []
+        if not self.verification_list:
+            issues.append("Has no verification criteria.")
         if not self.derived_from_list:
             issues.append("Does not derive from any stakeholder requirements.")
         if issues:
