@@ -56,6 +56,8 @@ class SystemQualificationTest(SpecElement):
         issues = []
         if not self.tests_list:
             issues.append("Does not test any system requirements.")
+        if not self.cases_list:
+            issues.append("Does not monitor any test cases.")
         if issues:
             issues = [f"SystemQualificationTest({self.name}):", *issues]
         return issues

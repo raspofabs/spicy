@@ -32,7 +32,7 @@ Tests:
 - [CDU_SYS_REQ_bag_ordering](#cdu_sys_req_bag_ordering)
 - [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
 
-Cases:
+What cases:
 
 - CDU_SYS_TEST_order_a_cookie
 - CDU_SYS_TEST_check_stock_level
