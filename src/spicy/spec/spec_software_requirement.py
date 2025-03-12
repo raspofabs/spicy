@@ -33,7 +33,7 @@ class SoftwareRequirement(SpecElement):
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
         logger.debug("Parsing as software requirement: %s", node.pretty(show_text=True))
-        if get_text_from_node(node) == "Refined from:":
+        if get_text_from_node(node) == "Required by:":
             self.state = "elements_list"
         if node.type == "bullet_list" and self.state == "elements_list":
             elements_list = read_bullet_list(node)

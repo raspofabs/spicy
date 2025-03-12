@@ -34,7 +34,7 @@ class SystemRequirement(SpecElement):
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
         logger.debug("Parsing as system requirement: %s", node.pretty(show_text=True))
-        if get_text_from_node(node) == "Derived from:":
+        if get_text_from_node(node).lower() == "derived from:":
             self.state = "reqs_list"
         if node.type == "bullet_list" and self.state == "reqs_list":
             reqs_list = read_bullet_list(node)
@@ -44,7 +44,7 @@ class SystemRequirement(SpecElement):
             reqs_list = [x.strip() for x in node.content.split("\n") if x.strip()]
             self.derived_from_list.extend(reqs_list)
             self.state = ""
-        if get_text_from_node(node) == "Verification criteria:":
+        if get_text_from_node(node).lower() == "verification criteria:":
             self.state = "verification_list"
         if node.type == "bullet_list" and self.state == "verification_list":
             elements_list = read_bullet_list(node)
