@@ -19,6 +19,7 @@ class SystemQualificationTest(SpecElement):
         self.content: list[str] = []
         self.tests_list: list[str] = []
         self.cases_list: list[str] = []
+        self.results_list: list[str] = []
         self.state = ""
 
     def fulfils(self) -> list[str]:
@@ -50,6 +51,12 @@ class SystemQualificationTest(SpecElement):
             test_cases = read_bullet_list(node)
             self.cases_list.extend([get_text_from_node(x) for x in test_cases])
             self.state = ""
+        if get_text_from_node(node) == "Results:":
+            self.state = "results_list"
+        if node.type == "bullet_list" and self.state == "results_list":
+            results = read_bullet_list(node)
+            self.results_list.extend([get_text_from_node(x) for x in results])
+            self.state = ""
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
@@ -58,6 +65,8 @@ class SystemQualificationTest(SpecElement):
             issues.append("Does not test any system requirements.")
         if not self.cases_list:
             issues.append("Does not monitor any test cases.")
+        if not self.results_list:
+            issues.append("Does not have any test results.")
         if issues:
             issues = [f"SystemQualificationTest({self.name}):", *issues]
         return issues
