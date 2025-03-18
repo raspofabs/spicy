@@ -21,6 +21,7 @@ class SystemQualificationTest(SpecElement):
         self.cases_list: list[str] = []
         self.results_list: list[str] = []
         self.state = ""
+        self.spec_prefix, __ = name.split("_SYS_QUAL_")
 
     def fulfils(self) -> list[str]:
         """Return a list of names of system requirements this system qualification test resolves."""
@@ -65,8 +66,21 @@ class SystemQualificationTest(SpecElement):
             issues.append("Does not test any system requirements.")
         if not self.cases_list:
             issues.append("Does not monitor any test cases.")
+        else:
+            test_spec_name_prefix = self.spec_prefix+"_SYS_TEST_"
+            badly_named_tests = [case for case in self.cases_list if not case.startswith(test_spec_name_prefix)]
+            if badly_named_tests:
+                issues.append(f"Not all tests are correctly named: {badly_named_tests}")
         if not self.results_list:
             issues.append("Does not have any test results.")
+        else:
+            result_tests = [result.split(":")[0] for result in self.results_list]
+            unlinked_results = [result for result in result_tests if result not in self.cases_list]
+            if unlinked_results:
+                issues.append(f"Not all results are correctly named: {unlinked_results}")
+            cases_without_results = set(self.cases_list) - set(result_tests)
+            if cases_without_results:
+                issues.append(f"Not all test cases have results : {list(cases_without_results)}")
         if issues:
             issues = [f"SystemQualificationTest({self.name}):", *issues]
         return issues

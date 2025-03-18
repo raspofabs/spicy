@@ -16,7 +16,7 @@ class StakeholderNeed(SpecElement):
     def __init__(self, name: str, ordering: int, from_file: Path) -> None:
         """Construct super and placeholder fields."""
         super().__init__(name, ordering, from_file, spec_type="Stakeholder Need")
-        self.content: list[str] = []
+        self.elicitation_date: str | None = None
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:
@@ -27,8 +27,11 @@ class StakeholderNeed(SpecElement):
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
         logger.debug("Parsing as stakeholder need: %s", node.pretty(show_text=True))
-        self.content.append(render_node(node))
+        if value := self.single_line_getter(node, "Elicitation date:"):
+            self.elicitation_date = value
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
+        if self.elicitation_date is None:
+            return ["No elicitation date."]
         return []

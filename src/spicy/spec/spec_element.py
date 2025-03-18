@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode
+from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +34,13 @@ class SpecElement:
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
         logger.info("Unable to parse, unknown element type: %s", node.pretty(show_text=True))
+
+    def single_line_getter(self, node: SyntaxTreeNode, expected_prefix: str) -> str | None:
+        text = get_text_from_node(node)
+        if text.startswith(expected_prefix):
+            __, value = text.split(expected_prefix)
+            return value
+        return None
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""

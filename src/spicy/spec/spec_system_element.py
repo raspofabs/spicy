@@ -43,10 +43,11 @@ class SystemElement(SpecElement):
         text = get_text_from_node(node)
         if text == "Implements:":
             self.state = "reqs_list"
-        if text.startswith("Software element:"):
-            if "yes" in text.lower():
+        if value := self.single_line_getter(node, "Software element:"):
+            value = value.strip().lower()
+            if value == "yes":
                 self._is_software = True
-            elif "no" in text.lower():
+            elif value == "no":
                 self._is_software = False
             else:
                 self._is_software = None
