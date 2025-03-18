@@ -19,6 +19,12 @@ Cases:
 - CDU_SYS_TEST_order_too_many_cookies
 - CDU_SYS_TEST_too_many_orders
 
+Results:
+
+- CDU_SYS_TEST_order_a_cookie: PASS
+- CDU_SYS_TEST_order_too_many_cookies: PASS
+- CDU_SYS_TEST_too_many_orders: PASS
+
 #### CDU_SYS_QUAL_operator_test
 
 The **CDU** operations terminal must be tested.
@@ -37,3 +43,9 @@ What cases:
 - CDU_SYS_TEST_order_a_cookie
 - CDU_SYS_TEST_check_stock_level
 - CDU_SYS_TEST_order_bags
+
+Results:
+
+- CDU_SYS_TEST_order_a_cookie: PASS
+- CDU_SYS_TEST_order_a_cookie: FAIL
+- CDU_SYS_TEST_check_stock_level: FAIL

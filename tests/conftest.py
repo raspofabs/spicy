@@ -9,3 +9,9 @@ import pytest
 def test_data_path() -> Path:
     """Return the path to the test data directory."""
     return Path(__file__).parent / "test_data"
+
+
+@pytest.fixture
+def positive_test_data_path() -> Path:
+    """Return the path to the test data directory."""
+    return Path(__file__).parent / "simple_test_spec"
