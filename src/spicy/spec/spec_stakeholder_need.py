@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, render_node
+from spicy.md_read import SyntaxTreeNode
 
 from .spec_element import SpecElement
 

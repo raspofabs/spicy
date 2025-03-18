@@ -36,6 +36,7 @@ class SpecElement:
         logger.info("Unable to parse, unknown element type: %s", node.pretty(show_text=True))
 
     def single_line_getter(self, node: SyntaxTreeNode, expected_prefix: str) -> str | None:
+        """Get the value from a single line field."""
         text = get_text_from_node(node)
         if text.startswith(expected_prefix):
             __, value = text.split(expected_prefix)
