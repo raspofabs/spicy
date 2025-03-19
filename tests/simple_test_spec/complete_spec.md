@@ -9,6 +9,8 @@ The **STAKEHOLDER** needs **POS** to have a spec.
 
 Elicitation date: March 2020
 
+Safety related: yes
+
 ## POS_STK_REQ_have_a_stakeholder_requirement
 
 **POS** must have stakeholder needs refined into stakeholder requirements.

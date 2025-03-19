@@ -106,6 +106,14 @@ def render_use_case_linkage_issues(
         render_function("Needs without a use-case:")
         for need in sorted(unused_needs):
             render_function(f"\t{need}")
+
+    for need in stakeholder_needs:
+        related_safety_cases = [uc.name for uc in use_cases if need.name in uc.fulfils() and uc.safety_case]
+        if related_safety_cases and not need.is_safety_related:
+            any_errors = True
+            render_function(f"\t{need.name} is not marked as safety related but linked to {related_safety_cases}")
+
+
     return any_errors
 
 

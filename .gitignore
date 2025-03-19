@@ -4,5 +4,6 @@
 .spec_check_files
 .test_files
 .venv
+.coverage
 __pycache__
 htmlcov
