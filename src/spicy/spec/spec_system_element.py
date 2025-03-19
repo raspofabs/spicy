@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, read_bullet_list
+from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, read_bullet_list
 
 from .spec_element import SpecElement
 
@@ -44,13 +44,7 @@ class SystemElement(SpecElement):
         if text == "Implements:":
             self.state = "reqs_list"
         if value := self.single_line_getter(node, "Software element:"):
-            value = value.strip().lower()
-            if value == "yes":
-                self._is_software = True
-            elif value == "no":
-                self._is_software = False
-            else:
-                self._is_software = None
+            self._is_software = parse_yes_no(value)
         if node.type == "bullet_list" and self.state == "reqs_list":
             implemented_reqs = read_bullet_list(node)
             self.implements_list.extend([get_text_from_node(x) for x in implemented_reqs])

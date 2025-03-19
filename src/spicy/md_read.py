@@ -29,6 +29,14 @@ def load_syntax_tree(markdown_file_path: Path) -> SyntaxTreeNode:
         md_file = fh.read()
     return parse_text_to_syntax_tree(md_file)
 
+def parse_yes_no(value: str) -> bool | None:
+    """Parse a yes/no answer into a boolean, or return None."""
+    value = value.strip().lower()
+    if value == "yes":
+        return True
+    if value == "no":
+        return False
+    return None
 
 # SyntaxTreeNode interpretation functions
 
