@@ -58,3 +58,18 @@ def test_invalid_use_case(test_data_path: Path) -> None:
     assert "no detectability" in issues
     assert "5 no usage: inputs,outputs,purpose,usage,environment" in issues
     assert "4 no section information for :prologue,features,tool_impact,detectability" in issues
+
+
+def test_high_tcl(test_data_path: Path) -> None:
+    """Test the high tcl rating test data."""
+    use_case_list = gather_use_cases(test_data_path / "use_cases" / "04_high_tcl.md")
+    assert isinstance(use_case_list, list)
+    assert len(use_case_list) > 0
+    use_case = next(case for case in use_case_list if case.name == "FEAT_HOT_OVEN")
+    assert isinstance(use_case, UseCase)
+
+    assert use_case.name == "FEAT_HOT_OVEN"
+    assert use_case.impact == "TI2"
+    assert use_case.detectability == "TD2"
+    assert use_case.tcl == "TCL2"
+    assert use_case.safety_case == True

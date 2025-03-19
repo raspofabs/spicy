@@ -64,6 +64,11 @@ class UseCase:
         self.fulfils_needs = needs_fulfilled
 
     @property
+    def safety_case(self) -> bool:
+        """Return whether the use case is safety related."""
+        return self.tcl in ["TCL2", "TCL3"]
+
+    @property
     def tcl(self) -> str | None:
         """Return the tcl class based on the tool impact and error detectability."""
         return tcl_map(self.impact, self.detectability)
