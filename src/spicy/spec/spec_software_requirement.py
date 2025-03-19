@@ -18,7 +18,13 @@ class SoftwareRequirement(SpecElement):
         super().__init__(name, ordering, from_file, spec_type="Software Requirement")
         self.content: list[str] = []
         self.elements_list: list[str] = []
+        self.sys_reqs_list: list[str] = []
         self.state = ""
+
+    def support(self) -> list[str]:
+        """Return a list of names of system elements from which this software requirement is derived."""
+        return self.elements_list
+
 
     def fulfils(self) -> list[str]:
         """Return a list of names of system elements from which this software requirement is derived."""
@@ -39,12 +45,20 @@ class SoftwareRequirement(SpecElement):
             elements_list = read_bullet_list(node)
             self.elements_list.extend([get_text_from_node(x) for x in elements_list])
             self.state = ""
+        if get_text_from_node(node) == "Fulfils:":
+            self.state = "reqs_list"
+        if node.type == "bullet_list" and self.state == "reqs_list":
+            reqs_list = read_bullet_list(node)
+            self.sys_reqs_list.extend([get_text_from_node(x) for x in reqs_list])
+            self.state = ""
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
         issues = []
         if not self.elements_list:
             issues.append("Does not refine from any system element.")
+        if not self.sys_reqs_list:
+            issues.append("Does not fulfil any system requirement.")
         if issues:
             issues = [f"SoftwareRequirement({self.name}):", *issues]
         return issues
