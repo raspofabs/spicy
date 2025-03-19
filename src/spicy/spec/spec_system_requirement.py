@@ -33,6 +33,7 @@ class SystemRequirement(SpecElement):
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
+        super().parse_node(node)
         logger.debug("Parsing as system requirement: %s", node.pretty(show_text=True))
         if get_text_from_node(node).lower() == "derived from:":
             self.state = "reqs_list"

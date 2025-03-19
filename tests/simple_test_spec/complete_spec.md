@@ -33,6 +33,8 @@ Derived from:
 
 - POS_STK_REQ_have_a_stakeholder_requirement
 
+Safety related: yes
+
 ## POS_SYS_ELEMENT_the_spec
 
 This document is the realisation of this spec.

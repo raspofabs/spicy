@@ -177,6 +177,13 @@ def render_system_requirement_linkage_issues(
         render_function("Stakeholder requirements without a system requirement:")
         for unrefined_stk_req in sorted(unrefined_stk_reqs):
             render_function(f"\t{unrefined_stk_req}")
+
+    for stk_req in stakeholder_reqs:
+        safety_requirements = [sys_req.name for sys_req in system_reqs if stk_req.name in sys_req.fulfils() and sys_req.is_safety_related]
+        if not safety_requirements and stk_req.is_safety_related:
+            any_errors = True
+            render_function(f"\t{stk_req.name} is not satisfied by any system safety requirements")
+
     return any_errors
 
 
