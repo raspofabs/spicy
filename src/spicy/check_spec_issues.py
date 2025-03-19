@@ -142,6 +142,13 @@ def render_stakeholder_requirement_linkage_issues(
         render_function("Needs without a fulfilling stakeholder requirement:")
         for need in sorted(unfulfilled_needs):
             render_function(f"\t{need}")
+
+    for need in stakeholder_needs:
+        safety_requirements = [req.name for req in stakeholder_reqs if need.name in req.fulfils() and req.is_safety_related]
+        if not safety_requirements and need.is_safety_related:
+            any_errors = True
+            render_function(f"\t{need.name} is not satisfied by any safety requirements")
+
     return any_errors
 
 

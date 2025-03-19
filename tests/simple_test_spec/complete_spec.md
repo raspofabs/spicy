@@ -19,6 +19,8 @@ Implements:
 
 - POS_STK_NEED_have_a_stakeholder_need
 
+Safety related: yes
+
 ## POS_SYS_REQ_have_a_sys_req
 
 **POS** must support system requirements.
