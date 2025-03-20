@@ -9,6 +9,14 @@ The **STAKEHOLDER** needs **POS** to have a spec.
 
 Elicitation date: March 2020
 
+Safety related: no
+
+## POS_STK_NEED_have_a_safety_need
+
+The **STAKEHOLDER** needs **POS** to have safety as a concern.
+
+Elicitation date: April 2020
+
 Safety related: yes
 
 ## POS_STK_REQ_have_a_stakeholder_requirement
@@ -18,6 +26,16 @@ Safety related: yes
 Implements:
 
 - POS_STK_NEED_have_a_stakeholder_need
+
+Safety related: no
+
+## POS_STK_REQ_safe_stakeholder_requirement
+
+**POS** must be safe.
+
+Implements:
+
+- POS_STK_NEED_have_a_safety_need
 
 Safety related: yes
 
@@ -32,6 +50,7 @@ Verification criteria:
 Derived from:
 
 - POS_STK_REQ_have_a_stakeholder_requirement
+- POS_STK_REQ_safe_stakeholder_requirement
 
 Safety related: yes
 
@@ -106,6 +125,46 @@ A developer wants to see a complete positive example.
 Fulfils:
 
     POS_STK_NEED_have_a_stakeholder_need
+
+### Features, functions, and technical properties
+
+The spec will be as simple as possible while remaining complete.
+
+### Description of usage
+
+- **Purpose:**
+    To verify the positive case.
+- **Inputs:**
+    Just this spec file.
+- **Outputs:**
+    A happy output in spicy.
+- **Usage procedure:**
+    Run the tests.
+- **Environmental constraints:**
+    The spicy Python package.
+
+### Impact analysis of feature
+
+    TI class: TI2
+
+If this spec is bad, then it won't test the positive path at all.
+
+### Detectability analysis of feature
+
+    TD class: TD1
+
+But the point of tests is to test stuff.
+
+## Must use spicy safely
+
+    ID: FEAT_SAFE_SPEC
+
+A developer wants to see how safety works.
+
+Fulfils:
+
+    POS_STK_NEED_have_a_stakeholder_need
+    POS_STK_NEED_have_a_safety_need
 
 ### Features, functions, and technical properties
 

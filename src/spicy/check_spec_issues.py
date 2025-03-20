@@ -91,11 +91,20 @@ def render_use_case_linkage_issues(
     stakeholder_needs = list(just(StakeholderNeed)(specs))
     logger.debug("Have %s stakeholder needs", len(stakeholder_needs))
 
-    stakeholder_needs_names = {n.name for n in stakeholder_needs}
+    stakeholder_needs_map = {n.name: n for n in stakeholder_needs}
+    stakeholder_needs_names = set(stakeholder_needs_map.keys())
     unused_needs = set(stakeholder_needs_names)
 
     for use_case in use_cases:
         fulfilment = set(use_case.fulfils())
+        if use_case.safety_case:
+            uc_needs = list(filter(None, [stakeholder_needs_map.get(a) for a in fulfilment]))
+            if not any(need.is_safety_related for need in uc_needs):
+                any_errors = True
+                render_function(f"Use case {use_case.name} is safety related, but none of it's needs are:")
+                for need in uc_needs:
+                    render_function(f"\t{need.name}")
+
         if disconnected := fulfilment - stakeholder_needs_names:
             any_errors = True
             render_function(f"Use case {use_case.name} fulfils unexpected need {disconnected}.")
@@ -106,13 +115,6 @@ def render_use_case_linkage_issues(
         render_function("Needs without a use-case:")
         for need in sorted(unused_needs):
             render_function(f"\t{need}")
-
-    for need in stakeholder_needs:
-        related_safety_cases = [uc.name for uc in use_cases if need.name in uc.fulfils() and uc.safety_case]
-        if related_safety_cases and not need.is_safety_related:
-            any_errors = True
-            render_function(f"\t{need.name} is not marked as safety related but linked to {related_safety_cases}")
-
 
     return any_errors
 
@@ -144,10 +146,14 @@ def render_stakeholder_requirement_linkage_issues(
             render_function(f"\t{need}")
 
     for need in stakeholder_needs:
-        safety_requirements = [req.name for req in stakeholder_reqs if need.name in req.fulfils() and req.is_safety_related]
-        if not safety_requirements and need.is_safety_related:
+        if not need.is_safety_related:
+            continue
+        reqs = [req for req in stakeholder_reqs if need.name in req.fulfils()]
+        if not any(map(lambda x: x.is_safety_related, reqs)):
             any_errors = True
-            render_function(f"\t{need.name} is not satisfied by any safety requirements")
+            render_function(f"{need.name} is not satisfied by any safety requirements")
+            for req in reqs:
+                render_function(f"\t{req.name}")
 
     return any_errors
 
