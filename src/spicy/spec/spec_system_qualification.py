@@ -23,8 +23,8 @@ class SystemQualificationTest(SpecElement):
         self.state = ""
         self.spec_prefix, __ = name.split("_SYS_QUAL_")
 
-    def fulfils(self) -> list[str]:
-        """Return a list of names of system requirements this system qualification test resolves."""
+    def tests(self) -> list[str]:
+        """Return a list of names of system requirements this system qualification test tests."""
         return self.tests_list
 
     def monitors(self) -> list[str]:

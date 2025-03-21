@@ -146,14 +146,10 @@ def render_stakeholder_requirement_linkage_issues(
             render_function(f"\t{need}")
 
     for need in stakeholder_needs:
-        if not need.is_safety_related:
-            continue
-        reqs = [req for req in stakeholder_reqs if need.name in req.fulfils()]
-        if not any(map(lambda x: x.is_safety_related, reqs)):
-            any_errors = True
-            render_function(f"{need.name} is not satisfied by any safety requirements")
-            for req in reqs:
-                render_function(f"\t{req.name}")
+        result, messages = check_safety(need, stakeholder_reqs, lambda x: x.fulfils())
+        any_errors |= result
+        for m in messages:
+            render_function(m)
 
     return any_errors
 
@@ -185,10 +181,12 @@ def render_system_requirement_linkage_issues(
             render_function(f"\t{unrefined_stk_req}")
 
     for stk_req in stakeholder_reqs:
-        safety_requirements = [sys_req.name for sys_req in system_reqs if stk_req.name in sys_req.fulfils() and sys_req.is_safety_related]
-        if not safety_requirements and stk_req.is_safety_related:
-            any_errors = True
-            render_function(f"\t{stk_req.name} is not satisfied by any system safety requirements")
+        result, messages = check_safety(stk_req, system_reqs, lambda x: x.fulfils())
+        any_errors |= result
+        for m in messages:
+            render_function(m)
+
+
 
     return any_errors
 
@@ -334,25 +332,44 @@ def render_system_qualification_linkage_issues(
     untested_reqs = set(system_reqs_names)
 
     for sys_qual_test in system_qualification_tests:
-        fulfilment = set(sys_qual_test.fulfils())
-        if disconnected := fulfilment - system_reqs_names:
+        tested_list = set(sys_qual_test.tests())
+        if disconnected := tested_list - system_reqs_names:
             any_errors = True
             render_function(
                 f"System qualification test {sys_qual_test.name} tests unexpected requirement {disconnected}.",
             )
-        untested_reqs = untested_reqs - fulfilment
+        untested_reqs = untested_reqs - tested_list
 
     if untested_reqs:
         any_errors = True
         render_function("System requirements without a qualification test:")
         for untested_req in sorted(untested_reqs):
             render_function(f"\t{untested_req}")
+
+    for system_req in system_reqs:
+        result, messages = check_safety(system_req, system_qualification_tests, lambda x: x.tests())
+        any_errors |= result
+        for m in messages:
+            render_function(m)
+
     return any_errors
 
 
 def just(checked_class: type) -> Callable:
     """Return a function which filters by checked_class."""
     return partial(filter, lambda x: isinstance(x, checked_class))
+
+
+def check_safety(safe_spec, other_specs, fulfilment):
+    if not safe_spec.is_safety_related:
+        return True, []
+    relevant_specs = [spec for spec in other_specs if safe_spec.name in fulfilment(spec)]
+    if not any(x.is_safety_related for x in relevant_specs):
+        messsages = [f"{safe_spec.name} is not satisfied by any safety spec"]
+        for other_spec in relevant_specs:
+            messsages.append(f"\t{other_spec.name}")
+        return False, messsages
+    return True, []
 
 
 # TODO @fabs: check all software units have at least one unit test - how? Need source access.
