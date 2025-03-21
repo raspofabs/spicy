@@ -364,10 +364,14 @@ def check_safety(safe_spec, other_specs, fulfilment):
     if not safe_spec.is_safety_related:
         return False, []
     relevant_specs = [spec for spec in other_specs if safe_spec.name in fulfilment(spec)]
+    target = "safety related spec"
+    if relevant_specs:
+        spec, *__ = relevant_specs
+        target = f"safety related {spec.__class__.__name__}"
     if any(x.is_safety_related for x in relevant_specs):
         return False, []
     # nothing safe connected
-    messsages = [f"{safe_spec.name} is not satisfied by any safety spec"]
+    messsages = [f"{safe_spec.name} is not satisfied by any {target}"]
     for other_spec in relevant_specs:
         messsages.append(f"\t{other_spec.name}")
     return True, messsages
