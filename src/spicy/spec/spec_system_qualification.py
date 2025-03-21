@@ -39,6 +39,7 @@ class SystemQualificationTest(SpecElement):
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
+        super().parse_node(node)
         logger.debug("Parsing as system qualification test: %s", node.pretty(show_text=True))
         if get_text_from_node(node) == "Tests:":
             self.state = "reqs_list"

@@ -87,6 +87,8 @@ Integrates:
 
 Test that this spec exists.
 
+Safety related: yes
+
 Tests:
 
 - POS_SYS_REQ_have_a_sys_req

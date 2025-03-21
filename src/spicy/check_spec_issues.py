@@ -362,14 +362,15 @@ def just(checked_class: type) -> Callable:
 
 def check_safety(safe_spec, other_specs, fulfilment):
     if not safe_spec.is_safety_related:
-        return True, []
+        return False, []
     relevant_specs = [spec for spec in other_specs if safe_spec.name in fulfilment(spec)]
-    if not any(x.is_safety_related for x in relevant_specs):
-        messsages = [f"{safe_spec.name} is not satisfied by any safety spec"]
-        for other_spec in relevant_specs:
-            messsages.append(f"\t{other_spec.name}")
-        return False, messsages
-    return True, []
+    if any(x.is_safety_related for x in relevant_specs):
+        return False, []
+    # nothing safe connected
+    messsages = [f"{safe_spec.name} is not satisfied by any safety spec"]
+    for other_spec in relevant_specs:
+        messsages.append(f"\t{other_spec.name}")
+    return True, messsages
 
 
 # TODO @fabs: check all software units have at least one unit test - how? Need source access.
