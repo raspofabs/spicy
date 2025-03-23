@@ -40,6 +40,15 @@ class SpecElement:
         # Always False for base class
         return False
 
+    @staticmethod
+    def is_detail_heading(node: SyntaxTreeNode) -> str | None:
+        text = get_text_from_node(node).lower()
+        if "\n" not in text and text.endswith(":"):
+            return text.strip(":").lower()
+        if node.type == "heading":
+            return get_text_from_node(node).lower().strip(":")
+        return None
+
     def parse_node(self, node: SyntaxTreeNode) -> None:
         logger.debug("Parsing common features")
         """Parse a SyntaxTreeNode for common features."""

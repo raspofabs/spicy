@@ -41,18 +41,20 @@ class SystemRequirement(SpecElement):
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a SyntaxTreeNode."""
         super().parse_node(node)
+        detail_heading = self.is_detail_heading(node)
+
         logger.debug("Parsing as system requirement: %s", node.pretty(show_text=True))
-        if get_text_from_node(node).lower() == "derived from:":
+        if detail_heading == "derived from":
             self.state = "reqs_list"
+        elif detail_heading== "verification criteria":
+            self.state = "verification_list"
+        elif detail_heading== "specification":
+            self.state = "specification_list"
+
         if node.type == "code_block" and self.state == "reqs_list":
             reqs_list = [x.strip() for x in node.content.split("\n") if x.strip()]
             self.derived_from_list.extend(reqs_list)
             self.state = ""
-        if get_text_from_node(node).lower() == "verification criteria:":
-            self.state = "verification_list"
-        if node.type == "heading":
-            if get_text_from_node(node).lower() == "specification":
-                self.state = "specification_list"
         if node.type == "bullet_list":
             if  self.state == "reqs_list":
                 reqs_list = read_bullet_list(node)
