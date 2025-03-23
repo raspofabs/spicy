@@ -39,10 +39,10 @@ class SystemIntegrationTest(SpecElement):
         """Parse a SyntaxTreeNode."""
         logger.debug("Parsing as system integration test: %s", node.pretty(show_text=True))
         if get_text_from_node(node) == "Integrates:":
-            self.state = "component_list"
-        if node.type == "bullet_list" and self.state == "component_list":
-            tested_reqs = read_bullet_list(node)
-            self.integrates_list.extend([get_text_from_node(x) for x in tested_reqs])
+            self.state = "element_list"
+        if node.type == "bullet_list" and self.state == "element_list":
+            elements = read_bullet_list(node)
+            self.integrates_list.extend([get_text_from_node(x) for x in elements])
             self.state = ""
         if get_text_from_node(node) == "Cases:":
             self.state = "cases_list"
@@ -56,6 +56,14 @@ class SystemIntegrationTest(SpecElement):
         issues = []
         if not self.integrates_list:
             issues.append("Does not integrate any system elements.")
+        elif len(self.integrates_list) == 1:
+            issues.append(f"Only integrates {len(self.integrates_list)} item.")
+        else:
+            pass
+
+        if not self.cases_list:
+            issues.append("Does not have any integration test cases.")
+
         if issues:
             issues = [f"SystemIntegrationTest({self.name}):", *issues]
         return issues

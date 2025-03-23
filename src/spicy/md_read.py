@@ -99,3 +99,16 @@ def read_bullet_list(node: SyntaxTreeNode) -> list[str]:
         msg = f"Node is wrong type: {node.type}"
         raise TypeError(msg)
     return [item.children[0] for item in node.children]
+
+
+def read_titled_bullet_list(node: SyntaxTreeNode) -> dict[str, str]:
+    """Return the content of the bullet_list item for the specified variant."""
+    if node.type != "bullet_list":
+        msg = f"Node is wrong type: {node.type}"
+        raise TypeError(msg)
+    return {
+        title: content
+        for (title, content) in (
+            split_list_item(item) for item in node.children)
+        }
+

@@ -52,7 +52,15 @@ Derived from:
 - POS_STK_REQ_have_a_stakeholder_requirement
 - POS_STK_REQ_safe_stakeholder_requirement
 
-Safety related: yes
+### Specification
+
+- **Requirement type:** Qualification.
+- **Interaction:** No interactions.
+- **Constraints:** None
+- **Operational and environmental limits and capabilities:** None.
+- **Documentation:** Just this document.
+- **Safety related:** Yes.
+- **Auditable:** No.
 
 ## POS_SYS_ELEMENT_the_spec
 
@@ -76,12 +84,16 @@ Implements:
 
 ## POS_SYS_INT_integrate_to_a_complete_spec
 
-It's very easy to integrate a single element system.
+It's very easy to integrate a two element system.
 
 Integrates:
 
 - POS_SYS_ELEMENT_the_spec
 - POS_SYS_ELEMENT_the_software
+
+Cases:
+
+- POS_SYS_INT_TEST_check_the_document_connectivity
 
 ## POS_SYS_QUAL_has_a_qualification_test
 
@@ -101,6 +113,22 @@ Results:
 
 - POS_SYS_TEST_read_this_document: PASS
 
+## POS_VAL_document_is_provided
+
+This test verifies the document is provisioned with the spicy toolkit.
+
+Tests:
+
+- POS_STK_REQ_have_a_stakeholder_requirement
+
+Cases:
+
+- POS_VAL_TEST_document_in_test_data
+    1. Check that this document is provided in the spicy repo under the test data directory.
+
+Results:
+
+- POS_VAL_TEST_document_in_test_data: PASS
 
 # Software section
 

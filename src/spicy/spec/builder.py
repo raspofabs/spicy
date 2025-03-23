@@ -16,6 +16,7 @@ from .spec_system_element import SystemElement
 from .spec_system_integration import SystemIntegrationTest
 from .spec_system_qualification import SystemQualificationTest
 from .spec_system_requirement import SystemRequirement
+from .spec_validation import ValidationTest
 
 logger = logging.getLogger("SpecBuilder")
 
@@ -39,6 +40,7 @@ class SpecElementBuilder:
         SoftwareUnit,
         SystemIntegrationTest,
         SystemQualificationTest,
+        ValidationTest,
     )
 
     def __init__(self, name: str, ordering_id: int, file_path: Path) -> None:

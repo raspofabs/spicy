@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, read_bullet_list
+from spicy.md_read import SyntaxTreeNode, get_text_from_node, read_titled_bullet_list, read_bullet_list
 
 from .spec_element import SpecElement
 
@@ -19,11 +19,18 @@ class SystemRequirement(SpecElement):
         self.content: list[str] = []
         self.derived_from_list: list[str] = []
         self.verification_list: list[str] = []
+        self.specification: dict[str, str] = {}
         self.state = ""
 
     def fulfils(self) -> list[str]:
         """Return a list of names of stakeholder requirements this system requirement resolves."""
         return self.derived_from_list
+
+    @property
+    def is_safety_related(self):
+        if self.specification.get("safety related","").lower().strip(".") == "yes":
+            return True
+        return super().is_safety_related
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:
@@ -37,20 +44,28 @@ class SystemRequirement(SpecElement):
         logger.debug("Parsing as system requirement: %s", node.pretty(show_text=True))
         if get_text_from_node(node).lower() == "derived from:":
             self.state = "reqs_list"
-        if node.type == "bullet_list" and self.state == "reqs_list":
-            reqs_list = read_bullet_list(node)
-            self.derived_from_list.extend([get_text_from_node(x) for x in reqs_list])
-            self.state = ""
         if node.type == "code_block" and self.state == "reqs_list":
             reqs_list = [x.strip() for x in node.content.split("\n") if x.strip()]
             self.derived_from_list.extend(reqs_list)
             self.state = ""
         if get_text_from_node(node).lower() == "verification criteria:":
             self.state = "verification_list"
-        if node.type == "bullet_list" and self.state == "verification_list":
-            elements_list = read_bullet_list(node)
-            self.verification_list.extend([get_text_from_node(x) for x in elements_list])
-            self.state = ""
+        if node.type == "heading":
+            if get_text_from_node(node).lower() == "specification":
+                self.state = "specification_list"
+        if node.type == "bullet_list":
+            if  self.state == "reqs_list":
+                reqs_list = read_bullet_list(node)
+                self.derived_from_list.extend([get_text_from_node(x) for x in reqs_list])
+                self.state = ""
+            if self.state == "verification_list":
+                elements_list = read_bullet_list(node)
+                self.verification_list.extend([get_text_from_node(x) for x in elements_list])
+                self.state = ""
+            if self.state == "specification_list":
+                new_spec = {a.strip().strip(":").lower(): b.strip() for a, b in read_titled_bullet_list(node).items()}
+                self.specification.update(new_spec)
+                self.state = ""
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
@@ -59,6 +74,8 @@ class SystemRequirement(SpecElement):
             issues.append("Has no verification criteria.")
         if not self.derived_from_list:
             issues.append("Does not derive from any stakeholder requirements.")
+        if not self.specification:
+            issues.append("Has no detailed specification.")
         if issues:
             issues = [f"SystemRequirement({self.name}):", *issues]
         return issues
