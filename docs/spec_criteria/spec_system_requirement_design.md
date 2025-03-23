@@ -4,26 +4,18 @@
    stakeholder requirements.
    System requirements are written from the perspective of the technical system
    but still fulfil the stakeholder's needs.
-2. Ensure the requirements are
-    1. Verifiable,
-    2. unambiguous,
-    3. free from design or implementation details,
-    4. not contradictory with any other requirement.
-3. Structure and prioritise the requirements
-4. Analyse the requirements and their interdependencies for:
-    1. correctness,
-    2. feasibility,
-    3. estimated complexity and cost.
-5. Analyse the impact of the architecture on the system context (operating
+2. Analyse the impact of the architecture on the system context (operating
    environment).
 
 ### System requirements specification
 
-- System requirements include: functions and capabilities of the system;
-  business, organizational and user requirements; safety, security,
-  human-factors engineering (ergonomics), interface, operations, and
-  maintenance requirements; design constraints and qualification requirements.
-  (ISO/IEC 12207)
+- System requirements include: 
+    - functions and capabilities of the system;
+    - business, organizational and user requirements;
+    - safety, security, human-factors engineering (ergonomics), interface,
+      operations, and maintenance requirements;
+    - design constraints and qualification requirements.
+    - Source: (ISO/IEC 12207)
 - Identifies the required system overview
 - Identifies any interrelationship considerations / constraints between system elements
 - Identifies any relationship considerations / constraints between the system elements and the software
