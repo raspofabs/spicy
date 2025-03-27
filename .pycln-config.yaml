@@ -1,0 +1,5 @@
+---
+pycln:
+  exclude: __init__.py
+  disable_all_dunder_policy: false
+  expand_stars: false
