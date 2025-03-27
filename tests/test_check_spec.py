@@ -4,7 +4,7 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from spicy import run
+from spicy.check_spec import run
 
 
 def test_simple_use_case(positive_test_data_path: Path) -> None:

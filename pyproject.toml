@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-spicy = "spicy:run"
+spicy = "spicy.check_spec:run"
 spicecheck = "spicy.check_use_cases:run"
 
 [build-system]
