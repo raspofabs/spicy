@@ -2,11 +2,11 @@
 
 import logging
 import sys
-from collections.abc import Callable
 from pathlib import Path
 
 import click
 
+from .render_use_case_issues import render_issues
 from .use_cases import UseCase, get_use_cases_from_files
 
 
@@ -16,24 +16,6 @@ def get_use_case_files(root_path: Path | None = None) -> list[Path]:
     if glob_root.is_file():
         return [glob_root]
     return sorted(glob_root.glob("*.md"))
-
-
-def render_issues(use_cases: list[UseCase], render_function: Callable | None = None) -> bool:
-    """Render unresolved issues for each use-case."""
-    render_function = render_function or print
-    any_errors = False
-    for use_case in use_cases:
-        issues = use_case.get_issues()
-        if not issues:
-            continue
-        first_issue, *other_issues = issues
-        render_function(first_issue)
-        for issue in other_issues:
-            render_function("\t" + issue)
-        any_errors = True
-    if not any_errors:
-        render_function("No issues found.")
-    return any_errors
 
 
 @click.command()
