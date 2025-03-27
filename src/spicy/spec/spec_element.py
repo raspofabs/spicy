@@ -27,6 +27,10 @@ class SpecElement:
 
         self._safety_related: bool | None = None
 
+    def get_linked(self, _linkage_term: str) -> list[str]:
+        """Return a list of all specs linked by this term."""
+        return []
+
     @property
     def is_safety_related(self) -> bool:
         """Return whether this need has been marked as safety related."""
@@ -42,6 +46,7 @@ class SpecElement:
 
     @staticmethod
     def is_detail_heading(node: SyntaxTreeNode) -> str | None:
+        """Return whether this node is a leader for some details."""
         text = get_text_from_node(node).lower()
         if "\n" not in text and text.endswith(":"):
             return text.strip(":").lower()
@@ -50,8 +55,8 @@ class SpecElement:
         return None
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
-        logger.debug("Parsing common features")
         """Parse a SyntaxTreeNode for common features."""
+        logger.debug("Parsing common features")
         if value := self.single_line_getter(node, "Safety related:"):
             self._safety_related = parse_yes_no(value)
 

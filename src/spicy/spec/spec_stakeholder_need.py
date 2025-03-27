@@ -17,7 +17,6 @@ class StakeholderNeed(SpecElement):
         """Construct super and placeholder fields."""
         super().__init__(name, ordering, from_file, spec_type="Stakeholder Need")
         self.elicitation_date: str | None = None
-        # self._is_safety_related: bool | None = None
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:

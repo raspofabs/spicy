@@ -29,6 +29,7 @@ def load_syntax_tree(markdown_file_path: Path) -> SyntaxTreeNode:
         md_file = fh.read()
     return parse_text_to_syntax_tree(md_file)
 
+
 def parse_yes_no(value: str) -> bool | None:
     """Parse a yes/no answer into a boolean, or return None."""
     value = value.strip().lower()
@@ -37,6 +38,7 @@ def parse_yes_no(value: str) -> bool | None:
     if value == "no":
         return False
     return None
+
 
 # SyntaxTreeNode interpretation functions
 
@@ -106,9 +108,4 @@ def read_titled_bullet_list(node: SyntaxTreeNode) -> dict[str, str]:
     if node.type != "bullet_list":
         msg = f"Node is wrong type: {node.type}"
         raise TypeError(msg)
-    return {
-        title: content
-        for (title, content) in (
-            split_list_item(item) for item in node.children)
-        }
-
+    return dict(split_list_item(item) for item in node.children)

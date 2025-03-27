@@ -31,16 +31,16 @@ class LinkageRequirement:
         forward_name: str,
         backward_name: str,
         linkage_requiremnt: str,
-    ):
+    ) -> None:
         """Store the spec classes, linkage names, and the requirements for linkage to be valid."""
         self.primary_spec = primary_spec
         self.other_spec = other_spec
         self.linkage_names = (forward_name, backward_name)
         self.linkage_requirement = linkage_requiremnt
 
-    def fulfils(self, other_spec_instance) -> list[str]:
+    def fulfils(self, other_spec_instance: SpecElement) -> list[str]:
         """Return the fulfilment data from the other spec."""
-        return other_spec_instance.fulfils()
+        return other_spec_instance.get_linked(self.linkage_names[1])
 
     def relevant_to(self, spec_class: type) -> bool:
         """Return whether this linkage requirement is relevant to this spec class."""
@@ -77,8 +77,7 @@ def get_linkage_issues(
                 relevant_considered: list[SpecElement] = list(filter(None, [spec_map.get(a) for a in fulfilment]))
                 if not any(spec.is_safety_related for spec in relevant_considered):
                     issues.append(f"{o_name} {other_spec.name} is safety related, but none of it's {c_name} links are:")
-                    for spec in relevant_considered:
-                        issues.append(f"\t{spec.name}")
+                    issues.extend(f"\t{spec.name}" for spec in relevant_considered)
 
             if disconnected := fulfilment - spec_names:
                 issues.append(f"{o_name} {other_spec.name} fulfils unexpected {c_name} {disconnected}.")
@@ -86,8 +85,7 @@ def get_linkage_issues(
 
         if unused_specs:
             issues.append(f"{c_name} specs without a {o_name}:")
-            for spec in sorted(unused_specs):
-                issues.append(f"\t{spec}")
+            issues.extend(f"\t{spec}" for spec in sorted(unused_specs))
 
     return issues
 
@@ -429,7 +427,11 @@ def just(checked_class: type) -> Callable:
     return partial(filter, lambda x: isinstance(x, checked_class))
 
 
-def check_safety(safe_spec, other_specs, fulfilment):
+def check_safety(
+    safe_spec: SpecElement,
+    other_specs: list[SpecElement],
+    fulfilment: Callable,
+) -> tuple[bool, list[str]]:
     """Check and return whether there are safety linkage issues."""
     if not safe_spec.is_safety_related:
         return False, []
@@ -441,10 +443,9 @@ def check_safety(safe_spec, other_specs, fulfilment):
     if any(x.is_safety_related for x in relevant_specs):
         return False, []
     # nothing safe connected
-    messsages = [f"{safe_spec.name} is not satisfied by any {target}"]
-    for other_spec in relevant_specs:
-        messsages.append(f"\t{other_spec.name}")
-    return True, messsages
+    messages = [f"{safe_spec.name} is not satisfied by any {target}"]
+    messages.extend(f"\t{os.name}" for os in relevant_specs)
+    return True, messages
 
 
 # TODO @fabs: check all software units have at least one unit test - how? Need source access.

@@ -27,7 +27,7 @@ class SystemRequirement(SpecElement):
         return self.derived_from_list
 
     @property
-    def is_safety_related(self):
+    def is_safety_related(self) -> bool:
         """Return whether the spec is safety related based on specification first."""
         if self.specification.get("safety related", "").lower().strip(".") == "yes":
             return True
