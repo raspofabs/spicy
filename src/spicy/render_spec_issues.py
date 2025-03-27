@@ -25,7 +25,12 @@ class LinkageRequirement:
     """Hold information about requirements of spec links."""
 
     def __init__(
-        self, primary_spec: type, other_spec: type, forward_name: str, backward_name: str, linkage_requiremnt: str
+        self,
+        primary_spec: type,
+        other_spec: type,
+        forward_name: str,
+        backward_name: str,
+        linkage_requiremnt: str,
     ):
         """Store the spec classes, linkage names, and the requirements for linkage to be valid."""
         self.primary_spec = primary_spec

@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, parse_yes_no
+from spicy.md_read import SyntaxTreeNode
 
 from .spec_element import SpecElement
 
@@ -17,7 +17,7 @@ class StakeholderNeed(SpecElement):
         """Construct super and placeholder fields."""
         super().__init__(name, ordering, from_file, spec_type="Stakeholder Need")
         self.elicitation_date: str | None = None
-        #self._is_safety_related: bool | None = None
+        # self._is_safety_related: bool | None = None
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:

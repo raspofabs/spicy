@@ -2,7 +2,7 @@
 
 from collections.abc import Callable
 
-from .use_cases import UseCase, get_use_cases_from_files
+from .use_cases import UseCase
 
 
 def render_issues(use_cases: list[UseCase], render_function: Callable | None = None) -> bool:

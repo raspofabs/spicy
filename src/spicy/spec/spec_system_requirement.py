@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, read_titled_bullet_list, read_bullet_list
+from spicy.md_read import SyntaxTreeNode, get_text_from_node, read_bullet_list, read_titled_bullet_list
 
 from .spec_element import SpecElement
 
@@ -28,7 +28,8 @@ class SystemRequirement(SpecElement):
 
     @property
     def is_safety_related(self):
-        if self.specification.get("safety related","").lower().strip(".") == "yes":
+        """Return whether the spec is safety related based on specification first."""
+        if self.specification.get("safety related", "").lower().strip(".") == "yes":
             return True
         return super().is_safety_related
 
@@ -46,9 +47,9 @@ class SystemRequirement(SpecElement):
         logger.debug("Parsing as system requirement: %s", node.pretty(show_text=True))
         if detail_heading == "derived from":
             self.state = "reqs_list"
-        elif detail_heading== "verification criteria":
+        elif detail_heading == "verification criteria":
             self.state = "verification_list"
-        elif detail_heading== "specification":
+        elif detail_heading == "specification":
             self.state = "specification_list"
 
         if node.type == "code_block" and self.state == "reqs_list":
@@ -56,7 +57,7 @@ class SystemRequirement(SpecElement):
             self.derived_from_list.extend(reqs_list)
             self.state = ""
         if node.type == "bullet_list":
-            if  self.state == "reqs_list":
+            if self.state == "reqs_list":
                 reqs_list = read_bullet_list(node)
                 self.derived_from_list.extend([get_text_from_node(x) for x in reqs_list])
                 self.state = ""
