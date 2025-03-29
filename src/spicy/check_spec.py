@@ -6,6 +6,7 @@ from pathlib import Path
 
 import click
 
+from .config import load_spicy_config
 from .render_spec_issues import render_issues
 from .spec import get_specs_from_files
 from .use_cases import get_use_cases_from_files
@@ -22,13 +23,19 @@ def get_spec_files(root_path: Path | None = None) -> list[Path]:
 
 
 @click.command()
-@click.argument("project-prefix", required=True, type=str)
 @click.argument("path-override", required=False, default=None, type=Path)
+@click.option("-p", "--project-prefix", default=None, type=str, help="Set the project prefix.")
 def run(
-    project_prefix: str,
     path_override: Path | None,
+    project_prefix: str | None,
 ) -> None:
     """Find paths to read, then print out the TCLs of all the use-cases."""
+    spicy_config = load_spicy_config(path_override or Path(""))
+    if not project_prefix:
+        project_prefix = spicy_config.get("prefix")
+    if project_prefix is None:
+        logger.error("Unable to scan without a known prefix")
+        sys.exit(1)
     logging.basicConfig(level=logging.INFO)
 
     filenames = get_spec_files(path_override)
