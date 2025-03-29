@@ -1,5 +1,6 @@
 """Test the use spec checker cli."""
 
+import re
 from pathlib import Path
 
 from click.testing import CliRunner
@@ -33,9 +34,16 @@ def test_larger_spec(cookie_data_path: Path) -> None:
 def test_various_data(test_data_path: Path) -> None:
     """Test the general test data folder."""
     runner = CliRunner()
+
+    # complete directory
     result = runner.invoke(run, ["-p", "TD", str(test_data_path)])
     assert result.exit_code == 1, result.stdout
     assert "Needs without a fulfilling stakeholder requirement" in result.stdout
+
+    # one file
+    result = runner.invoke(run, ["-p", "TD", str(test_data_path / "spec" / "spec_swe1_software_requirements.md")])
+    assert result.exit_code == 1, result.stdout
+    assert re.search(r"SoftwareRequirement.*\n.*Does not fulfil any system requirement", result.stdout, re.MULTILINE)
 
 
 def test_missing_config(test_data_path: Path, caplog) -> None:
