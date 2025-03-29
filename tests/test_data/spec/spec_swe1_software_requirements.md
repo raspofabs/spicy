@@ -2,39 +2,39 @@
 
 ## Static aspects
 
-#### CDU_SW_REQ_cookie_order_persistence
+#### TD_SW_REQ_cookie_order_persistence
 
-The **CDU** maintains a persistent data store for inventory levels and unfulfilled orders.
+The **TD** maintains a persistent data store for inventory levels and unfulfilled orders.
 
 Required by:
 
-- [CDU_SYS_ELEMENT_cookie_storage](#CDU_SYS_ARCH_cookie_storage)
+- [TD_SYS_ELEMENT_cookie_storage](#TD_SYS_ARCH_cookie_storage)
 
-#### CDU_SW_REQ_ordering_page
+#### TD_SW_REQ_ordering_page
 
-The **CDU** maintains a web-page where cookies can be ordered.
+The **TD** maintains a web-page where cookies can be ordered.
 
 The ordering page takes as input, the **KIDS** ID and the number of cookies.
 The output is a message as an ETA, or just a confirmation if cookies are immediately available.
 
 Required by:
 
-- [CDU_SYS_ELEMENT_cookie_website](#cdu_sys_arch_cookie_website)
+- [TD_SYS_ELEMENT_cookie_website](#TD_sys_arch_cookie_website)
 
-#### CDU_SW_REQ_cookie_operator_terminal
+#### TD_SW_REQ_cookie_operator_terminal
 
-The **CDU** notifies the operators for new orders of cookies through an operator terminal.
+The **TD** notifies the operators for new orders of cookies through an operator terminal.
 
 Required by:
 
-- [CDU_SYS_ELEMENT_operations_terminal](#CDU_SYS_ELEMENT_operations_terminal)
+- [TD_SYS_ELEMENT_operations_terminal](#TD_SYS_ELEMENT_operations_terminal)
 
 ## Dynamic aspects
 
-#### CDU_SW_REQ_cookie_delivery
+#### TD_SW_REQ_cookie_delivery
 
-The **CDU** delivers cookies in reasonable time, or begins baking and then notifies the **KIDS** about the ETA (eating time approximation)
+The **TD** delivers cookies in reasonable time, or begins baking and then notifies the **KIDS** about the ETA (eating time approximation)
 
 Required by:
 
-- [CDU_SYS_ELEMENT_operations_terminal](#cdu_sys_element_operations_terminal)
+- [TD_SYS_ELEMENT_operations_terminal](#TD_sys_element_operations_terminal)

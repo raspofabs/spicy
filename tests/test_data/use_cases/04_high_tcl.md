@@ -8,11 +8,11 @@ The **KIDS** need to be able to order cookies from the cookie ordering page.
 
     ID: FEAT_HOT_OVEN
 
-A **CDU** operator will use the oven to bake some cookies.
+A **TD** operator will use the oven to bake some cookies.
 
 Fulfils:
 
-    CDU_STK_NEED_get_a_cookie
+    TD_STK_NEED_get_a_cookie
 
 ### Features, functions, and technical properties
 
