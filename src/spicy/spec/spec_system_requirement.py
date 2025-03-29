@@ -133,6 +133,13 @@ class SystemRequirement(SpecElement):
 #        They can include decisions to use specific architectures, frameworks,
 #        or approaches to resolving other problems or requirements.
 #    - Qualification requirements:
+#        Define the features that define whether the system is able to do its job
+#        Characteristics, attributes, or properties of the system that must be
+#        present, otherwise the system is not fit for purpose.
+#        Examples include operational limits such as storage space,
+#        temperature, or qualification measures such as whether it meets the
+#        constraints of a development process of international standards
+#        document for code-quality.
 #
 # Beyond this:
 # - Identifies any relationship considerations / constraints between the system elements and the software
