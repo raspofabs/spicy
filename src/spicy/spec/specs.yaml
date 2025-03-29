@@ -1,0 +1,63 @@
+---
+specs:
+  stakeholder_need:
+    name: "Stakeholder need"
+    tags: [safety_related]
+    fields:
+      elicitation_date: "string|None"
+  stakeholder_requirement:
+    name: "Stakeholder requirement"
+    tags: [safety_related]
+  system_requirement:
+    name: "System requirement"
+    tags: [safety_related]
+  system_element:
+    name: "System element"
+    tags: [safety_related]
+  system_integration:
+    name: "System integration test"
+    tags: [safety_related]
+  system_qualification:
+    name: "System qualification test"
+    tags: [safety_related]
+  software_requirement:
+    name: "Software requirement"
+    tags: [safety_related]
+  software_component:
+    name: "Software component"
+    tags: [safety_related]
+  software_unit:
+    name: "Software unit"
+    tags: [safety_related]
+  use_case:
+    name: "Use case"
+    tags: [safety_related]
+links:
+  # connections: implement, realize, resolve, fulfil, deliver
+  # refinements: interpret, refine,
+  # limitation: acknowledge, discharge, honour, respect, obey, satisfy
+  # detructuring: breaks down into, splits to
+  # checking:
+  #   validate, verify, qualify, test, confirm, prove, demonstrate,
+  #   assert, measure
+  stakeholder_need_refinement:
+    primary_spec: stakeholder_need
+    destination_spec: stakeholder_requirement
+    link_text: "Refines to"
+    return_link_text: "Refined from"
+    required_by_primary: mandatory
+    required_by_destination: mandatory
+  stakeholder_need_use_case:
+    primary_spec: stakeholder_need
+    destination_spec: use_case
+    link_text: "Fulfilled by"
+    return_link_text: "Fulfils"
+    required_by_primary: optional
+    required_by_destination: mandatory
+  system_integration_tests:
+    primary_spec: system_integration
+    destination_spec: system_element
+    link_text: "Integrates"
+    return_link_text: "Integrated by"
+    required_by_primary: mandatory(2+)
+    required_by_destination: mandatory
