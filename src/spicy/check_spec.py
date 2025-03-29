@@ -30,12 +30,14 @@ def run(
     project_prefix: str | None,
 ) -> None:
     """Find paths to read, then print out the TCLs of all the use-cases."""
-    spicy_config = load_spicy_config(path_override or Path(""))
-    if not project_prefix:
-        project_prefix = spicy_config.get("prefix")
+    spicy_config = load_spicy_config(path_override or Path(), prefix=project_prefix)
+
+    project_prefix = spicy_config.get("prefix")
+
     if project_prefix is None:
         logger.error("Unable to scan without a known prefix")
         sys.exit(1)
+
     logging.basicConfig(level=logging.INFO)
 
     filenames = get_spec_files(path_override)
