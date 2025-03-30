@@ -17,9 +17,15 @@ specs:
   system_integration:
     name: "System integration test"
     tags: [safety_related]
+    links: ["Tests", "Cases", "Results"]
   system_qualification:
     name: "System qualification test"
     tags: [safety_related]
+    links: ["Tests", "Cases", "Results"]
+  validation_test:
+    name: "Validation test"
+    tags: [safety_related]
+    links: ["Tests", "Cases", "Results"]
   software_requirement:
     name: "Software requirement"
     tags: [safety_related]
