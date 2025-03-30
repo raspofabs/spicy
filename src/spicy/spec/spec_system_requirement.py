@@ -89,10 +89,19 @@ class SystemRequirement(SpecElement):
 # In a system requirement, look for a set of details:
 
 # Specification:
-# 
-# - **Requirement type:** {{business function, organisational function, user, safety, security, ergonomic, interface, operational, maintenance, design constraint, qualification}}
+#
+# - **Requirement type:**
+#   - business function, organisational function;
+#   - user, safety, security, ergonomic, interface;
+#   - operational, maintenance;
+#   - design constraint;
+#   - qualification
 # - **Interaction:** system elements / software, nature of interaction
-# - **Constraints:** resource limits; performance constraints; safety, security expectations; interface and API constraints
+# - **Constraints:**
+#   - resource limits;
+#   - performance constraints;
+#   - safety, security expectations;
+#   - interface and API constraints
 # - **Operational and environmental limits and capabilities:**
 # - **Documentation:** where it is, what it is for.
 # - **Safety related:** yes/no
@@ -103,7 +112,7 @@ class SystemRequirement(SpecElement):
 # human-factors engineering (ergonomics), interface, operations, and
 # maintenance requirements; design constraints and qualification requirements.
 # (ISO/IEC 12207)
-#    - business requirements: 
+#    - business requirements:
 #        Such as requirement to achieve certain compliance level.
 #        They are about what the system will need to do to resolve some lack in
 #        what the business is capable of.
@@ -163,7 +172,3 @@ class SystemRequirement(SpecElement):
 # - Logistical Requirements
 # - Describes security requirements
 # - Diagnosis requirements
-
-
-
-

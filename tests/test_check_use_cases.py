@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import pytest
 from click.testing import CliRunner
 
 from spicy.check_use_cases import run
@@ -14,7 +15,7 @@ def test_simple_use_case(test_data_path: Path) -> None:
     assert result.exit_code == 0, result.stdout
 
 
-def test_general_use_cases(test_data_path: Path, caplog) -> None:
+def test_general_use_cases(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test the simple positive use case."""
     runner = CliRunner()
     result = runner.invoke(run, [str(test_data_path / "use_cases")])

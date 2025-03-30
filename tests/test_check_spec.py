@@ -3,6 +3,7 @@
 import re
 from pathlib import Path
 
+import pytest
 from click.testing import CliRunner
 
 from spicy.check_spec import run
@@ -46,7 +47,7 @@ def test_various_data(test_data_path: Path) -> None:
     assert re.search(r"SoftwareRequirement.*\n.*Does not fulfil any system requirement", result.stdout, re.MULTILINE)
 
 
-def test_missing_config(test_data_path: Path, caplog) -> None:
+def test_missing_config(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test that we need a specified prefix if we don't have a spicy.yaml."""
     runner = CliRunner()
 
