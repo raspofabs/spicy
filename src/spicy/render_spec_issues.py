@@ -98,7 +98,7 @@ def render_use_case_linkage_issues(
     for use_case in use_cases:
         fulfilment = set(use_case.fulfils())
         if use_case.safety_case:
-            uc_needs = list(filter(None, [stakeholder_needs_map.get(a) for a in fulfilment]))
+            uc_needs: list[SpecElement] = list(filter(None, [stakeholder_needs_map.get(a) for a in fulfilment]))
             if not any(need.is_safety_related for need in uc_needs):
                 any_errors = True
                 render_function(f"Use case {use_case.name} is safety related, but none of it's needs are:")
@@ -185,8 +185,6 @@ def render_system_requirement_linkage_issues(
         any_errors |= result
         for m in messages:
             render_function(m)
-
-
 
     return any_errors
 
@@ -360,7 +358,12 @@ def just(checked_class: type) -> Callable:
     return partial(filter, lambda x: isinstance(x, checked_class))
 
 
-def check_safety(safe_spec, other_specs, fulfilment):
+def check_safety(
+    safe_spec: SpecElement,
+    other_specs: list[SpecElement],
+    fulfilment: Callable,
+) -> tuple[bool, list[str]]:
+    """Check and return whether there are safety linkage issues."""
     if not safe_spec.is_safety_related:
         return False, []
     relevant_specs = [spec for spec in other_specs if safe_spec.name in fulfilment(spec)]
@@ -371,10 +374,9 @@ def check_safety(safe_spec, other_specs, fulfilment):
     if any(x.is_safety_related for x in relevant_specs):
         return False, []
     # nothing safe connected
-    messsages = [f"{safe_spec.name} is not satisfied by any {target}"]
-    for other_spec in relevant_specs:
-        messsages.append(f"\t{other_spec.name}")
-    return True, messsages
+    messages = [f"{safe_spec.name} is not satisfied by any {target}"]
+    messages.extend(f"\t{os.name}" for os in relevant_specs)
+    return True, messages
 
 
 # TODO @fabs: check all software units have at least one unit test - how? Need source access.

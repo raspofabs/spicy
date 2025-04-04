@@ -16,18 +16,18 @@ from spicy.spec.builder import (
 
 def test_simple_spec(test_data_path: Path) -> None:
     """Test a very simple spec."""
-    spec_list = gather_spec_elements("cdu", test_data_path / "spec" / "spec_sys1_stakeholder_requirements.md")
+    spec_list = gather_spec_elements("td", test_data_path / "spec" / "spec_sys1_stakeholder_requirements.md")
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
     spec_element = spec_list[0]
     assert issubclass(type(spec_element), SpecElement)
 
-    assert spec_element.name == "CDU_STK_NEED_get_a_cookie"
+    assert spec_element.name == "TD_STK_NEED_get_a_cookie"
 
 
 def test_complete_spec(test_data_path: Path) -> None:
     """Test a set of spec files."""
-    spec_list = gather_spec_elements("cdu", test_data_path / "spec")
+    spec_list = gather_spec_elements("td", test_data_path / "spec")
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
 
@@ -36,22 +36,22 @@ def test_complete_spec(test_data_path: Path) -> None:
 
     assert all(issubclass(type(x), SpecElement) for x in spec_list)
 
-    assert any(x.name == "CDU_STK_NEED_get_a_cookie" for x in spec_list)
+    assert any(x.name == "TD_STK_NEED_get_a_cookie" for x in spec_list)
 
 
 spec_parts_data = [
-    ("CDU_STK_NEED_get_a_cookie", StakeholderNeed),
-    ("CDU_STK_REQ_cookie_orders", StakeholderRequirement),
-    ("CDU_SYS_REQ_cookie_ordering", SystemRequirement),
-    ("CDU_SYS_ELEMENT_cookie_storage", SystemElement),
-    ("CDU_SW_REQ_cookie_order_persistence", SoftwareRequirement),
+    ("TD_STK_NEED_get_a_cookie", StakeholderNeed),
+    ("TD_STK_REQ_cookie_orders", StakeholderRequirement),
+    ("TD_SYS_REQ_cookie_ordering", SystemRequirement),
+    ("TD_SYS_ELEMENT_cookie_storage", SystemElement),
+    ("TD_SW_REQ_cookie_order_persistence", SoftwareRequirement),
 ]
 
 
 @pytest.mark.parametrize(("expected_name", "expected_class"), spec_parts_data)
 def test_spec_parts(test_data_path: Path, expected_name: str, expected_class: type) -> None:
     """Test that spec parts are detected correctly."""
-    spec_list = gather_spec_elements("cdu", test_data_path / "spec")
+    spec_list = gather_spec_elements("td", test_data_path / "spec")
 
     spec_by_name = {x.name: x for x in spec_list}
 

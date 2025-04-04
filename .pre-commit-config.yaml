@@ -56,3 +56,4 @@ repos:
     hooks:
       - id: mypy
         args: [--python-version=3.12, --ignore-missing-imports]
+        additional_dependencies: [types-PyYAML]

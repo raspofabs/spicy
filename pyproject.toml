@@ -1,6 +1,6 @@
 [project]
 name = "spicy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Almost an mdneeds"
 readme = "README.md"
 authors = [
@@ -15,6 +15,7 @@ dependencies = [
     "pytest-cov>=6.0.0",
     "pytest-forked>=1.6.0",
     "pytest-xdist>=3.6.1",
+    "pyyaml>=6.0.2",
 ]
 
 [project.scripts]

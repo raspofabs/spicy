@@ -12,7 +12,7 @@ A **KIDS** will use the web page to order a cookie.
 
 Fulfils:
 
-    CDU_STK_NEED_get_a_cookie
+    TD_STK_NEED_get_a_cookie
 
 ### Features, functions, and technical properties
 

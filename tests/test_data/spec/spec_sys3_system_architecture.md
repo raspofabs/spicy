@@ -2,45 +2,45 @@
 
 For each element, we need the static aspects, the dynamic aspects, and more.
 
-#### CDU_SYS_ELEMENT_cookie_storage
+#### TD_SYS_ELEMENT_cookie_storage
 
-The **CDU** maintains a cookie locker where tins of cookies are placed.
+The **TD** maintains a cookie locker where tins of cookies are placed.
 The same locker also provides storage for the paper bags.
 
 Software element: No
 
 Implements:
 
-- [CDU_SYS_REQ_cookie_stock](#cdu_sys_req_cookie_stock)
-- [CDU_SYS_REQ_bag_stock](#cdu_sys_req_bag_stock)
+- [TD_SYS_REQ_cookie_stock](#TD_sys_req_cookie_stock)
+- [TD_SYS_REQ_bag_stock](#TD_sys_req_bag_stock)
 
-#### CDU_SYS_ELEMENT_cookie_website
+#### TD_SYS_ELEMENT_cookie_website
 
-The **CDU** runs a simple server where the **KIDS** can order cookies.
-The orders are stored in the stock_database and viewable by the **CDU** to
+The **TD** runs a simple server where the **KIDS** can order cookies.
+The orders are stored in the stock_database and viewable by the **TD** to
 determine stock levels.
 
 Software element: Yes
 
 Implements:
 
-- [CDU_SYS_REQ_cookie_ordering](#cdu_sys_req_cookie_ordering)
-- [CDU_SYS_REQ_stock_and_order_tracking](#cdu_sys_req_stock_and_order_tracking)
+- [TD_SYS_REQ_cookie_ordering](#TD_sys_req_cookie_ordering)
+- [TD_SYS_REQ_stock_and_order_tracking](#TD_sys_req_stock_and_order_tracking)
 
-#### CDU_SYS_ELEMENT_stock_database
+#### TD_SYS_ELEMENT_stock_database
 
-The **CDU** keeps a database of the current cookie stock levels, the current open orders, and how many bags are in stock.
+The **TD** keeps a database of the current cookie stock levels, the current open orders, and how many bags are in stock.
 
 Software element: Yes
 
 Implements:
 
-- [CDU_SYS_REQ_stock_and_order_tracking](#cdu_sys_req_stock_and_order_tracking)
-- [CDU_SYS_REQ_calculate_nominal_stock_level](#cdu_sys_req_calculate_nominal_stock_level)
+- [TD_SYS_REQ_stock_and_order_tracking](#TD_sys_req_stock_and_order_tracking)
+- [TD_SYS_REQ_calculate_nominal_stock_level](#TD_sys_req_calculate_nominal_stock_level)
 
-#### CDU_SYS_ELEMENT_operations_terminal
+#### TD_SYS_ELEMENT_operations_terminal
 
-The **CDU** has an operations terminal.
+The **TD** has an operations terminal.
 
 The terminal has:
 
@@ -58,12 +58,12 @@ Software element: Yes
 
 Implements:
 
-- [CDU_SYS_REQ_bag_ordering](#cdu_sys_req_bag_ordering)
-- [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
+- [TD_SYS_REQ_bag_ordering](#TD_sys_req_bag_ordering)
+- [TD_SYS_REQ_cookie_baking](#TD_sys_req_cookie_baking)
 
-#### CDU_SYS_ELEMENT_cookie_oven
+#### TD_SYS_ELEMENT_cookie_oven
 
-The **CDU** has an operational oven in which cookies can be baked.
+The **TD** has an operational oven in which cookies can be baked.
 
 The oven has:
 
@@ -77,4 +77,4 @@ Software element: No
 
 Implements:
 
-- [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
+- [TD_SYS_REQ_cookie_baking](#TD_sys_req_cookie_baking)
