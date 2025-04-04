@@ -21,6 +21,75 @@ from .use_cases import UseCase
 logger = logging.getLogger(__name__)
 
 
+class LinkageRequirement:
+    """Hold information about requirements of spec links."""
+
+    def __init__(
+        self,
+        primary_spec: type,
+        other_spec: type,
+        forward_name: str,
+        backward_name: str,
+        linkage_requiremnt: str,
+    ) -> None:
+        """Store the spec classes, linkage names, and the requirements for linkage to be valid."""
+        self.primary_spec = primary_spec
+        self.other_spec = other_spec
+        self.linkage_names = (forward_name, backward_name)
+        self.linkage_requirement = linkage_requiremnt
+
+    def fulfils(self, other_spec_instance: SpecElement) -> list[str]:
+        """Return the fulfilment data from the other spec."""
+        return other_spec_instance.get_linked(self.linkage_names[1])
+
+    def relevant_to(self, spec_class: type) -> bool:
+        """Return whether this linkage requirement is relevant to this spec class."""
+        return spec_class == self.primary_spec
+
+
+def get_linkage_issues(
+    specs: list[SpecElement],
+    considered_case_class: type,
+    linkages: dict,
+) -> list[str]:
+    """Check all use cases are connected to at least one stakeholder need."""
+    issues: list[str] = []
+
+    considered_specs = list(just(considered_case_class)(specs))
+    logger.debug("Have %s %s", len(considered_specs), considered_case_class.__name__)
+
+    c_name = considered_case_class.__name__
+
+    spec_map = {n.name: n for n in considered_specs}
+    spec_names = set(spec_map.keys())
+
+    for link in linkages:
+        if not link.relevant_to(considered_case_class):
+            continue
+        # reset per link type
+        unused_specs = set(spec_names)
+
+        o_name = link.other_spec.__name__
+        other_specs = list(just(link.other_spec)(specs))
+        for other_spec in other_specs:
+            fulfilment = set(link.fulfils(other_spec))
+            if other_spec.safety_case:
+                relevant_considered: list[SpecElement] = list(filter(None, [spec_map.get(a) for a in fulfilment]))
+                if not any(spec.is_safety_related for spec in relevant_considered):
+                    issues.append(f"{o_name} {other_spec.name} is safety related, but none of it's {c_name} links are:")
+                    issues.extend(f"\t{spec.name}" for spec in relevant_considered)
+
+            if disconnected := fulfilment - spec_names:
+                issues.append(f"{o_name} {other_spec.name} fulfils unexpected {c_name} {disconnected}.")
+            unused_specs = unused_specs - fulfilment
+
+        if unused_specs:
+            issues.append(f"{c_name} specs without a {o_name}:")
+            issues.extend(f"\t{spec}" for spec in sorted(unused_specs))
+
+    return issues
+
+
 def render_issues(
     specs: list[SpecElement],
     use_cases: list[UseCase],

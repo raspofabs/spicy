@@ -27,6 +27,10 @@ class SpecElement:
 
         self._safety_related: bool | None = None
 
+    def get_linked(self, _linkage_term: str) -> list[str]:
+        """Return a list of all specs linked by this term."""
+        return []
+
     @property
     def is_safety_related(self) -> bool:
         """Return whether this need has been marked as safety related."""
