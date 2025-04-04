@@ -2,50 +2,50 @@
 
 For each element, we need the static aspects, the dynamic aspects, and more.
 
-#### CDU_SYS_QUAL_order_cookies
+#### TD_SYS_QUAL_order_cookies
 
-The **CDU** must be tested by ordering cookies.
+The **TD** must be tested by ordering cookies.
 
 Tests:
 
-- [CDU_SYS_REQ_cookie_ordering](#cdu_sys_req_cookie_ordering)
-- [CDU_SYS_REQ_stock_and_order_tracking](#cdu_sys_req_stock_and_order_tracking)
-- [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
-- [CDU_SYS_REQ_calculate_nominal_stock_level](#cdu_sys_req_calculate_nominal_stock_level)
+- [TD_SYS_REQ_cookie_ordering](#TD_sys_req_cookie_ordering)
+- [TD_SYS_REQ_stock_and_order_tracking](#TD_sys_req_stock_and_order_tracking)
+- [TD_SYS_REQ_cookie_baking](#TD_sys_req_cookie_baking)
+- [TD_SYS_REQ_calculate_nominal_stock_level](#TD_sys_req_calculate_nominal_stock_level)
 
 Cases:
 
-- CDU_SYS_TEST_order_a_cookie
-- CDU_SYS_TEST_order_too_many_cookies
-- CDU_SYS_TEST_too_many_orders
+- TD_SYS_TEST_order_a_cookie
+- TD_SYS_TEST_order_too_many_cookies
+- TD_SYS_TEST_too_many_orders
 
 Results:
 
-- CDU_SYS_TEST_order_a_cookie: PASS
-- CDU_SYS_TEST_order_too_many_cookies: PASS
-- CDU_SYS_TEST_too_many_orders: PASS
+- TD_SYS_TEST_order_a_cookie: PASS
+- TD_SYS_TEST_order_too_many_cookies: PASS
+- TD_SYS_TEST_too_many_orders: PASS
 
-#### CDU_SYS_QUAL_operator_test
+#### TD_SYS_QUAL_operator_test
 
-The **CDU** operations terminal must be tested.
+The **TD** operations terminal must be tested.
 
 Tests:
 
-- [CDU_SYS_REQ_cookie_ordering](#cdu_sys_req_cookie_ordering)
-- [CDU_SYS_REQ_stock_and_order_tracking](#cdu_sys_req_stock_and_order_tracking)
-- [CDU_SYS_REQ_cookie_stock](#cdu_sys_req_stock_and_order_tracking)
-- [CDU_SYS_REQ_bag_stock](#cdu_sys_req_stock_and_order_tracking)
-- [CDU_SYS_REQ_bag_ordering](#cdu_sys_req_bag_ordering)
-- [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
+- [TD_SYS_REQ_cookie_ordering](#TD_sys_req_cookie_ordering)
+- [TD_SYS_REQ_stock_and_order_tracking](#TD_sys_req_stock_and_order_tracking)
+- [TD_SYS_REQ_cookie_stock](#TD_sys_req_stock_and_order_tracking)
+- [TD_SYS_REQ_bag_stock](#TD_sys_req_stock_and_order_tracking)
+- [TD_SYS_REQ_bag_ordering](#TD_sys_req_bag_ordering)
+- [TD_SYS_REQ_cookie_baking](#TD_sys_req_cookie_baking)
 
 What cases:
 
-- CDU_SYS_TEST_order_a_cookie
-- CDU_SYS_TEST_check_stock_level
-- CDU_SYS_TEST_order_bags
+- TD_SYS_TEST_order_a_cookie
+- TD_SYS_TEST_check_stock_level
+- TD_SYS_TEST_order_bags
 
 Results:
 
-- CDU_SYS_TEST_order_a_cookie: PASS
-- CDU_SYS_TEST_order_a_cookie: FAIL
-- CDU_SYS_TEST_check_stock_level: FAIL
+- TD_SYS_TEST_order_a_cookie: PASS
+- TD_SYS_TEST_order_a_cookie: FAIL
+- TD_SYS_TEST_check_stock_level: FAIL

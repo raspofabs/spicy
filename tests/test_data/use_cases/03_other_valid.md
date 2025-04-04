@@ -8,11 +8,11 @@ The **KIDS** need to be able to order cookies from the cookie ordering page.
 
     ID: FEAT_COOKIE_BAKING
 
-A **CDU** operator will use the oven to bake some cookies.
+A **TD** operator will use the oven to bake some cookies.
 
 Fulfils:
 
-    CDU_STK_NEED_get_a_cookie
+    TD_STK_NEED_get_a_cookie
 
 ### Features, functions, and technical properties
 
@@ -29,7 +29,7 @@ The oven bakes cookies.
 - **Usage procedure:**
     Put uncooked cookies in oven.
     Wait.
-    Take out the cooked cookies and shove them into the fully qualified **CDU** cookie dumpster.
+    Take out the cooked cookies and shove them into the fully qualified **TD** cookie dumpster.
 - **Environmental constraints:**
     The **Operator** must be tall enough to open the oven door.
 
@@ -51,11 +51,11 @@ And those people are not allowed to be operators.
 
     ID: FEAT_COOKIE_BAGGING
 
-A **CDU** operator will bag the cookies
+A **TD** operator will bag the cookies
 
 Fulfils:
 
-    CDU_STK_NEED_bag_for_cookies
+    TD_STK_NEED_bag_for_cookies
 
 ### Features, functions, and technical properties
 

@@ -39,6 +39,8 @@ Implements:
 
 Safety related: yes
 
+# System level requirements
+
 ## POS_SYS_REQ_have_a_sys_req
 
 **POS** must support system requirements.
@@ -112,6 +114,8 @@ Cases:
 Results:
 
 - POS_SYS_TEST_read_this_document: PASS
+
+# Validation - new to ASPICE 4.0
 
 ## POS_VAL_document_is_provided
 

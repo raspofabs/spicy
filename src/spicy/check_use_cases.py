@@ -7,7 +7,7 @@ from pathlib import Path
 import click
 
 from .render_use_case_issues import render_issues
-from .use_cases import UseCase, get_use_cases_from_files
+from .use_cases import get_use_cases_from_files
 
 
 def get_use_case_files(root_path: Path | None = None) -> list[Path]:
@@ -32,5 +32,5 @@ def run(
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     run()
