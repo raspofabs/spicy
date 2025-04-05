@@ -75,7 +75,7 @@ def get_linkage_issues(
             fulfilment = set(link.fulfils(other_spec))
             if other_spec.safety_case:
                 relevant_considered: list[SpecElement] = list(filter(None, [spec_map.get(a) for a in fulfilment]))
-                if not any(spec.is_safety_related for spec in relevant_considered):
+                if not any(spec.is_qualification_related for spec in relevant_considered):
                     issues.append(f"{o_name} {other_spec.name} is safety related, but none of it's {c_name} links are:")
                     issues.extend(f"\t{spec.name}" for spec in relevant_considered)
 
@@ -168,7 +168,7 @@ def render_use_case_linkage_issues(
         fulfilment = set(use_case.fulfils())
         if use_case.safety_case:
             uc_needs: list[SpecElement] = list(filter(None, [stakeholder_needs_map.get(a) for a in fulfilment]))
-            if not any(need.is_safety_related for need in uc_needs):
+            if not any(need.is_qualification_related for need in uc_needs):
                 any_errors = True
                 render_function(f"Use case {use_case.name} is safety related, but none of it's needs are:")
                 for need in uc_needs:
@@ -433,14 +433,14 @@ def check_safety(
     fulfilment: Callable,
 ) -> tuple[bool, list[str]]:
     """Check and return whether there are safety linkage issues."""
-    if not safe_spec.is_safety_related:
+    if not safe_spec.is_qualification_related:
         return False, []
     relevant_specs = [spec for spec in other_specs if safe_spec.name in fulfilment(spec)]
     target = "safety related spec"
     if relevant_specs:
         spec, *__ = relevant_specs
         target = f"safety related {spec.__class__.__name__}"
-    if any(x.is_safety_related for x in relevant_specs):
+    if any(x.is_qualification_related for x in relevant_specs):
         return False, []
     # nothing safe connected
     messages = [f"{safe_spec.name} is not satisfied by any {target}"]

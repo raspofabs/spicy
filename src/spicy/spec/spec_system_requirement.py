@@ -27,11 +27,13 @@ class SystemRequirement(SpecElement):
         return self.derived_from_list
 
     @property
-    def is_safety_related(self) -> bool:
+    def is_qualification_related(self) -> bool:
         """Return whether the spec is safety related based on specification first."""
         if self.specification.get("safety related", "").lower().strip(".") == "yes":
             return True
-        return super().is_safety_related
+        if self.specification.get("tcl relevant", "").lower().strip(".") == "yes":
+            return True
+        return super().is_qualification_related
 
     @staticmethod
     def is_spec_heading(header_text: str) -> bool:

@@ -89,7 +89,7 @@ class UseCasesBuilder:
         self.last_h3 = ""
         self.num_cases = 0
 
-        self.builder_stack: list[tuple(int, SingleUseCaseBuilder)] = []
+        self.builder_stack: list[tuple[int, SingleUseCaseBuilder]] = []
         self.builder: SingleUseCaseBuilder | None = None
         self.current_spec_level = 0
         self.used_current_spec_level = False
@@ -102,7 +102,7 @@ class UseCasesBuilder:
         for i in range(level):
             self.header_stack[i] = None
         content = node.children[0].children[0].content
-        self.header_stack[i-1] = content
+        self.header_stack[i - 1] = content
         self.last_header = content
         self.last_heading_level = level
         self.used_current_spec_level = False
@@ -112,7 +112,6 @@ class UseCasesBuilder:
             self.last_h2 = content
         if node.tag == "h3":
             self.last_h3 = content
-            #self.in_section = section_map.get(self.last_h3, self.in_section)
 
         # enable tracking content if the section name matches
         section = section_map.get(self.last_header, self.in_section)
@@ -123,6 +122,9 @@ class UseCasesBuilder:
         use_case_name = node.content.strip().split("ID: ")[1]
         self.in_section = "prologue"
         self.num_cases += 1
+        if self.header_stack[-1] is None:
+            msg = f"Invalid header stack: {self.header_stack=}"
+            raise ValueError(msg)
         self.builder = SingleUseCaseBuilder(use_case_name, self.num_cases, self.from_file, self.header_stack[-1])
         self.current_spec_level = self.last_heading_level
 

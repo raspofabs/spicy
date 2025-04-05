@@ -48,7 +48,7 @@ documentation between elements requiring bi-directional traceability.
 
 Elicitation date: 2025-04-05
 
-TQP relevant: yes
+TCL relevant: yes
 
 ## SPICY_STK_NEED_verify_correctness
 
@@ -57,7 +57,7 @@ omitting important details, or duplicating data.
 
 Elicitation date: 2025-04-05
 
-TQP relevant: yes
+TCL relevant: yes
 
 ## SPICY_STK_NEED_verify_completeness
 
@@ -66,7 +66,7 @@ to other spec elements needed to fulfil their specification.
 
 Elicitation date: 2025-04-05
 
-TQP relevant: yes
+TCL relevant: yes
 
 ## SPICY_STK_NEED_aspice_compatibility
 
@@ -77,7 +77,7 @@ Note: The version of ASPICE referenced should be at least ASPICE 4.0.
 
 Elicitation date: 2025-04-05
 
-TQP relevant: yes
+TCL relevant: yes
 
 ## SPICY_STK_NEED_ISO_26262_tool_qualification
 
@@ -112,4 +112,18 @@ bootstrap the purpose of the tool.
 
 Elicitation date: 2025-04-05
 
-TQP relevant: yes
+TCL relevant: yes
+
+## SPICY_STK_NEED_document_rendering_support
+
+The **TWs** need **SPICY** to verify and fix any broken links in the rendering
+of the document to help make moving between elements easier.
+
+The documents must be cross-linked between elements for bi-directional
+traceability, but having the links be hyperlinks you can click to take you to
+the other elements will help simplify the job of reviewing items and argue the
+case for ASPICE compliance against an ASPICE assessor.
+
+Elicitation date: 2025-04-05
+
+TCL relevant: no

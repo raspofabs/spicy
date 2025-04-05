@@ -25,17 +25,17 @@ class SpecElement:
         self.ordering_id = ordering_id
         self.file_path = file_path
 
-        self._safety_related: bool | None = None
+        self._qualification_related: bool | None = None
 
     def get_linked(self, _linkage_term: str) -> list[str]:
         """Return a list of all specs linked by this term."""
         return []
 
     @property
-    def is_safety_related(self) -> bool:
+    def is_qualification_related(self) -> bool:
         """Return whether this need has been marked as safety related."""
-        if self._safety_related is not None:
-            return self._safety_related
+        if self._qualification_related is not None:
+            return self._qualification_related
         return False
 
     @staticmethod
@@ -58,7 +58,9 @@ class SpecElement:
         """Parse a SyntaxTreeNode for common features."""
         logger.debug("Parsing common features")
         if value := self.single_line_getter(node, "Safety related:"):
-            self._safety_related = parse_yes_no(value)
+            self._qualification_related = parse_yes_no(value)
+        if value := self.single_line_getter(node, "TCL relevant:"):
+            self._qualification_related = parse_yes_no(value)
 
     def single_line_getter(self, node: SyntaxTreeNode, expected_prefix: str) -> str | None:
         """Get the value from a single line field."""
