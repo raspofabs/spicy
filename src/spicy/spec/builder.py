@@ -56,6 +56,7 @@ class SpecElementBuilder:
             self.ordering_id,
             self.file_path,
         )
+        self.is_rejected = False
 
     def build(self) -> SpecElement:
         """Build a SpecElement from the gathered data."""
@@ -65,6 +66,9 @@ class SpecElementBuilder:
     def location(self) -> str:
         """Return a string for the location of the spec element."""
         return f"{self.file_path}:{self.ordering_id}:{self.name}"
+
+    def set_as_rejected(self, is_rejected: bool):
+        self.is_rejected = is_rejected
 
     def section_add_paragraph(self, section_id: str, content: str) -> None:
         """Append content to section information."""
@@ -94,11 +98,15 @@ class SpecElementBuilder:
                 node_text = get_text_from_node(node)
                 logger.debug("Heading: %s - %s", node, node_text)
                 if element_prefix in node_text:
-                    spec_name = element_prefix + node_text.strip().split(element_prefix)[1]
+                    spec_name = node_text.strip()
+                    prefix, *postfix = spec_name.split(element_prefix)
+                    #spec_name = element_prefix + element_prefix.join(postfix)
                     spec_heading_level = node.tag
                     num_specs += 1
                     builder = SpecElementBuilder(spec_name, num_specs, from_file)
-                    spec_element_builders.append(builder)
+                    builder.set_as_rejected(prefix == "REJECTED_")
+                    if not builder.is_rejected:
+                        spec_element_builders.append(builder)
                     continue
                 if spec_heading_level > node.tag:
                     # higher (lower) level or equal means we're no longer in that spec

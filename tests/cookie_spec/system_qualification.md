@@ -29,6 +29,8 @@ Results:
 
 The **CDU** operations terminal must be tested.
 
+Safety related: yes
+
 Tests:
 
 - [CDU_SYS_REQ_cookie_ordering](#cdu_sys_req_cookie_ordering)
@@ -38,7 +40,7 @@ Tests:
 - [CDU_SYS_REQ_bag_ordering](#cdu_sys_req_bag_ordering)
 - [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
 
-What cases:
+Cases:
 
 - CDU_SYS_TEST_order_a_cookie
 - CDU_SYS_TEST_check_stock_level
@@ -47,5 +49,5 @@ What cases:
 Results:
 
 - CDU_SYS_TEST_order_a_cookie: PASS
-- CDU_SYS_TEST_order_a_cookie: FAIL
 - CDU_SYS_TEST_check_stock_level: FAIL
+- CDU_SYS_TEST_order_bags: FAIL

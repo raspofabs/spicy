@@ -90,7 +90,7 @@ Derived from:
 Specification:
 
 - **Type:** functional
-- **Safety related:** no
+- **Safety related:** yes
 
 Verification criteria:
 
@@ -110,6 +110,13 @@ Specification:
 
 - **Type:** functional
 - **Safety related:** no
+
+Verification Criteria:
+
+- Refer to the operations manual and verify there is a specific location for
+  paper bags.
+- Verify the documented location exists and bags are present there, or there is
+  an order for bags open.
 
 #### CDU_SYS_REQ_bag_ordering
 

@@ -71,14 +71,14 @@ class SystemQualificationTest(SpecElement):
             test_spec_name_prefix = self.spec_prefix+"_SYS_TEST_"
             badly_named_tests = [case for case in self.cases_list if not case.startswith(test_spec_name_prefix)]
             if badly_named_tests:
-                issues.append(f"Not all tests are correctly named: {badly_named_tests}")
+                issues.append(f"Not all tests are correctly ({test_spec_name_prefix}) named: {badly_named_tests}")
         if not self.results_list:
             issues.append("Does not have any test results.")
         else:
             result_tests = [result.split(":")[0] for result in self.results_list]
             unlinked_results = [result for result in result_tests if result not in self.cases_list]
             if unlinked_results:
-                issues.append(f"Not all results are correctly named: {unlinked_results}")
+                issues.append(f"Not all results map to tests: {unlinked_results}")
             cases_without_results = set(self.cases_list) - set(result_tests)
             if cases_without_results:
                 issues.append(f"Not all test cases have results : {list(cases_without_results)}")
