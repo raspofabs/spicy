@@ -82,31 +82,56 @@ class UseCasesBuilder:
         """Construct the basic properties."""
         self.from_file = from_file
         self.use_case_builders: list[SingleUseCaseBuilder] = []
+        self.header_stack: list[str | None] = [None] * 5
+        self.last_heading_level = 0
+        self.last_header = ""
         self.last_h2 = ""
         self.last_h3 = ""
-        self.used_h2 = False
         self.num_cases = 0
 
+        self.builder_stack: list[tuple(int, SingleUseCaseBuilder)] = []
         self.builder: SingleUseCaseBuilder | None = None
+        self.current_spec_level = 0
+        self.used_current_spec_level = False
         self.current_use_case = None
         self.in_section = "none"
         self.issues: list[str] = []
 
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
+        level = int(node.tag[1])
+        for i in range(level):
+            self.header_stack[i] = None
+        content = node.children[0].children[0].content
+        self.header_stack[i-1] = content
+        self.last_header = content
+        self.last_heading_level = level
+        self.used_current_spec_level = False
+
         if node.tag == "h2":
-            self.last_h2 = node.children[0].children[0].content
             self.used_h2 = False
+            self.last_h2 = content
         if node.tag == "h3":
-            self.last_h3 = node.children[0].children[0].content
-            self.in_section = section_map.get(self.last_h3, self.in_section)
+            self.last_h3 = content
+            #self.in_section = section_map.get(self.last_h3, self.in_section)
+
+        # enable tracking content if the section name matches
+        section = section_map.get(self.last_header, self.in_section)
+        if section is not None:
+            self.in_section = section
 
     def _handle_use_case_node(self, node: SyntaxTreeNode) -> None:
         use_case_name = node.content.strip().split("ID: ")[1]
         self.in_section = "prologue"
         self.num_cases += 1
-        self.builder = SingleUseCaseBuilder(use_case_name, self.num_cases, self.from_file, self.last_h2)
-        if self.used_h2:
-            self.issues.append(f"{self.builder.location} reuses {self.last_h2} in {self.from_file}")
+        self.builder = SingleUseCaseBuilder(use_case_name, self.num_cases, self.from_file, self.header_stack[-1])
+        self.current_spec_level = self.last_heading_level
+
+        while self.builder_stack and self.builder_stack[-1][0] >= self.current_spec_level:
+            self.builder_stack.pop()
+        self.builder_stack.append((self.current_spec_level, self.builder))
+        if self.used_current_spec_level:
+            self.issues.append(f"{self.builder.location} reuses {self.header_stack[-1]} in {self.from_file}")
+        self.used_current_spec_level = True
         self.used_h2 = True
         self.use_case_builders.append(self.builder)
 

@@ -97,6 +97,10 @@ Cases:
 
 - POS_SYS_INT_TEST_check_the_document_connectivity
 
+Results:
+
+- POS_SYS_INT_TEST_check_the_document_connectivity: PASS
+
 ## POS_SYS_QUAL_has_a_qualification_test
 
 Test that this spec exists.
