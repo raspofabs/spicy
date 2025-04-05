@@ -3,6 +3,7 @@
 .ruff_cache
 .ruff_files
 .spec_check_files
+.self_check_files
 .test_files
 .venv
 .coverage
