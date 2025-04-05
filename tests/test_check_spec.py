@@ -26,6 +26,8 @@ def test_larger_spec(cookie_data_path: Path) -> None:
     result = runner.invoke(run, ["--project-prefix", "CDU", str(cookie_data_path)])
     assert result.exit_code == 1, result.stdout
     assert "Needs without a fulfilling stakeholder requirement" in result.stdout
+    assert "Stakeholder requirements without a system requirement" in result.stdout
+    assert re.search(r"Stakeholder requirement .* fulfils unexpected need ", result.stdout)
 
     result = runner.invoke(run, [str(cookie_data_path)])
     assert result.exit_code == 1, result.stdout

@@ -23,7 +23,7 @@ The **KIDS** need the **CDU** to provide cookies in bags.
 
 Elicitation date: 1970
 
-#### REJECTED_CDU_STK_NEED_allergy_information
+#### CDU_STK_NEED_allergy_information
 
 The **KIDS** might need allergy advice for the cookies.
 
