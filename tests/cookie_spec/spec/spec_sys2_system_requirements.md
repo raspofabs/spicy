@@ -8,6 +8,11 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 
+Specification:
+
+- **Type:** user
+- **Safety related:** no
+
 Verification Criteria:
 
 - Check the order list on the operator terminal to verify ordering is successful.
@@ -21,6 +26,11 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 
+Specification:
+
+- **Type:** design
+- **Safety related:** no
+
 Verification Criteria:
 
 - Check the order list is present on the operator terminal.
@@ -33,6 +43,11 @@ maintain a stock of cookies.
 Derived from:
 
 - [CDU_STK_REQ_cookie_availability](#cdu_stk_req_cookie_availability)
+
+Specification:
+
+- **Type:** functional
+- **Safety related:** no
 
 Verification Criteria:
 
@@ -49,6 +64,11 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 - [CDU_STK_REQ_cookie_availability](#cdu_stk_req_cookie_availability)
+
+Specification:
+
+- **Type:** functional
+- **Safety related:** no
 
 Verification Criteria:
 
@@ -67,6 +87,11 @@ Derived from:
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 - [CDU_STK_REQ_cookie_availability](#cdu_stk_req_cookie_availability)
 
+Specification:
+
+- **Type:** functional
+- **Safety related:** no
+
 Verification criteria:
 
 - Baking orders can be checked on the operator terminal output.
@@ -81,6 +106,11 @@ Derived from:
 
 - [CDU_STK_REQ_bags_for_cookies](#cdu_stk_req_bags_for_cookies)
 
+Specification:
+
+- **Type:** functional
+- **Safety related:** no
+
 #### CDU_SYS_REQ_bag_ordering
 
 The **CDU** shall maintain a stock of paper bags sufficient
@@ -92,6 +122,11 @@ Derived from:
 
 - [CDU_STK_REQ_cookie_orders](#cdu_stk_req_cookie_orders)
 - [CDU_STK_REQ_bags_for_cookies](#cdu_stk_req_bags_for_cookies)
+
+Specification:
+
+- **Type:** functional
+- **Safety related:** no
 
 Verification Criteria:
 

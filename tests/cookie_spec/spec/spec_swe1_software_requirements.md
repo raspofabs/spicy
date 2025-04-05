@@ -8,7 +8,12 @@ The **CDU** maintains a persistent data store for inventory levels and unfulfill
 
 Required by:
 
-- [CDU_SYS_ELEMENT_cookie_storage](#CDU_SYS_ARCH_cookie_storage)
+- [CDU_SYS_ELEMENT_stock_database](#cdu_sys_element_stock_database)
+
+Fulfils:
+
+- [CDU_SYS_REQ_cookie_stock](#cdu_sys_req_cookie_stock)
+- [CDU_SYS_REQ_bag_stock](#cdu_sys_req_bag_stock)
 
 #### CDU_SW_REQ_ordering_page
 
@@ -21,6 +26,10 @@ Required by:
 
 - [CDU_SYS_ELEMENT_cookie_website](#cdu_sys_arch_cookie_website)
 
+Fulfils:
+
+- [CDU_SYS_REQ_cookie_ordering](#cdu_sys_arch_cookie_website)
+
 #### CDU_SW_REQ_cookie_operator_terminal
 
 The **CDU** notifies the operators for new orders of cookies through an operator terminal.
@@ -28,6 +37,10 @@ The **CDU** notifies the operators for new orders of cookies through an operator
 Required by:
 
 - [CDU_SYS_ELEMENT_operations_terminal](#CDU_SYS_ELEMENT_operations_terminal)
+
+Fulfils:
+
+- [CDU_SYS_REQ_stock_and_order_tracking](#cdu_sys_req_stock_and_order_tracking)
 
 ## Dynamic aspects
 
@@ -38,3 +51,8 @@ The **CDU** delivers cookies in reasonable time, or begins baking and then notif
 Required by:
 
 - [CDU_SYS_ELEMENT_operations_terminal](#cdu_sys_element_operations_terminal)
+
+Fulfils:
+
+- [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
+

@@ -13,13 +13,19 @@ cookies for Key Industry Data Specialists (Kids)
 
 The **KIDS** need the **TD** to provide them with cookies.
 
+Elicitation date: 1970
+
 #### TD_STK_NEED_bag_for_cookies
 
 The **KIDS** need the **TD** to provide cookies in bags.
 
+Elicitation date: 1970
+
 #### TD_STK_NEED_allergy_information
 
 The **KIDS** might need allergy advice for the cookies.
+
+Elicitation date: 1990
 
 # Formalised requirements
 

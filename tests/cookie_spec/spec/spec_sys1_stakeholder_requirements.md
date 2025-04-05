@@ -17,7 +17,7 @@ The **KIDS** need the **CDU** to provide them with cookies.
 
 The **KIDS** need the **CDU** to provide cookies in bags.
 
-#### CDU_STK_NEED_allergy_information
+#### REJECTED_CDU_STK_NEED_allergy_information
 
 The **KIDS** might need allergy advice for the cookies.
 
@@ -63,7 +63,7 @@ Implements:
 
 - [CDU_STK_NEED_bag_for_cookies](#cdu_stk_need_bag_for_cookies)
 
-#### CDU_STK_REQ_cookie_flavours
+#### REJECTED_CDU_STK_REQ_cookie_flavours
 
 **CDU** shall provide a variety of flavours
 
@@ -71,6 +71,6 @@ Implements:
 
 - [CDU_STK_NEED_variety](#cdu_stk_need_variety)
 
-#### CDU_STK_REQ_milk
+#### REJECTED_CDU_STK_REQ_milk
 
 **CDU** shall provide milk
