@@ -5,7 +5,7 @@ from pathlib import Path
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node, read_bullet_list
 
-from .spec_element import SpecElementBase
+from .spec_element_base import SpecElementBase
 
 logger = logging.getLogger(__name__)
 

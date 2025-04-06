@@ -6,7 +6,7 @@ from pathlib import Path
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
-from .spec_element import SpecElementBase
+from .spec_element_base import SpecElementBase
 from .spec_software_component import SoftwareComponent
 from .spec_software_requirement import SoftwareRequirement
 from .spec_software_unit import SoftwareUnit

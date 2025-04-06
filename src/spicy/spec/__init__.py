@@ -5,7 +5,7 @@ from pathlib import Path
 from spicy.md_read import load_syntax_tree
 
 from .builder import SpecElementBuilder
-from .spec_element import SpecElementBase
+from .spec_element_base import SpecElementBase
 
 
 def gather_spec_elements(project_prefix: str, from_file: Path) -> list[SpecElementBase]:
