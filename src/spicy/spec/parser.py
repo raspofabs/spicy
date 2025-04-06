@@ -4,11 +4,41 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node
+from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, split_list_item
+from spicy.use_cases.mappings import tcl_map
 
 from .spec_element_base import SpecElementBase
 
 logger = logging.getLogger("SpecParser")
+
+FEATURES_TITLE = "Features, functions, and technical properties"
+DESCRIPTION_OF_USAGE = "Description of usage"
+PURPOSE = "Purpose:"
+INPUTS = "Inputs:"
+OUTPUTS = "Outputs:"
+USAGE = "Usage procedure:"
+ENVIRONMENT = "Environmental constraints:"
+TOOL_IMPACT_HEADING = "Impact analysis of feature"
+TOOL_IMPACT_CLASS = "TI class:"
+DETECTABILITY_HEADING = "Detectability analysis of feature"
+DETECTABILITY_CLASS = "TD class:"
+
+section_map = {
+    "": "prologue",
+    FEATURES_TITLE: "features",
+    DESCRIPTION_OF_USAGE: "usage",
+    TOOL_IMPACT_HEADING: "tool_impact",
+    DETECTABILITY_HEADING: "detectability",
+}
+
+usage_section_map = {
+    "inputs": INPUTS,
+    "outputs": OUTPUTS,
+    "purpose": PURPOSE,
+    "usage": USAGE,
+    "environment": ENVIRONMENT,
+}
+
 
 class SpecElement:
     """Spec Element class to store details of the spec element and links to other elements."""
@@ -16,82 +46,124 @@ class SpecElement:
     def __init__(
         self,
         name: str,
+        variant: str,
         ordering_id: int,
         file_path: Path,
     ) -> None:
         """Construct the basic properties."""
         self.name = name
+        self.variant = variant
         self.ordering_id = ordering_id
         self.file_path = file_path
 
         self._qualification_related: bool | None = None
         self._links: defaultdict[str, list[str]] = defaultdict(list)
 
+        self.title = ""
+        self.content: defaultdict[str, list[str]] = defaultdict(list)
+        self.impact: str | None = None
+        self.detectability: str | None = None
+        self.usage_sections: dict[str, str] = {}
+
     def get_linked_by(self, _linkage_term: str) -> list[str]:
         """Return a list of all specs linked by this term."""
-        return self._links.get(_linkage_term,[])
+        return self._links.get(_linkage_term, [])
 
     @property
     def is_qualification_related(self) -> bool:
         """Return whether this need has been marked as qualification related."""
         # All use-cases are qualification relevant if they are TCL2 or TCL3
-        if self.is_use_case:
-            return self.tcl_classification in ["TCL2", "TCL3"]
+        if self.variant == "UseCase":
+            return self.tcl in ["TCL2", "TCL3"]
 
         # All requirements and design specs are optionally qualification related
         if self._qualification_related is not None:
             return self._qualification_related
         return False
 
-    @staticmethod
-    def is_detail_heading(node: SyntaxTreeNode) -> str | None:
-        """Return whether this node is a leader for some details."""
-        text = get_text_from_node(node).lower()
-        if "\n" not in text and text.endswith(":"):
-            return text.strip(":").lower()
-        if node.type == "heading":
-            return get_text_from_node(node).lower().strip(":")
-        return None
+    def description_text(self) -> list[str]:
+        """Return a list of lines describing the use-case."""
+        return self.content.get("prologue", [])
 
-    def parse_node(self, node: SyntaxTreeNode) -> None:
-        """Parse a SyntaxTreeNode for common features."""
-        logger.debug("Parsing common features")
-        if value := self.single_line_getter(node, "Safety related:"):
-            self._qualification_related = parse_yes_no(value)
-        if value := self.single_line_getter(node, "TCL relevant:"):
-            self._qualification_related = parse_yes_no(value)
+    def features_text(self) -> list[str]:
+        """Return a list of lines describing the features of the use-case."""
+        return self.content.get("features", [])
 
-    def single_line_getter(self, node: SyntaxTreeNode, expected_prefix: str) -> str | None:
-        """Get the value from a single line field."""
-        text = get_text_from_node(node)
-        if text.startswith(expected_prefix):
-            __, value = text.split(expected_prefix)
-            return value
-        return None
+    def inputs(self) -> str:
+        """Return a list of lines describing the inputs of the use-case."""
+        return self.usage_sections.get("inputs", "")
+
+    def outputs(self) -> str:
+        """Return a list of lines describing the outputs of the use-case."""
+        return self.usage_sections.get("outputs", "")
+
+    def impact_rationale(self) -> list[str]:
+        """Return a list of lines describing the tool impact of the use-case."""
+        return self.content.get("tool_impact", [])
+
+    def detectability_rationale(self) -> list[str]:
+        """Return a list of lines describing the error detectability of the use-case."""
+        return self.content.get("detectability", [])
 
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
-        return [f"Spec {self.name} is of an unknown type."]
+        if self.variant == "UseCase":
+            return self.get_use_case_issues()
+        else:
+            return self.get_spec_issues()
+
+    def get_spec_issues(self) -> list[str]:
+        """Return a list of problems with this spec."""
+        return []
+
+    def get_use_case_issues(self) -> list[str]:
+        """Return a list of problems with this use case."""
+        issues = []
+        if self.impact is None:
+            issues.append("no impact")
+        if self.detectability is None:
+            issues.append("no detectability")
+
+        # usage section check
+        no_usage = [slot for slot in usage_section_map if slot not in self.usage_sections]
+        if no_usage:
+            issues.append(f"{len(no_usage)} no usage: {','.join(no_usage)}")
+
+        # section check
+        no_section = [slot for slot in section_map.values() if slot not in self.content and slot not in ["usage"]]
+        if no_section:
+            issues.append(f"{len(no_section)} no section information for :{','.join(no_section)}")
+
+        if issues:
+            issues = [f"Issues in {self.file_path.name}, {self.name}", *issues]
+        return issues
+
+    @property
+    def tcl(self) -> str | None:
+        """Return the tcl class based on the tool impact and error detectability."""
+        return tcl_map(self.impact, self.detectability)
+
 
 class SpecElementBuilder:
     """Parses documents and build specs based on found structure."""
 
-    def __init__(self, name: str, ordering_id: int, file_path: Path) -> None:
+    def __init__(self, name: str, variant: str, ordering_id: int, file_path: Path) -> None:
         """Construct the basic properties."""
         self.name = name
         self.ordering_id = ordering_id
         self.file_path = file_path
         self.content: defaultdict[str, list[str]] = defaultdict(list)
 
-        self.spec_class = SpecElement(name) # SpecElementBuilder._class_for_header(name)
-        self.spec_element = self.spec_class(
+        self.spec_element = SpecElement(
             self.name,
+            variant,
             self.ordering_id,
             self.file_path,
         )
         self.is_rejected = False
+        self.is_qualification_related = False
 
-    def build(self) -> SpecElementBase:
+    def build(self) -> SpecElement:
         """Build a SpecElementBase from the gathered data."""
         return self.spec_element
 
@@ -105,40 +177,57 @@ class SpecElementBuilder:
         self.content[section_id].append(content)
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
-        """Ask the current spec_element to parse the node."""
-        self.spec_element.parse_node(node)
+        """Parse a SyntaxTreeNode for common features."""
+        logger.debug("Parsing common features")
+        if value := self.single_line_getter(node, "Safety related:"):
+            self.qualification_related = parse_yes_no(value)
+        if value := self.single_line_getter(node, "TCL relevant:"):
+            self.qualification_related = parse_yes_no(value)
+
+    def single_line_getter(self, node: SyntaxTreeNode, expected_prefix: str) -> str | None:
+        """Get the value from a single line field."""
+        text = get_text_from_node(node)
+        if text.startswith(expected_prefix):
+            __, value = text.split(expected_prefix)
+            return value
+        return None
 
 
 class SingleSpecBuilder:
     """Gather information on use-cases and feedback on missing elements."""
 
-    def __init__(self, name: str, ordering_id: int, file_path: Path, title: str) -> None:
+    def __init__(self, name: str, variant: str, ordering_id: int, file_path: Path, title: str) -> None:
         """Construct the basic properties."""
         self.name = name
         self.ordering_id = ordering_id
         self.file_path = file_path
         self.title = title
         self.content: defaultdict[str, list[str]] = defaultdict(list)
+        self.variant = variant
         self.impact: str | None = None
         self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
-        self.needs_fulfilled: list[str] = []
+        self.links: defaultdict[str, list[str]] = defaultdict(list)
 
         self.state = ""
 
-    def build(self) -> UseCase:
-        """Build a UseCase from the gathered data."""
-        return UseCase(
+    def build(self) -> SpecElement:
+        """Build a Spec Element from the gathered data."""
+        element = SpecElement(
             self.name,
+            self.variant,
             self.ordering_id,
             self.file_path,
-            self.title,
-            self.content,
-            self.impact,
-            self.detectability,
-            self.usage_sections,
-            self.needs_fulfilled,
         )
+
+        element.title = self.title
+        element.impact = self.impact
+        element.content = self.content
+        element.impact = self.impact
+        element.detectability = self.detectability
+        element.usage_sections = self.usage_sections
+        element._links = self.links
+        return element
 
     @property
     def location(self) -> str:
@@ -156,8 +245,7 @@ class SingleSpecBuilder:
         """Use the code block or paste it into content."""
         if self.state == "expect_fulfils":
             content = code_block_node.content
-            self.needs_fulfilled.extend(line.strip() for line in content.split())
-            logger.debug("%s Adding needs %s", self.name, self.needs_fulfilled)
+            self.links["fulfils"].extend(line.strip() for line in content.split())
             self.state = ""
         else:
             self.content[section_id].append(code_block_node.content)
@@ -184,8 +272,8 @@ class SpecParser:
         self.last_h3 = ""
         self.num_cases = 0
 
-        self.builder_stack: list[tuple[int, SingleUseCaseBuilder]] = []
-        self.builder: SingleUseCaseBuilder | None = None
+        self.builder_stack: list[tuple[int, SingleSpecBuilder]] = []
+        self.builder: SingleSpecBuilder | None = None
         self.current_spec_level = 0
         self.used_current_spec_level = False
         self.current_use_case = None
@@ -213,8 +301,8 @@ class SpecParser:
         if section is not None:
             self.in_section = section
 
-        #if self._is_spec_heading(node):
-            #self.begin_spec()
+        # if self._is_spec_heading(node):
+        # self.begin_spec()
 
     @staticmethod
     def is_spec_heading(_header_text: str) -> bool:
@@ -234,7 +322,9 @@ class SpecParser:
         if self.header_stack[-1] is None:
             msg = f"Invalid header stack: {self.header_stack=}"
             raise ValueError(msg)
-        self.builder = SingleUseCaseBuilder(use_case_name, self.num_cases, self.from_file, self.header_stack[-1])
+        self.builder = SingleSpecBuilder(
+            use_case_name, "UseCase", self.num_cases, self.from_file, self.header_stack[-1]
+        )
         self.current_spec_level = self.last_heading_level
 
         while self.builder_stack and self.builder_stack[-1][0] >= self.current_spec_level:
@@ -313,6 +403,7 @@ def _parse_syntax_tree_to_spec_elements(
     num_specs = 0
     element_prefix = project_prefix.upper() + "_"
 
+    spec_element_builders: list[SpecElementBuilder] = []
     builder = None
 
     for node in tree_root.children:
@@ -325,7 +416,7 @@ def _parse_syntax_tree_to_spec_elements(
                 prefix, *postfix = spec_name.split(element_prefix)
                 spec_heading_level = node.tag
                 num_specs += 1
-                builder = SpecElementBuilder(spec_name, num_specs, from_file)
+                builder = SpecElementBuilder(spec_name, "Spec", num_specs, from_file)
                 if prefix != "REJECTED_":
                     spec_element_builders.append(builder)
                 continue
@@ -339,3 +430,42 @@ def _parse_syntax_tree_to_spec_elements(
                 if builder is not None:
                     builder.section_add_paragraph("content", text_content)
     return [spec.build() for spec in spec_element_builders]
+
+
+# utility functions
+
+
+def _list_item_is_variant(parts: list[SyntaxTreeNode], variant: str) -> bool:
+    """Return whether the list item is this variant."""
+    try:
+        title_node = parts[1]
+        if title_node.type != "strong":
+            return False
+        if title_node.children[0].content == variant:
+            return True
+    except IndexError:
+        logger.warning("Malformed bullet_list item: %s", parts)
+        return False
+    return False
+
+
+def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
+    """Return the content of the bullet_list item for the specified variant."""
+    if node.type != "bullet_list":
+        msg = f"Node is wrong type: {node.type}"
+        raise TypeError(msg)
+    for bullet_point in node.children:
+        title, content = split_list_item(bullet_point)
+        if title == variant:
+            return content
+    return ""
+
+
+def _is_detail_heading(node: SyntaxTreeNode) -> str | None:
+    """Return whether this node is a leader for some details."""
+    text = get_text_from_node(node).lower()
+    if "\n" not in text and text.endswith(":"):
+        return text.strip(":").lower()
+    if node.type == "heading":
+        return get_text_from_node(node).lower().strip(":")
+    return None
