@@ -3,7 +3,6 @@
 from pathlib import Path
 
 from spicy.spec import get_elements_from_files
-from spicy.spec.parser import parse_syntax_tree_to_spec_elements
 
 
 def test_valid_use_case(test_data_path: Path) -> None:

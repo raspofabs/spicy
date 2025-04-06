@@ -7,8 +7,6 @@ from pathlib import Path
 from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, split_list_item
 from spicy.use_cases.mappings import tcl_map
 
-from .spec_element_base import SpecElementBase
-
 logger = logging.getLogger("SpecParser")
 
 FEATURES_TITLE = "Features, functions, and technical properties"
@@ -109,8 +107,7 @@ class SpecElement:
         """Get issues with this spec."""
         if self.variant == "UseCase":
             return self.get_use_case_issues()
-        else:
-            return self.get_spec_issues()
+        return self.get_spec_issues()
 
     def get_spec_issues(self) -> list[str]:
         """Return a list of problems with this spec."""
@@ -323,7 +320,11 @@ class SpecParser:
             msg = f"Invalid header stack: {self.header_stack=}"
             raise ValueError(msg)
         self.builder = SingleSpecBuilder(
-            use_case_name, "UseCase", self.num_cases, self.from_file, self.header_stack[-1]
+            use_case_name,
+            "UseCase",
+            self.num_cases,
+            self.from_file,
+            self.header_stack[-1],
         )
         self.current_spec_level = self.last_heading_level
 
