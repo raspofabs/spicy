@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class SpecElementBase:
-    """Gather information on use-cases and feedback on missing elements."""
+    """Base class for all spec element types."""
 
     def __init__(
         self,
@@ -33,7 +33,7 @@ class SpecElementBase:
 
     @property
     def is_qualification_related(self) -> bool:
-        """Return whether this need has been marked as safety related."""
+        """Return whether this need has been marked as qualification related."""
         if self._qualification_related is not None:
             return self._qualification_related
         return False
