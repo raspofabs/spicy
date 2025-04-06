@@ -6,7 +6,7 @@ from pathlib import Path
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
-from .spec_element import SpecElement
+from .spec_element import SpecElementBase
 from .spec_software_component import SoftwareComponent
 from .spec_software_requirement import SoftwareRequirement
 from .spec_software_unit import SoftwareUnit
@@ -58,8 +58,8 @@ class SpecElementBuilder:
         )
         self.is_rejected = False
 
-    def build(self) -> SpecElement:
-        """Build a SpecElement from the gathered data."""
+    def build(self) -> SpecElementBase:
+        """Build a SpecElementBase from the gathered data."""
         return self.spec_element
 
     @property
@@ -80,7 +80,7 @@ class SpecElementBuilder:
         project_prefix: str,
         tree_root: SyntaxTreeNode,
         from_file: Path,
-    ) -> list[SpecElement]:
+    ) -> list[SpecElementBase]:
         """Parse a markdown-it node tree into a list of spec elements."""
         spec_element_builders: list[SpecElementBuilder] = []
         spec_heading_level = "h1"  # default heading is top level
@@ -119,4 +119,4 @@ class SpecElementBuilder:
         for spec_class in SpecElementBuilder.SPEC_CLASSES:
             if spec_class.is_spec_heading(name):
                 return spec_class
-        return SpecElement
+        return SpecElementBase

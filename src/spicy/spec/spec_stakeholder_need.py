@@ -5,12 +5,12 @@ from pathlib import Path
 
 from spicy.md_read import SyntaxTreeNode
 
-from .spec_element import SpecElement
+from .spec_element import SpecElementBase
 
 logger = logging.getLogger(__name__)
 
 
-class StakeholderNeed(SpecElement):
+class StakeholderNeed(SpecElementBase):
     """Handles stakeholder needs parsing."""
 
     def __init__(self, name: str, ordering: int, from_file: Path) -> None:

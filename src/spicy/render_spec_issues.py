@@ -5,7 +5,7 @@ from collections import Counter
 from collections.abc import Callable
 from functools import partial
 
-from .spec import SpecElement
+from .spec import SpecElementBase
 from .spec.builder import (
     SoftwareComponent,
     SoftwareRequirement,
@@ -38,7 +38,7 @@ class LinkageRequirement:
         self.linkage_names = (forward_name, backward_name)
         self.linkage_requirement = linkage_requiremnt
 
-    def fulfils(self, other_spec_instance: SpecElement) -> list[str]:
+    def fulfils(self, other_spec_instance: SpecElementBase) -> list[str]:
         """Return the fulfilment data from the other spec."""
         return other_spec_instance.get_linked(self.linkage_names[1])
 
@@ -48,7 +48,7 @@ class LinkageRequirement:
 
 
 def get_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     considered_case_class: type,
     linkages: dict,
 ) -> list[str]:
@@ -74,7 +74,7 @@ def get_linkage_issues(
         for other_spec in other_specs:
             fulfilment = set(link.fulfils(other_spec))
             if other_spec.safety_case:
-                relevant_considered: list[SpecElement] = list(filter(None, [spec_map.get(a) for a in fulfilment]))
+                relevant_considered: list[SpecElementBase] = list(filter(None, [spec_map.get(a) for a in fulfilment]))
                 if not any(spec.is_qualification_related for spec in relevant_considered):
                     issues.append(f"{o_name} {other_spec.name} is safety related, but none of it's {c_name} links are:")
                     issues.extend(f"\t{spec.name}" for spec in relevant_considered)
@@ -90,8 +90,15 @@ def get_linkage_issues(
     return issues
 
 
+def render_issues_with_elements(
+    _spec_elments: list[SpecElementBase],
+    _render_function: Callable | None = None,
+) -> bool:
+    """Render unresolved issues for each Spec Element."""
+    pass
+
 def render_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     use_cases: list[UseCase],
     render_function: Callable | None = None,
 ) -> bool:
@@ -150,7 +157,7 @@ def render_issues(
 
 
 def render_use_case_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     use_cases: list[UseCase],
     render_function: Callable,
 ) -> bool:
@@ -167,7 +174,7 @@ def render_use_case_linkage_issues(
     for use_case in use_cases:
         fulfilment = set(use_case.fulfils())
         if use_case.safety_case:
-            uc_needs: list[SpecElement] = list(filter(None, [stakeholder_needs_map.get(a) for a in fulfilment]))
+            uc_needs: list[SpecElementBase] = list(filter(None, [stakeholder_needs_map.get(a) for a in fulfilment]))
             if not any(need.is_qualification_related for need in uc_needs):
                 any_errors = True
                 render_function(f"Use case {use_case.name} is safety related, but none of it's needs are:")
@@ -189,7 +196,7 @@ def render_use_case_linkage_issues(
 
 
 def render_stakeholder_requirement_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     render_function: Callable,
 ) -> bool:
     """Check all stakeholder needs are refined into at least one stakeholder requirement."""
@@ -224,7 +231,7 @@ def render_stakeholder_requirement_linkage_issues(
 
 
 def render_system_requirement_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     render_function: Callable,
 ) -> bool:
     """Check all stakeholder requirements are fulfilled by at least one system requirement."""
@@ -259,7 +266,7 @@ def render_system_requirement_linkage_issues(
 
 
 def render_system_element_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     render_function: Callable,
 ) -> bool:
     """Check all system requirements are captured by at least one system element."""
@@ -287,7 +294,7 @@ def render_system_element_linkage_issues(
 
 
 def render_software_requirement_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     render_function: Callable,
 ) -> bool:
     """Check all system elements which are software elements derive to at least one software requirement."""
@@ -315,7 +322,7 @@ def render_software_requirement_linkage_issues(
 
 
 def render_software_component_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     _render_function: Callable,
 ) -> bool:
     """Check all software requirements are satisfied by at least one software component."""
@@ -326,7 +333,7 @@ def render_software_component_linkage_issues(
 
 
 def render_software_integration_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     _render_function: Callable,
 ) -> bool:
     """Check all software components have integration tests."""
@@ -337,7 +344,7 @@ def render_software_integration_linkage_issues(
 
 
 def render_software_qualification_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     _render_function: Callable,
 ) -> bool:
     """Check all software requirements have qualification tests."""
@@ -348,7 +355,7 @@ def render_software_qualification_linkage_issues(
 
 
 def render_software_unit_linkage_issues(
-    _specs: list[SpecElement],
+    _specs: list[SpecElementBase],
     _render_function: Callable,
 ) -> bool:
     """Check all software components have at least one software unit design."""
@@ -356,7 +363,7 @@ def render_software_unit_linkage_issues(
 
 
 def render_system_integration_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     render_function: Callable,
 ) -> bool:
     """Check all system elements have integration tests."""
@@ -386,7 +393,7 @@ def render_system_integration_linkage_issues(
 
 
 def render_system_qualification_linkage_issues(
-    specs: list[SpecElement],
+    specs: list[SpecElementBase],
     render_function: Callable,
 ) -> bool:
     """Check all system requirements have system qualification tests."""
@@ -428,8 +435,8 @@ def just(checked_class: type) -> Callable:
 
 
 def check_safety(
-    safe_spec: SpecElement,
-    other_specs: list[SpecElement],
+    safe_spec: SpecElementBase,
+    other_specs: list[SpecElementBase],
     fulfilment: Callable,
 ) -> tuple[bool, list[str]]:
     """Check and return whether there are safety linkage issues."""

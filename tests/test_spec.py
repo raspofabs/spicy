@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from spicy.spec import SpecElement, gather_spec_elements
+from spicy.spec import SpecElementBase, gather_spec_elements
 from spicy.spec.builder import (
     SoftwareRequirement,
     StakeholderNeed,
@@ -20,7 +20,7 @@ def test_simple_spec(test_data_path: Path) -> None:
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
     spec_element = spec_list[0]
-    assert issubclass(type(spec_element), SpecElement)
+    assert issubclass(type(spec_element), SpecElementBase)
 
     assert spec_element.name == "TD_STK_NEED_get_a_cookie"
 
@@ -32,9 +32,9 @@ def test_complete_spec(test_data_path: Path) -> None:
     assert len(spec_list) > 0
 
     first_spec_element = spec_list[0]
-    assert issubclass(type(first_spec_element), SpecElement)
+    assert issubclass(type(first_spec_element), SpecElementBase)
 
-    assert all(issubclass(type(x), SpecElement) for x in spec_list)
+    assert all(issubclass(type(x), SpecElementBase) for x in spec_list)
 
     assert any(x.name == "TD_STK_NEED_get_a_cookie" for x in spec_list)
 

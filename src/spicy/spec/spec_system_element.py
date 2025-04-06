@@ -5,12 +5,12 @@ from pathlib import Path
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, read_bullet_list
 
-from .spec_element import SpecElement
+from .spec_element import SpecElementBase
 
 logger = logging.getLogger(__name__)
 
 
-class SystemElement(SpecElement):
+class SystemElement(SpecElementBase):
     """Handles system architecture parsing."""
 
     def __init__(self, name: str, ordering: int, from_file: Path) -> None:

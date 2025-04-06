@@ -8,7 +8,7 @@ from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no
 logger = logging.getLogger(__name__)
 
 
-class SpecElement:
+class SpecElementBase:
     """Gather information on use-cases and feedback on missing elements."""
 
     def __init__(
