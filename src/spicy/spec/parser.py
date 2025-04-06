@@ -47,6 +47,8 @@ class SpecElement:
         variant: str,
         ordering_id: int,
         file_path: Path,
+        *,
+        links: defaultdict[str, list[str]] | None = None,
     ) -> None:
         """Construct the basic properties."""
         self.name = name
@@ -55,7 +57,7 @@ class SpecElement:
         self.file_path = file_path
 
         self._qualification_related: bool | None = None
-        self._links: defaultdict[str, list[str]] = defaultdict(list)
+        self._links = links or defaultdict(list)
 
         self.title = ""
         self.content: defaultdict[str, list[str]] = defaultdict(list)
@@ -215,6 +217,7 @@ class SingleSpecBuilder:
             self.variant,
             self.ordering_id,
             self.file_path,
+            links=self.links,
         )
 
         element.title = self.title
@@ -223,7 +226,6 @@ class SingleSpecBuilder:
         element.impact = self.impact
         element.detectability = self.detectability
         element.usage_sections = self.usage_sections
-        element._links = self.links
         return element
 
     @property
@@ -261,6 +263,8 @@ class SpecParser:
     def __init__(self, from_file: Path, project_prefix: str) -> None:
         """Construct the basic properties."""
         self.from_file = from_file
+        self.project_prefix = project_prefix
+
         self.spec_builders: list[SingleSpecBuilder] = []
         self.header_stack: list[str | None] = [None] * 5
         self.last_heading_level = 0
