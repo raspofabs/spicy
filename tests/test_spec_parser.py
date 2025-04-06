@@ -10,9 +10,9 @@ def test_valid_use_case(test_data_path: Path) -> None:
     spec_element_list = get_elements_from_files("CDU", [test_data_path / "use_cases" / "01_simple_valid.md"])
 
     assert isinstance(spec_element_list, list)
-    assert len(spec_element_list) > 0
+    assert len(spec_element_list) == 1
 
-    use_case = next(case for case in spec_element_list if case.name == "FEAT_COOKIE_ORDERING_PAGE")
+    use_case = spec_element_list[0]
 
     assert use_case.name == "FEAT_COOKIE_ORDERING_PAGE"
     assert use_case.description_text()
