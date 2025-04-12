@@ -272,8 +272,9 @@ class SpecParser:
         self.last_h2 = ""
         self.last_h3 = ""
         self.num_cases = 0
+        self.parsed_spec_count = 0
 
-        self.builder_stack: list[tuple[int, SingleSpecBuilder]] = []
+        self.builder_stack: dict[tuple[int, SingleSpecBuilder]] = {}
         self.builder: SingleSpecBuilder | None = None
         self.current_spec_level = 0
         self.used_current_spec_level = False
@@ -281,15 +282,43 @@ class SpecParser:
         self.in_section = "none"
         self.issues: list[str] = []
 
+    @property
+    def next_ordering_id(self) -> int:
+        self.parsed_spec_count += 1
+        return self.parsed_spec_count - 1
+
+    def _close_section(self, level: int):
+        if self.header_stack[level] is not None:
+            if builder := self.builder_stack.get(level) is not None:
+                builder.close()
+        self.header_stack[level] = None
+
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
-        level = int(node.tag[1])
-        for i in range(level):
+        # figure out which heading level we're at
+        level = int(node.tag[1]) - 1
+        # clear all levels below this level
+        for i in reversed(range(level, 5)):
+            self._close_section(i)
             self.header_stack[i] = None
-        content = node.children[0].children[0].content
-        self.header_stack[i - 1] = content
+        content = get_text_from_node(node)#node.children[0].children[0].content
+        self.header_stack[level] = content
         self.last_header = content
         self.last_heading_level = level
         self.used_current_spec_level = False
+
+        if self.is_spec_heading(content):
+            self.used_current_spec_level = True
+            self.current_spec_level = level
+            name = content
+            variant = "Spec"
+            title = content
+            builder = SingleSpecBuilder(
+                    name,
+                    variant,
+                    self.next_ordering_id,
+                    self.from_file,
+                    title)
+            self.builder_stack[level] = builder
 
         if node.tag == "h2":
             self.used_h2 = False
@@ -305,11 +334,9 @@ class SpecParser:
         # if self._is_spec_heading(node):
         # self.begin_spec()
 
-    @staticmethod
-    def is_spec_heading(_header_text: str) -> bool:
+    def is_spec_heading(self, header_text: str) -> bool:
         """Return whether the header_node relates to this class of spec."""
-        # Always False for base class
-        return False
+        return header_text.startswith(self.project_prefix)
 
     @staticmethod
     def _is_use_case(node: SyntaxTreeNode) -> bool:
@@ -320,7 +347,7 @@ class SpecParser:
         use_case_name = node.content.strip().split("ID: ")[1]
         self.in_section = "prologue"
         self.num_cases += 1
-        if self.header_stack[-1] is None:
+        if self.header_stack[self.last_heading_level] is None:
             msg = f"Invalid header stack: {self.header_stack=}"
             raise ValueError(msg)
         self.builder = SingleSpecBuilder(
@@ -328,16 +355,20 @@ class SpecParser:
             "UseCase",
             self.num_cases,
             self.from_file,
-            self.header_stack[-1],
+            self.last_header,
         )
         self.current_spec_level = self.last_heading_level
+        self.used_current_spec_level = True
 
-        while self.builder_stack and self.builder_stack[-1][0] >= self.current_spec_level:
-            self.builder_stack.pop()
-        self.builder_stack.append((self.current_spec_level, self.builder))
+        builders_to_delete = [k for k in self.builder_stack if k >= self.current_spec_level]
+        for level in builders_to_delete:
+            del self.builder_stack[level]
+        self.builder_stack[self.current_spec_level] = self.builder
+
         if self.used_current_spec_level:
             self.issues.append(f"{self.builder.location} reuses {self.header_stack[-1]} in {self.from_file}")
         self.used_current_spec_level = True
+
         self.used_h2 = True
         self.spec_builders.append(self.builder)
 

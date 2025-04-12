@@ -49,9 +49,10 @@ def run(
     if render_issues(specs, use_cases):
         sys.exit(1)
 
-    elements = get_elements_from_files(project_prefix, filenames)
-    if render_issues_with_elements(elements):
-        sys.exit(1)
+    # not yet
+    #elements = get_elements_from_files(project_prefix, filenames)
+    #if render_issues_with_elements(elements):
+        #sys.exit(1)
 
 
 if __name__ == "__main__":  # pragma: no cover

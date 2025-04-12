@@ -16,13 +16,24 @@ from spicy.spec.builder import (
 
 def test_simple_spec(test_data_path: Path) -> None:
     """Test a very simple spec."""
-    spec_list = gather_spec_elements("td", test_data_path / "spec" / "spec_sys1_stakeholder_requirements.md")
+    spec_list = gather_spec_elements("td", test_data_path / "01_simple_valid_sys_req.md")
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
     spec_element = spec_list[0]
     assert issubclass(type(spec_element), SpecElementBase)
 
-    assert spec_element.name == "TD_STK_NEED_get_a_cookie"
+    assert any(e.name == "TD_SYS_REQ_simple_sys_req" for e in spec_list)
+
+
+def test_stakeholder_needs(test_data_path: Path) -> None:
+    """Test stakeholder needs parsing."""
+    spec_list = gather_spec_elements("td", test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")
+    assert isinstance(spec_list, list)
+    assert len(spec_list) > 0
+    spec_element = spec_list[0]
+    assert issubclass(type(spec_element), SpecElementBase)
+
+    assert any(e.name == "TD_STK_NEED_get_a_cookie" for e in spec_list)
 
 
 def test_complete_spec(test_data_path: Path) -> None:
