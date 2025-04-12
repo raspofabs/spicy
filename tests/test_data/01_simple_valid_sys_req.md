@@ -10,4 +10,4 @@ TQP relevant: yes
 
 Verification Criteria:
 
-- Check the order list on the operator terminal to verify ordering is successful.
+- Check we have a simple sys req

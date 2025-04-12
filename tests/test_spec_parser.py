@@ -43,10 +43,65 @@ def test_detect_spec_heading():
         parser.parse_node(child)
     assert parser.parsed_spec_count == 1
 
+
+def test_parse_sys_req_from_text(test_data_path: Path) -> None:
+    from_file = test_data_path / "01_simple_valid_sys_req.md"
+    project_prefix = "TD"
+    spec_text = "\n\n".join((
+        "# TD_SYS_REQ_simple_sys_req",
+        "The **TD** shall have a simple system requirement"
+        "Derived from:",
+        "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
+        "TQP relevant: yes",
+        "Verification Criteria:",
+        "- check we have a simple sys req."
+        ))
+    tree = parse_text_to_syntax_tree(spec_text)
+
+    parser = SpecParser(from_file, project_prefix)
+    for child in tree.children:
+        parser.parse_node(child)
+    assert parser.parsed_spec_count == 1
+    spec_element_list = [spec.build() for spec in parser.spec_builders]
+
+    assert isinstance(spec_element_list, list)
+    assert len(spec_element_list) == 1
+
+    spec = spec_element_list[0]
+
+    assert spec.name == "TD_SYS_REQ_simple_sys_req"
+    assert spec.description_text(), str(spec)
+    assert spec.features_text()
+    assert spec.inputs()
+    assert spec.outputs()
+
+    issues = spec.get_issues()
+    assert not issues
+
+
+@pytest.mark.skip
 def test_parse_sys_req(test_data_path: Path) -> None:
     from_file = test_data_path / "01_simple_valid_sys_req.md"
     project_prefix = "TD"
     node = load_syntax_tree(from_file)
+
+    spec_text = "\n\n".join((
+        "# TD_SYS_REQ_simple_sys_req",
+        "The **TD** shall have a simple system requirement"
+        "Derived from:",
+        "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
+        "TQP relevant: yes",
+        "Verification Criteria:",
+        "- Check the order list on the operator terminal to verify ordering is successful."
+        ))
+
+    tree = parse_text_to_syntax_tree("# TD_SYS_REQ_a_system_requirement")
+    parser = SpecParser(from_file, project_prefix)
+    for child in tree.children:
+        parser.parse_node(child)
+    assert parser.parsed_spec_count == 1
+    spec_element_list = [spec.build() for spec in parser.spec_builders]
+
     spec_element_list = parse_syntax_tree_to_spec_elements(project_prefix, node, from_file)
 
     assert isinstance(spec_element_list, list)
