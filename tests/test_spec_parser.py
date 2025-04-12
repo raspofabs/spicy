@@ -5,8 +5,7 @@ from pathlib import Path
 
 from spicy.spec import get_elements_from_files
 from spicy.spec.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
-from spicy.md_read import load_syntax_tree
-
+from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
 
 def test_parse_use_case(test_data_path: Path) -> None:
     from_file = test_data_path / "use_cases" / "01_simple_valid.md"
@@ -36,6 +35,14 @@ def test_parse_use_case(test_data_path: Path) -> None:
     assert not issues
 
 
+def test_detect_spec_heading():
+    parser = SpecParser("my_file.md", "TD")
+    assert parser.parsed_spec_count == 0
+    tree_part = parse_text_to_syntax_tree("# TD_SYS_REQ_a_system_requirement")
+    for child in tree_part.children:
+        parser.parse_node(child)
+    assert parser.parsed_spec_count == 1
+
 def test_parse_sys_req(test_data_path: Path) -> None:
     from_file = test_data_path / "01_simple_valid_sys_req.md"
     project_prefix = "TD"
@@ -48,7 +55,7 @@ def test_parse_sys_req(test_data_path: Path) -> None:
     spec = spec_element_list[0]
 
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
-    assert spec.description_text()
+    assert spec.description_text(), str(spec)
     assert spec.features_text()
     assert spec.inputs()
     assert spec.outputs()

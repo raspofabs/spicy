@@ -65,6 +65,17 @@ class SpecElement:
         self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
 
+    @property
+    def all_content(self) -> str:
+        return ", ".join((
+            f"{k}:{v}" for k, v in self.content.items()))
+
+    def __str__(self) -> str:
+        return " ".join((
+            f"{self.variant}:{self.name}({self.file_path}:{self.ordering_id})",
+            f"{self.title} ({len(self.content)})[[{self.all_content}]]"
+            ))
+
     def get_linked_by(self, _linkage_term: str) -> list[str]:
         """Return a list of all specs linked by this term."""
         return self._links.get(_linkage_term, [])
@@ -319,6 +330,8 @@ class SpecParser:
                     self.from_file,
                     title)
             self.builder_stack[level] = builder
+            self.spec_builders.append(builder)
+            self.in_section = "prologue"
 
         if node.tag == "h2":
             self.used_h2 = False
