@@ -1,5 +1,6 @@
 """Test the use-cases parser."""
 
+import logging
 import pytest
 from pathlib import Path
 
@@ -44,7 +45,7 @@ def test_detect_spec_heading():
     assert parser.parsed_spec_count == 1
 
 
-def test_parse_sys_req_from_text(test_data_path: Path) -> None:
+def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     from_file = test_data_path / "01_simple_valid_sys_req.md"
     project_prefix = "TD"
     spec_text = "\n\n".join((
@@ -59,8 +60,9 @@ def test_parse_sys_req_from_text(test_data_path: Path) -> None:
     tree = parse_text_to_syntax_tree(spec_text)
 
     parser = SpecParser(from_file, project_prefix)
-    for child in tree.children:
-        parser.parse_node(child)
+    with caplog.at_level(logging.DEBUG):
+        for child in tree.children:
+            parser.parse_node(child)
     assert parser.parsed_spec_count == 1
     spec_element_list = [spec.build() for spec in parser.spec_builders]
 
@@ -68,8 +70,13 @@ def test_parse_sys_req_from_text(test_data_path: Path) -> None:
     assert len(spec_element_list) == 1
 
     spec = spec_element_list[0]
-
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
+
+    assert "adding to section" in caplog.text
+    assert caplog.records
+    r, *recs = caplog.records
+    #assert r.name,level,msg,args == 5
+
     assert spec.description_text(), str(spec)
     assert spec.features_text()
     assert spec.inputs()

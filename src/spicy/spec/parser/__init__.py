@@ -52,7 +52,6 @@ class SingleSpecBuilder:
         """Return a string for the location of the use case."""
         return f"{self.file_path}:{self.ordering_id}:{self.name}"
 
-
     def section_add_paragraph(self, section_id: str, content: str) -> None:
         """Append content to section information."""
         if content.startswith("Fulfils:"):
@@ -89,8 +88,6 @@ class SpecParser:
         self.header_stack: list[str | None] = [None] * 5
         self.last_heading_level = 0
         self.last_header = ""
-        self.last_h2 = ""
-        self.last_h3 = ""
         self.num_cases = 0
         self.parsed_spec_count = 0
 
@@ -140,6 +137,7 @@ class SpecParser:
             name = content.strip()
             variant = "Spec"
             title = content
+            logger.debug("Found a spec %s", name)
             builder = SingleSpecBuilder(
                     name,
                     variant,
@@ -152,20 +150,11 @@ class SpecParser:
             if prefix != "REJECTED_":
                 self.spec_builders.append(builder)
             self.in_section = "prologue"
-
-        if node.tag == "h2":
-            self.used_h2 = False
-            self.last_h2 = content
-        if node.tag == "h3":
-            self.last_h3 = content
-
-        # enable tracking content if the section name matches
-        section = section_map.get(self.last_header, self.in_section)
-        if section is not None:
-            self.in_section = section
-
-        # if self._is_spec_heading(node):
-        # self.begin_spec()
+        else:
+            # enable tracking content if the section name matches
+            section = section_map.get(self.last_header, self.in_section)
+            if section is not None:
+                self.in_section = section
 
     def is_spec_heading(self, header_text: str) -> bool:
         """Return whether the header_node relates to this class of spec."""
@@ -202,12 +191,12 @@ class SpecParser:
             self.issues.append(f"{self.builder.location} reuses {self.header_stack[-1]} in {self.from_file}")
         self.used_current_spec_level = True
 
-        self.used_h2 = True
         self.spec_builders.append(self.builder)
 
     def _handle_paragraph(self, node: SyntaxTreeNode) -> None:
         text_content = get_text_from_node(node)
         if self.builder is not None:
+            logger.debug("builder add %s -> %s", self.in_section, text_content)
             self.builder.section_add_paragraph(self.in_section, text_content)
 
     def _handle_bullet_list(self, node: SyntaxTreeNode) -> None:
@@ -244,24 +233,34 @@ class SpecParser:
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a single node."""
-        logger.debug("%s", node.pretty())
-        if node.type == "heading":
-            self._handle_heading(node)
-        if self._is_use_case(node):
-            self._handle_use_case_node(node)
-        elif self.builder is not None:
-            if node.type == "paragraph":
-                self._handle_paragraph(node)
-            elif node.type == "bullet_list":
-                self._handle_bullet_list(node)
-            elif node.type == "code_block":
-                self._handle_code_block(node)
         # Parse a SyntaxTreeNode for common features.
         logger.debug("Parsing common features")
         if value := self.single_line_getter(node, "Safety related:"):
             self.qualification_related = parse_yes_no(value)
+            return
         if value := self.single_line_getter(node, "TCL relevant:"):
             self.qualification_related = parse_yes_no(value)
+            return
+
+        if self._is_use_case(node):
+            logger.debug("Handle use case %s", node.pretty())
+            self._handle_use_case_node(node)
+            return
+
+        if node.type == "heading":
+            logger.debug("Handle heading %s", node.pretty())
+            self._handle_heading(node)
+
+        if self.builder is not None:
+            if node.type == "paragraph":
+                logger.debug("Handle paragraph %s", node.pretty())
+                self._handle_paragraph(node)
+            elif node.type == "bullet_list":
+                logger.debug("Handle bullet-list %s", node.pretty())
+                self._handle_bullet_list(node)
+            elif node.type == "code_block":
+                logger.debug("Handle code-block %s", node.pretty())
+                self._handle_code_block(node)
 
 
 def parse_syntax_tree_to_spec_elements(project_prefix: str, node: SyntaxTreeNode, from_file: Path) -> list[SpecElement]:
