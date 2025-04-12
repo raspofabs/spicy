@@ -110,7 +110,7 @@ class SpecParser:
     def _close_section(self, level: int):
         if self.header_stack[level] is not None:
             if builder := self.builder_stack.get(level) is not None:
-                builder.close()
+                del self.builder_stack[level]
         self.header_stack[level] = None
 
     def single_line_getter(self, node: SyntaxTreeNode, expected_prefix: str) -> str | None:
@@ -124,7 +124,7 @@ class SpecParser:
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
         # figure out which heading level we're at
         level = int(node.tag[1]) - 1
-        # clear all levels below this level
+        # clear all levels below this level (use max key from header_stack)
         for i in reversed(range(level, 5)):
             self._close_section(i)
             self.header_stack[i] = None
