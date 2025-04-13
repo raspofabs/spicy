@@ -8,6 +8,7 @@ from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, spli
 from spicy.use_cases.mappings import tcl_map
 from .spec_element import SpecElement
 from .use_case_constants import section_map, usage_section_map, TOOL_IMPACT_CLASS, DETECTABILITY_CLASS
+from .spec_utils import spec_name_to_variant
 
 logger = logging.getLogger("SpecParser")
 
@@ -135,7 +136,7 @@ class SpecParser:
             self.used_current_spec_level = True
             self.current_spec_level = level
             name = content.strip()
-            variant = "Spec"
+            variant = spec_name_to_variant(name) or "Spec"
             title = content
             logger.debug("Found a spec %s", name)
             builder = SingleSpecBuilder(
@@ -144,6 +145,7 @@ class SpecParser:
                     self.next_ordering_id,
                     self.from_file,
                     title)
+            self.builder = builder
             self.builder_stack[level] = builder
             prefix, *postfix = name.split(self.project_prefix)
             # don't add to list if it's a rejected spec
@@ -234,11 +236,18 @@ class SpecParser:
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a single node."""
         # Parse a SyntaxTreeNode for common features.
-        logger.debug("Parsing common features")
+        logger.debug("Handle %s: %s", node.type, node.pretty())
+
         if value := self.single_line_getter(node, "Safety related:"):
+            logger.debug("Parsed safety related")
             self.qualification_related = parse_yes_no(value)
             return
         if value := self.single_line_getter(node, "TCL relevant:"):
+            logger.debug("Parsed TCL related")
+            self.qualification_related = parse_yes_no(value)
+            return
+        if value := self.single_line_getter(node, "TQP relevant:"):
+            logger.debug("Parsed TQP related")
             self.qualification_related = parse_yes_no(value)
             return
 

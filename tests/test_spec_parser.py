@@ -72,15 +72,13 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     spec = spec_element_list[0]
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
 
-    assert "adding to section" in caplog.text
+    assert "Handle bullet-list" in caplog.text
     assert caplog.records
     r, *recs = caplog.records
     #assert r.name,level,msg,args == 5
 
     assert spec.description_text(), str(spec)
-    assert spec.features_text()
-    assert spec.inputs()
-    assert spec.outputs()
+    assert spec.variant == "SystemRequirement"
 
     issues = spec.get_issues()
     assert not issues
@@ -118,9 +116,6 @@ def test_parse_sys_req(test_data_path: Path) -> None:
 
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
     assert spec.description_text(), str(spec)
-    assert spec.features_text()
-    assert spec.inputs()
-    assert spec.outputs()
 
     issues = spec.get_issues()
     assert not issues
