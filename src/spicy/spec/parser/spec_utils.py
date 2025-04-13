@@ -24,3 +24,14 @@ def spec_name_to_variant(name: str) -> str | None:
         if comparison_string.startswith(variant_string):
             return variant
     return None
+
+def section_name_to_key(section_name: str) -> str | None:
+    """Return a proper key for the section name or None."""
+    mapping = {
+        "Safety related": "qualification_related",
+        "Qualification related": "qualification_related",
+        "TQP related": "qualification_related",
+        "TCL related": "qualification_related",
+        "verification criteria": "verification_criteria",
+    }
+    return mapping.get(section_name.lower())

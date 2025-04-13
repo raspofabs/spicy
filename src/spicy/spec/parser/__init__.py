@@ -8,7 +8,7 @@ from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, spli
 from spicy.use_cases.mappings import tcl_map
 from .spec_element import SpecElement
 from .use_case_constants import section_map, usage_section_map, TOOL_IMPACT_CLASS, DETECTABILITY_CLASS
-from .spec_utils import spec_name_to_variant
+from .spec_utils import spec_name_to_variant, section_name_to_key
 
 logger = logging.getLogger("SpecParser")
 
@@ -72,10 +72,14 @@ class SingleSpecBuilder:
         else:
             self.content[section_id].append(code_block_node.content)
 
-    def read_usage_bullets(self, usage_list: SyntaxTreeNode) -> None:
+    def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
+        """Consume the bullet list and store in content."""
+        self.content[section].append(_get_bullet_points(bullet_list))
+
+    def read_usage_bullets(self, bullet_list: SyntaxTreeNode) -> None:
         """Consume the usage list and create the usage slot data."""
         for slot, lookup in usage_section_map.items():
-            slot_content = _get_usage_subsection(usage_list, lookup)
+            slot_content = _get_usage_subsection(bullet_list, lookup)
             if slot_content:
                 self.usage_sections[slot] = slot_content
 
@@ -205,10 +209,11 @@ class SpecParser:
     def _handle_paragraph(self, node: SyntaxTreeNode) -> None:
         text_content = get_text_from_node(node)
         if (section_name := looks_like_non_sticky_section(text_content)) is not None:
-            logger.debug("looks like non-sticky section %s", section_name)
-            self.in_section = section_name
+            section_key = section_name_to_key(section_name)
+            logger.debug("looks like non-sticky section %s -> %s", section_name, section_key)
+            self.in_section = section_key
             self.section_is_sticky = False
-        if self.builder is not None:
+        elif self.builder is not None:
             logger.debug("builder add %s -> %s", self.in_section, text_content)
             self.builder.section_add_paragraph(self.in_section, text_content)
             if not self.section_is_sticky:
@@ -219,6 +224,8 @@ class SpecParser:
             return
         if self.in_section == "usage" and self.builder is not None:
             self.builder.read_usage_bullets(node)
+        else:
+            self.builder.read_bullets_to_section(node, self.in_section)
 
     def _handle_code_block(self, node: SyntaxTreeNode) -> None:
         if self.builder is None:
@@ -314,7 +321,24 @@ def looks_like_non_sticky_section(text_content: str) -> str | None:
     # return the name
     return simple_first_line
 
+def _get_bullet_points(node: SyntaxTreeNode) -> list[str]:
+    """Return the content of the bullet_list item as a simple list."""
+    if node.type != "bullet_list":
+        msg = f"Node is wrong type: {node.type}"
+        raise TypeError(msg)
+    return [get_text_from_node(bullet) for bullet in node.children]
 
+
+def _get_bullet_dict(node: SyntaxTreeNode) -> dict[str,str]:
+    """Return the content of the bullet_list item as a key, value dict if possible."""
+    if node.type != "bullet_list":
+        msg = f"Node is wrong type: {node.type}"
+        raise TypeError(msg)
+    for bullet_point in node.children:
+        title, content = split_list_item(bullet_point)
+        if title == variant:
+            return content
+    return ""
 
 
 def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
