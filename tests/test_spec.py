@@ -16,7 +16,7 @@ from spicy.spec.builder import (
 
 def test_simple_spec(test_data_path: Path) -> None:
     """Test a very simple spec."""
-    spec_list = gather_spec_elements("td", test_data_path / "01_simple_valid_sys_req.md")
+    spec_list = gather_spec_elements("td", test_data_path / "simple" / "sys_req.md")
     assert isinstance(spec_list, list)
     assert len(spec_list) > 0
     spec_element = spec_list[0]

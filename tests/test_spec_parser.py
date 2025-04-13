@@ -46,7 +46,7 @@ def test_detect_spec_heading():
 
 
 def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
-    from_file = test_data_path / "01_simple_valid_sys_req.md"
+    from_file = test_data_path / "simple" / "sys_req.md"
     project_prefix = "TD"
     spec_text = "\n\n".join((
         "# TD_SYS_REQ_simple_sys_req",
@@ -73,9 +73,6 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
 
     assert "Handle bullet-list" in caplog.text
-    assert caplog.records
-    r, *recs = caplog.records
-    #assert r.name,level,msg,args == 5
 
     assert spec.description_text(), str(spec)
     assert spec.is_qualification_related
@@ -87,9 +84,8 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     assert not issues
 
 
-@pytest.mark.skip
 def test_parse_sys_req(test_data_path: Path) -> None:
-    from_file = test_data_path / "01_simple_valid_sys_req.md"
+    from_file = test_data_path / "simple" / "sys_req.md"
     project_prefix = "TD"
     node = load_syntax_tree(from_file)
 
@@ -119,13 +115,16 @@ def test_parse_sys_req(test_data_path: Path) -> None:
 
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
     assert spec.description_text(), str(spec)
+    assert spec.is_qualification_related
+    assert spec.variant == "SystemRequirement"
+    assert spec.verification_criteria(), str(spec)
+    assert spec.get_linked_by("derived_from"), str(spec)
 
     issues = spec.get_issues()
     assert not issues
 
 # test high level functions
 
-@pytest.mark.skip
 def test_valid_use_case(test_data_path: Path) -> None:
     """Positive test the tooling using good data."""
     spec_element_list = get_elements_from_files("TD", [test_data_path / "use_cases" / "01_simple_valid.md"])
@@ -152,10 +151,9 @@ def test_valid_use_case(test_data_path: Path) -> None:
     assert not issues
 
 
-@pytest.mark.skip
 def test_valid_sys_req(test_data_path: Path) -> None:
     """Positive test the tooling using good data."""
-    spec_element_list = get_elements_from_files("TD", [test_data_path / "01_simple_valid_sys_req.md"])
+    spec_element_list = get_elements_from_files("TD", [test_data_path / "simple" / "sys_req.md"])
 
     assert isinstance(spec_element_list, list)
     assert len(spec_element_list) == 1
@@ -164,9 +162,10 @@ def test_valid_sys_req(test_data_path: Path) -> None:
 
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
     assert spec.description_text()
-    assert spec.features_text()
-    assert spec.inputs()
-    assert spec.outputs()
+    assert spec.is_qualification_related
+    assert spec.variant == "SystemRequirement"
+    assert spec.verification_criteria(), str(spec)
+    assert spec.get_linked_by("derived_from"), str(spec)
 
     issues = spec.get_issues()
     assert not issues
