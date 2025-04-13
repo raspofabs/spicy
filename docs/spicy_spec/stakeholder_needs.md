@@ -127,3 +127,28 @@ case for ASPICE compliance against an ASPICE assessor.
 Elicitation date: 2025-04-05
 
 TCL relevant: no
+
+## SPICY_STK_NEED_architectural_decision_records
+
+The **TWs** need **SPICY** to enforce architectural decisions are made and recorded.
+
+Architectural decisions are those which affect the selection process for
+solutions lower down in the process.
+For example, with **SPICY**, there was an architectural decision to develop a
+solution which takes markdown files as input.
+The markdown would be parsed and generates a model from that textual content.
+Only when the model was created would the issues be rendered.
+
+This decision was taken for reasons, but those reasons were not written down at the time.
+
+This need explictely requires that any architectural decisions are recorded.
+Alternatives must be considered.
+Any costs associated with the decision and the payoff are documented.
+
+Architectural decisions without a downside or payoff are unlikely to be
+architectural decisions, so this need relates to completeness in the negative.
+It helps identify overspecification.
+
+Elicitation date: 2025-04-13
+
+TCL relevant: no
