@@ -156,11 +156,13 @@ class SpecParser:
             if prefix != "REJECTED_":
                 self.spec_builders.append(builder)
             self.in_section = "prologue"
+            self.section_is_sticky = True
         else:
             # enable tracking content if the section name matches
             section = section_map.get(self.last_header, self.in_section)
             if section is not None:
                 self.in_section = section
+                self.section_is_sticky = True
 
     def is_spec_heading(self, header_text: str) -> bool:
         """Return whether the header_node relates to this class of spec."""
@@ -174,6 +176,7 @@ class SpecParser:
     def _handle_use_case_node(self, node: SyntaxTreeNode) -> None:
         use_case_name = node.content.strip().split("ID: ")[1]
         self.in_section = "prologue"
+        self.section_is_sticky = True
         self.num_cases += 1
         if self.header_stack[self.last_heading_level] is None:
             msg = f"Invalid header stack: {self.header_stack=}"
@@ -201,6 +204,10 @@ class SpecParser:
 
     def _handle_paragraph(self, node: SyntaxTreeNode) -> None:
         text_content = get_text_from_node(node)
+        if (section_name := looks_like_non_sticky_section(text_content)) is not None:
+            logger.debug("looks like non-sticky section %s", section_name)
+            self.in_section = section_name
+            self.section_is_sticky = False
         if self.builder is not None:
             logger.debug("builder add %s -> %s", self.in_section, text_content)
             self.builder.section_add_paragraph(self.in_section, text_content)
@@ -287,6 +294,27 @@ def parse_syntax_tree_to_spec_elements(project_prefix: str, node: SyntaxTreeNode
 
 
 # utility functions
+
+def looks_like_non_sticky_section(text_content: str) -> str | None:
+    """Return the section name if this looks like a section heading, otherwise None."""
+    first_line, *lines = text_content.split("\n")
+    # headers are only one line
+    if lines:
+        return None
+    # section headers always have a single terminal colon
+    try:
+        simple_first_line, post_colon = first_line.strip().split(":")
+        if post_colon:
+            return None
+    except ValueError:
+        return None
+    # are always short on word count
+    if len(simple_first_line.split(" ")) > 5:
+        return None
+    # return the name
+    return simple_first_line
+
+
 
 
 def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
