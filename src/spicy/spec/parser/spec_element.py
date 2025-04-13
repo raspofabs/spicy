@@ -6,6 +6,8 @@ from pathlib import Path
 from spicy.use_cases.mappings import tcl_map
 from .use_case_constants import section_map, usage_section_map
 
+logger = logging.getLogger(__name__)
+
 
 class SpecElement:
     """Spec Element class to store details of the spec element and links to other elements."""
@@ -26,7 +28,7 @@ class SpecElement:
         self.file_path = file_path
 
         self._qualification_related: bool | None = None
-        self._links: dict[str, list[str]] = links or {}
+        #self._links: dict[str, list[str]] = links or {}
 
         self.title = ""
         self.content: dict[str, list[str]] = {}
@@ -45,9 +47,15 @@ class SpecElement:
             f"{self.title} ({len(self.content)})[[{self.all_content}]]"
             ))
 
-    def get_linked_by(self, _linkage_term: str) -> list[str]:
+    def get_linked_by(self, linkage_term: str) -> list[str]:
         """Return a list of all specs linked by this term."""
-        return self._links.get(_linkage_term, [])
+        link_content = self.content.get(linkage_term)
+        if isinstance(link_content, list):
+            return link_content
+        else:
+            logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
+            return []
+        #return self._links.get(_linkage_term, [])
 
     @property
     def is_qualification_related(self) -> bool:

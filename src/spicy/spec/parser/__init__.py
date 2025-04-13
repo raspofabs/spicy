@@ -9,79 +9,9 @@ from spicy.use_cases.mappings import tcl_map
 from .spec_element import SpecElement
 from .use_case_constants import section_map, usage_section_map, TOOL_IMPACT_CLASS, DETECTABILITY_CLASS
 from .spec_utils import spec_name_to_variant, section_name_to_key
+from .single_spec_builder import SingleSpecBuilder
 
 logger = logging.getLogger("SpecParser")
-
-class SingleSpecBuilder:
-    """Gather information on use-cases and feedback on missing elements."""
-
-    def __init__(self, name: str, variant: str, ordering_id: int, file_path: Path, title: str) -> None:
-        """Construct the basic properties."""
-        self.name = name
-        self.ordering_id = ordering_id
-        self.file_path = file_path
-        self.title = title
-        self.content: defaultdict[str, list[str]] = defaultdict(list)
-        self.variant = variant
-        self.impact: str | None = None
-        self.detectability: str | None = None
-        self.usage_sections: dict[str, str] = {}
-        self.links: defaultdict[str, list[str]] = defaultdict(list)
-        self.qualification_related: bool = False
-
-        self.state = ""
-
-    def build(self) -> SpecElement:
-        """Build a Spec Element from the gathered data."""
-        element = SpecElement(
-            self.name,
-            self.variant,
-            self.ordering_id,
-            self.file_path,
-            #links=self.links,
-        )
-
-        element.title = self.title
-        element.impact = self.impact
-        element.content = self.content
-        element.impact = self.impact
-        element.detectability = self.detectability
-        element.usage_sections = self.usage_sections
-        if self.qualification_related is not None:
-            element._qualification_related = self.qualification_related
-        return element
-
-    @property
-    def location(self) -> str:
-        """Return a string for the location of the use case."""
-        return f"{self.file_path}:{self.ordering_id}:{self.name}"
-
-    def section_add_paragraph(self, section_id: str, content: str) -> None:
-        """Append content to section information."""
-        if content.startswith("Fulfils:"):
-            self.state = "expect_fulfils"
-        else:
-            self.content[section_id].append(content)
-
-    def add_code_block(self, section_id: str, code_block_node: SyntaxTreeNode) -> None:
-        """Use the code block or paste it into content."""
-        if self.state == "expect_fulfils":
-            content = code_block_node.content
-            self.links["fulfils"].extend(line.strip() for line in content.split())
-            self.state = ""
-        else:
-            self.content[section_id].append(code_block_node.content)
-
-    def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
-        """Consume the bullet list and store in content."""
-        self.content[section].append(_get_bullet_points(bullet_list))
-
-    def read_usage_bullets(self, bullet_list: SyntaxTreeNode) -> None:
-        """Consume the usage list and create the usage slot data."""
-        for slot, lookup in usage_section_map.items():
-            slot_content = _get_usage_subsection(bullet_list, lookup)
-            if slot_content:
-                self.usage_sections[slot] = slot_content
 
 
 class SpecParser:
@@ -211,7 +141,7 @@ class SpecParser:
         if (section_name := looks_like_non_sticky_section(text_content)) is not None:
             section_key = section_name_to_key(section_name)
             logger.debug("looks like non-sticky section %s -> %s", section_name, section_key)
-            self.in_section = section_key
+            self.in_section = section_key or section_name
             self.section_is_sticky = False
         elif self.builder is not None:
             logger.debug("builder add %s -> %s", self.in_section, text_content)
@@ -320,34 +250,3 @@ def looks_like_non_sticky_section(text_content: str) -> str | None:
         return None
     # return the name
     return simple_first_line
-
-def _get_bullet_points(node: SyntaxTreeNode) -> list[str]:
-    """Return the content of the bullet_list item as a simple list."""
-    if node.type != "bullet_list":
-        msg = f"Node is wrong type: {node.type}"
-        raise TypeError(msg)
-    return [get_text_from_node(bullet) for bullet in node.children]
-
-
-def _get_bullet_dict(node: SyntaxTreeNode) -> dict[str,str]:
-    """Return the content of the bullet_list item as a key, value dict if possible."""
-    if node.type != "bullet_list":
-        msg = f"Node is wrong type: {node.type}"
-        raise TypeError(msg)
-    for bullet_point in node.children:
-        title, content = split_list_item(bullet_point)
-        if title == variant:
-            return content
-    return ""
-
-
-def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
-    """Return the content of the bullet_list item for the specified variant."""
-    if node.type != "bullet_list":
-        msg = f"Node is wrong type: {node.type}"
-        raise TypeError(msg)
-    for bullet_point in node.children:
-        title, content = split_list_item(bullet_point)
-        if title == variant:
-            return content
-    return ""

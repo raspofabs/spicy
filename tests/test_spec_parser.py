@@ -50,12 +50,12 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     project_prefix = "TD"
     spec_text = "\n\n".join((
         "# TD_SYS_REQ_simple_sys_req",
-        "The **TD** shall have a simple system requirement"
+        "The **TD** shall have a simple system requirement",
         "Derived from:",
         "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
         "TQP relevant: yes",
         "Verification Criteria:",
-        "- check we have a simple sys req."
+        "- check we have a simple sys req.",
         ))
     tree = parse_text_to_syntax_tree(spec_text)
 
@@ -81,7 +81,7 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     assert spec.is_qualification_related
     assert spec.variant == "SystemRequirement"
     assert spec.verification_criteria(), str(spec)
-    assert spec._links, str(spec)
+    assert spec.get_linked_by("derived_from"), str(spec)
 
     issues = spec.get_issues()
     assert not issues

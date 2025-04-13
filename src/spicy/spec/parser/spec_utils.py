@@ -1,3 +1,7 @@
+"""Spec specific constants and utility functions."""
+
+from functools import lru_cache
+
 def spec_name_to_variant(name: str) -> str | None:
     """Return the variant by guessing from the name, or give up and return None."""
     parts = name.split("_")
@@ -25,13 +29,29 @@ def spec_name_to_variant(name: str) -> str | None:
             return variant
     return None
 
-def section_name_to_key(section_name: str) -> str | None:
-    """Return a proper key for the section name or None."""
+
+@lru_cache
+def _get_section_mapping() -> dict[str, str]:
     mapping = {
         "Safety related": "qualification_related",
         "Qualification related": "qualification_related",
         "TQP related": "qualification_related",
         "TCL related": "qualification_related",
+        "Derived from": "derived_from",
+        "Fulfils": "fulfils",
+        "Fulfilled by": "fulfilled_by",
+        "Implements": "implements",
+        "Implemented by": "implemented_by",
+        "Realises": "realises",
+        "Tests": "tests",
+        "Tested by": "tested_by",
+        "Results": "results",
+        "Cases": "cases",
         "verification criteria": "verification_criteria",
     }
-    return mapping.get(section_name.lower())
+    return {k.lower(): v for k, v in mapping.items()}
+
+
+def section_name_to_key(section_name: str) -> str | None:
+    """Return a proper key for the section name or None."""
+    return _get_section_mapping().get(section_name.lower())

@@ -59,3 +59,18 @@ def test_read_and_re_render() -> None:
             assert render_node(node) == quoted_text
             # check the content is not
             assert render_node(node.children[0]) == sub_text
+
+
+def test_paragraph_node() -> None:
+    test_data = [
+        "# Heading",
+        "paragraph content.",
+        "second paragraph content.",
+        "## second heading",
+        "third paragraph content.",
+    ]
+    document = "\n\n".join(test_data)
+    tree = parse_text_to_syntax_tree(document)
+    
+    tree_rep = tree.pretty()
+    assert len(tree.children) == 5, tree_rep

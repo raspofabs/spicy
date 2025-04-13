@@ -1,3 +1,7 @@
+"""Use case specific constants and utility functions."""
+
+from spicy.md_read import SyntaxTreeNode, split_list_item
+
 FEATURES_TITLE = "Features, functions, and technical properties"
 DESCRIPTION_OF_USAGE = "Description of usage"
 PURPOSE = "Purpose:"
@@ -26,3 +30,13 @@ usage_section_map = {
     "environment": ENVIRONMENT,
 }
 
+def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
+    """Return the content of the bullet_list item for the specified variant."""
+    if node.type != "bullet_list":
+        msg = f"Node is wrong type: {node.type}"
+        raise TypeError(msg)
+    for bullet_point in node.children:
+        title, content = split_list_item(bullet_point)
+        if title == variant:
+            return content
+    return ""
