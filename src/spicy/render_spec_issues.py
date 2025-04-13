@@ -16,7 +16,6 @@ from .spec.builder import (
     SystemQualificationTest,
     SystemRequirement,
 )
-from .spec.parser import SpecElement
 from .use_cases import UseCase
 
 logger = logging.getLogger(__name__)
@@ -89,14 +88,6 @@ def get_linkage_issues(
             issues.extend(f"\t{spec}" for spec in sorted(unused_specs))
 
     return issues
-
-
-def render_issues_with_elements(
-    _spec_elments: list[SpecElement],
-    _render_function: Callable | None = None,
-) -> bool:
-    """Render unresolved issues for each Spec Element."""
-    return False
 
 
 def render_issues(

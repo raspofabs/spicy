@@ -4,8 +4,8 @@ import logging
 import pytest
 from pathlib import Path
 
-from spicy.spec import get_elements_from_files
-from spicy.spec.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
+from spicy.gather import get_elements_from_files
+from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
 from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
 
 def test_parse_use_case(test_data_path: Path) -> None:

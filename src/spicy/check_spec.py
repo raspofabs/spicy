@@ -7,8 +7,8 @@ from pathlib import Path
 import click
 
 from .config import load_spicy_config
-from .render_spec_issues import render_issues, render_issues_with_elements
-from .spec import get_elements_from_files, get_specs_from_files
+from .render_spec_issues import render_issues
+from .spec import get_specs_from_files
 from .use_cases import get_use_cases_from_files
 
 logger = logging.getLogger(__name__)
@@ -48,11 +48,6 @@ def run(
     logger.info("Discovered %s spec elements.", len(specs))
     if render_issues(specs, use_cases):
         sys.exit(1)
-
-    # not yet
-    #elements = get_elements_from_files(project_prefix, filenames)
-    #if render_issues_with_elements(elements):
-        #sys.exit(1)
 
 
 if __name__ == "__main__":  # pragma: no cover
