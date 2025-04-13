@@ -78,7 +78,9 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     #assert r.name,level,msg,args == 5
 
     assert spec.description_text(), str(spec)
+    assert spec.is_qualification_related
     assert spec.variant == "SystemRequirement"
+    assert spec.verification_criteria(), str(spec)
 
     issues = spec.get_issues()
     assert not issues

@@ -61,6 +61,10 @@ class SpecElement:
             return self._qualification_related
         return False
 
+    def verification_criteria(self):
+        """Return a list of qualification criteria."""
+        return self.content.get("verification_criteria", [])
+
     def description_text(self) -> list[str]:
         """Return a list of lines describing the use-case."""
         return self.content.get("prologue", [])

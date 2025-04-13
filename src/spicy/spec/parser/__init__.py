@@ -27,6 +27,7 @@ class SingleSpecBuilder:
         self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
         self.links: defaultdict[str, list[str]] = defaultdict(list)
+        self.qualification_related: bool = False
 
         self.state = ""
 
@@ -46,6 +47,8 @@ class SingleSpecBuilder:
         element.impact = self.impact
         element.detectability = self.detectability
         element.usage_sections = self.usage_sections
+        if self.qualification_related is not None:
+            element._qualification_related = self.qualification_related
         return element
 
     @property
@@ -98,6 +101,7 @@ class SpecParser:
         self.used_current_spec_level = False
         self.current_use_case = None
         self.in_section = "none"
+        self.section_is_sticky: bool = False # headings are sticky, colon-sections are not.
         self.issues: list[str] = []
 
     @property
@@ -200,6 +204,8 @@ class SpecParser:
         if self.builder is not None:
             logger.debug("builder add %s -> %s", self.in_section, text_content)
             self.builder.section_add_paragraph(self.in_section, text_content)
+            if not self.section_is_sticky:
+                self.in_section = None
 
     def _handle_bullet_list(self, node: SyntaxTreeNode) -> None:
         if self.builder is None:
@@ -240,15 +246,15 @@ class SpecParser:
 
         if value := self.single_line_getter(node, "Safety related:"):
             logger.debug("Parsed safety related")
-            self.qualification_related = parse_yes_no(value)
+            self.builder.qualification_related = parse_yes_no(value)
             return
         if value := self.single_line_getter(node, "TCL relevant:"):
             logger.debug("Parsed TCL related")
-            self.qualification_related = parse_yes_no(value)
+            self.builder.qualification_related = parse_yes_no(value)
             return
         if value := self.single_line_getter(node, "TQP relevant:"):
             logger.debug("Parsed TQP related")
-            self.qualification_related = parse_yes_no(value)
+            self.builder.qualification_related = parse_yes_no(value)
             return
 
         if self._is_use_case(node):
