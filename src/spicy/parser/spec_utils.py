@@ -20,15 +20,34 @@ def spec_name_to_variant(name: str) -> str | None:
         "SW_COMP": "SoftwareComponent",
         "SW_UNIT": "SoftwareUnit",
         "SW_UNIT_TEST": "SoftwareUnitTest",
-        "SW_INT_TEST": "SoftwareIntegrationTest",
-        "SW_QUAL_TEST": "SoftwareQualificationTest",
-        "SYS_INT_TEST": "SystemIntegrationTest",
-        "SYS_QUAL_TEST": "SystemQualificationTest",
+        "SW_INT": "SoftwareIntegration",
+        "SW_QUAL": "SoftwareQualification",
+        "SYS_INT": "SystemIntegration",
+        "SYS_QUAL": "SystemQualification",
+        "VAL": "Validation",
         }.items():
         if comparison_string.startswith(variant_string):
             return variant
     return None
 
+
+@lru_cache
+def expected_links_for_variant(variant: str) -> list[tuple[str, str]]:
+    """Return a list of (link-name, target-variant) tuples.""" 
+    mapping = {
+        "StakeholderRequirement": [("Fulfills", "StakeholderNeed")],
+        "UseCase": [("Fulfills", "StakeholderNeed")],
+        "SystemRequirement": [("Derived from", "StakeholderRequirement")],
+        "SystemElement": [("Implements", "StakeholderRequirement")],
+        "SystemIntegration": [("Integrates", "SystemElement")],
+        "SystemQualification": [("Tests", "SystemRequirement")],
+        "Validation": [("Tests", "StakeholderRequirement")],
+        "SoftwareRequirement": [("Required by", "SystemRequirement"), ("Decomposes", "SystemElement")],
+        }
+    optional = {
+        "StakeholderNeed": [("Fulfilled by", "StakeholderRequirement")],
+        }
+    return mapping.get(variant, [])
 
 @lru_cache
 def _get_section_mapping() -> dict[str, str]:

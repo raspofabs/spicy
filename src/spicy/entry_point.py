@@ -50,8 +50,8 @@ def run(
     filenames = get_spec_files(path_override)
 
     logger.debug("Found %s files to read.", len(filenames))
-    specs = get_specs_from_files(project_prefix, filenames)
-    use_cases = get_use_cases_from_files(filenames)
-    logger.debug("Discovered %s spec elements.", len(specs))
-    if render_issues(specs, use_cases):
+    elements = get_elements_from_files(project_prefix, filenames)
+
+    logger.debug("Discovered %s elements.", len(elements))
+    if render_issues_with_elements(elements):
         sys.exit(1)

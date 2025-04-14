@@ -144,7 +144,7 @@ Results:
 
 The **POS** has a software element
 
-Required by:
+Decomposes:
 
 - [POS_SYS_ELEMENT_the_software](#pos_sys_element_the_software)
 
