@@ -27,27 +27,58 @@ def spec_name_to_variant(name: str) -> str | None:
         "VAL": "Validation",
         }.items():
         if comparison_string.startswith(variant_string):
+            try:
+                __, post = comparison_string.split(variant_string)
+            except ValueError:
+                return None
+            if post and post[0] not in " _-":
+                return None
             return variant
     return None
 
 
-@lru_cache
-def expected_links_for_variant(variant: str) -> list[tuple[str, str]]:
-    """Return a list of (link-name, target-variant) tuples.""" 
-    mapping = {
-        "StakeholderRequirement": [("Fulfills", "StakeholderNeed")],
-        "UseCase": [("Fulfills", "StakeholderNeed")],
-        "SystemRequirement": [("Derived from", "StakeholderRequirement")],
-        "SystemElement": [("Implements", "StakeholderRequirement")],
-        "SystemIntegration": [("Integrates", "SystemElement")],
-        "SystemQualification": [("Tests", "SystemRequirement")],
-        "Validation": [("Tests", "StakeholderRequirement")],
-        "SoftwareRequirement": [("Required by", "SystemRequirement"), ("Decomposes", "SystemElement")],
-        }
-    optional = {
+_spec_link_mapping = {
+    "StakeholderRequirement": [("Fulfills", "StakeholderNeed")],
+    "UseCase": [("Fulfills", "StakeholderNeed")],
+    "SystemRequirement": [("Derived from", "StakeholderRequirement")],
+    "SystemElement": [("Implements", "StakeholderRequirement")],
+    "SystemIntegration": [("Integrates", "SystemElement")],
+    "SystemQualification": [("Tests", "SystemRequirement")],
+    "Validation": [("Tests", "StakeholderRequirement")],
+    "SoftwareRequirement": [("Required by", "SystemRequirement"), ("Decomposes", "SystemElement")],
+    }
+
+_spec_link_optional_mapping = {
         "StakeholderNeed": [("Fulfilled by", "StakeholderRequirement")],
         }
-    return mapping.get(variant, [])
+
+
+@lru_cache
+def expected_links_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
+    """Return a list of (link-name, target-variant) tuples.""" 
+    extra = _spec_link_optional_mapping.get(variant, []) if include_optional else []
+    return _spec_link_mapping.get(variant, []) + extra
+
+
+@lru_cache
+def expected_backlinks_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
+    """Return a list of (link-name, target-variant) tuples.""" 
+    regular = [
+        (source_spec, link)
+        for source_spec, links in _spec_link_mapping.items()
+        for link, destination_spec in links
+        if destination_spec == variant
+        ]
+    extra = [
+        (source_spec, link)
+        for source_spec, links in _spec_link_optional_mapping.items()
+        for link, destination_spec in links
+        if destination_spec == variant
+        ]
+    if include_optional:
+        return regular + extra
+    return regular
+
 
 @lru_cache
 def _get_section_mapping() -> dict[str, str]:

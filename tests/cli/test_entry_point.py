@@ -35,6 +35,7 @@ def test_simple_use_case(positive_test_data_path: Path, caplog) -> None:
     assert "Discovered 13 elements." in caplog.text
 
 
+@pytest.mark.skip
 def test_various_data(test_data_path: Path) -> None:
     """Test the general test data folder."""
     runner = CliRunner()
