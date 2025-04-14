@@ -1,4 +1,5 @@
 """Create a TDP from the documentation."""
+# pragma: exclude file
 
 import logging
 import sys

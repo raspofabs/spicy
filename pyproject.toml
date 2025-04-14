@@ -58,3 +58,11 @@ ignore = ["D203", "D213", "FIX002", "TD003"]
 
 [tool.mypy]
 ignore_missing_imports=true
+
+[tool.coverage.report]
+exclude_also = [
+    # Comments to turn coverage on and off:
+    'no cover: start(?s:.)*?no cover: stop',
+    # A pragma comment that excludes an entire file:
+    '\A(?s:.*# pragma: exclude file.*)\Z',
+]
