@@ -53,5 +53,5 @@ def run(
     elements = get_elements_from_files(project_prefix, filenames)
 
     logger.debug("Discovered %s elements.", len(elements))
-    if render_issues_with_elements(elements):
+    if render_issues_with_elements(elements, print):
         sys.exit(1)

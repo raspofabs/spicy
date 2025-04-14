@@ -11,8 +11,6 @@ from .render_spec_issues import render_issues
 from .spec import get_specs_from_files
 from .use_cases import get_use_cases_from_files
 
-from .gather import get_elements_from_files, render_issues_with_elements
-
 logger = logging.getLogger(__name__)
 
 

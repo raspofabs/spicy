@@ -38,19 +38,38 @@ def spec_name_to_variant(name: str) -> str | None:
 
 
 _spec_link_mapping = {
-    "StakeholderRequirement": [("Fulfills", "StakeholderNeed")],
-    "UseCase": [("Fulfills", "StakeholderNeed")],
+    "StakeholderRequirement": [("Fulfils", "StakeholderNeed")],
     "SystemRequirement": [("Derived from", "StakeholderRequirement")],
     "SystemElement": [("Implements", "StakeholderRequirement")],
     "SystemIntegration": [("Integrates", "SystemElement")],
     "SystemQualification": [("Tests", "SystemRequirement")],
     "Validation": [("Tests", "StakeholderRequirement")],
     "SoftwareRequirement": [("Required by", "SystemRequirement"), ("Decomposes", "SystemElement")],
+    "SoftwareArchitecture": [("Fulfils", "SoftwareRequirement")],
+    "SoftwareComponent": [("Implements", "SoftwareArchitecture")],
+    "SoftwareUnit": [("Implements", "SoftwareComponent")],
+    "SoftwareUnitTest": [("Tests", "SoftwareUnit")],
+    "SoftwareIntegration": [("Integrates", "SoftwareComponent")],
+    "SoftwareQualification": [("Tests", "SoftwareRequirement")],
+    "UseCase": [("Fulfils", "StakeholderNeed")],
     }
 
 _spec_link_optional_mapping = {
-        "StakeholderNeed": [("Fulfilled by", "StakeholderRequirement")],
-        }
+    "StakeholderNeed": [("Fulfilled by", "StakeholderRequirement"), ("Qualified as", "UseCase")],
+    "StakeholderRequirement": [("Derives to", "SystemRequirement"), ("Validated by", "Validation")],
+    "SystemRequirement": [("Implemented as", "SystemElement"), ("Tested by", "SystemQualification"), ("Requires", "SoftwareRequirement")],
+    "SystemElement": [("Composes", "SoftwareRequirement"), ("Integrated by", "SystemIntegration")],
+    "SoftwareRequirement": [],
+    "SoftwareArchitecture": [],
+    "SoftwareComponent": [],
+    "SoftwareUnit": [],
+    "SoftwareUnitTest": [],
+    "SoftwareIntegration": [],
+    "SoftwareQualification": [],
+    "SystemIntegration": [],
+    "SystemQualification": [],
+    "Validation": [],
+    }
 
 
 @lru_cache

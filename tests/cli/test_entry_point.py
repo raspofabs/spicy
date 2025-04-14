@@ -1,5 +1,6 @@
 """Test the use spec checker cli."""
 
+import logging
 import re
 from pathlib import Path
 
@@ -7,6 +8,25 @@ import pytest
 from click.testing import CliRunner
 
 from spicy.entry_point import run
+
+
+def test_single_file(test_data_path: Path) -> None:
+    """Test accessing a single file."""
+    runner = CliRunner()
+    result = runner.invoke(run, ["--project-prefix", "TD", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")])
+    assert result.exit_code == 0, result.stdout
+
+    result = runner.invoke(run, ["--project-prefix", "WRONG_PREFIX", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")])
+    assert result.exit_code == 1, result.stdout
+
+
+def test_single_file_no_prefix(test_data_path: Path, caplog) -> None:
+    """Test accessing a single file."""
+    runner = CliRunner()
+    with caplog.at_level(logging.DEBUG):
+        result = runner.invoke(run, [str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")])
+    assert result.exit_code == 1, result.stdout
+    assert "Unable to scan without a known prefix" in caplog.text
 
 
 def test_simple_use_case(positive_test_data_path: Path, caplog) -> None:
