@@ -57,7 +57,7 @@ def get_text_from_node(node: SyntaxTreeNode) -> str:
         buffer = f"`{node.content}`"
     for child in node.children:
         buffer = (buffer + "\n" + get_text_from_node(child)).strip()
-    return buffer
+    return buffer.strip()
 
 
 def check_node_is(node: SyntaxTreeNode, type_name: str, message: str) -> None:

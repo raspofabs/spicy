@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from spicy.md_read import list_item_parts, load_syntax_tree, parse_text_to_syntax_tree, render_node
+from spicy.md_read import list_item_parts, load_syntax_tree, parse_text_to_syntax_tree, render_node, parse_yes_no, get_text_from_node
 
 
 def test_load_markdown_to_syntax_tree(test_data_path: Path) -> None:
@@ -74,3 +74,31 @@ def test_paragraph_node() -> None:
     
     tree_rep = tree.pretty()
     assert len(tree.children) == 5, tree_rep
+
+
+def test_yes_no() -> None:
+    assert parse_yes_no("yes")
+    assert parse_yes_no("YES")
+    assert not parse_yes_no("no")
+    assert not parse_yes_no("No")
+    assert parse_yes_no("Red") is None
+
+
+def test_get_text_from_node() -> str:
+    """Tests the get_text_from_node function, verifying it returns the text or code as a string."""
+
+    # test basic text
+    node = parse_text_to_syntax_tree("Some content")
+    assert get_text_from_node(node) == "Some content"
+
+    # test text with some emphasis
+    node = parse_text_to_syntax_tree("Some _italic_ and **bold** content")
+    assert get_text_from_node(node) == "Some\nitalic\nand\nbold\ncontent"
+
+    # test header
+    node = parse_text_to_syntax_tree("# Some header")
+    assert get_text_from_node(node) == "Some header"
+
+    # test some code content
+    node = parse_text_to_syntax_tree("Some `inline code;` snippet.")
+    assert get_text_from_node(node) == "Some\n`inline code;`\nsnippet."
