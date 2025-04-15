@@ -71,7 +71,7 @@ class SingleSpecBuilder:
 
     def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
         """Consume the bullet list and store in content."""
-        self.content[section].append(_get_bullet_points(bullet_list))
+        self.content[section].extend(_get_bullet_points(bullet_list))
 
     def read_usage_bullets(self, bullet_list: SyntaxTreeNode) -> None:
         """Consume the usage list and create the usage slot data."""

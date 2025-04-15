@@ -101,7 +101,7 @@ def test_paragraph_node() -> None:
     tree = parse_text_to_syntax_tree(document)
 
     tree_rep = tree.pretty()
-    assert len(tree.children) == 5, tree_rep
+    assert len(tree.children) == len(test_data), tree_rep
 
 
 def test_yes_no() -> None:

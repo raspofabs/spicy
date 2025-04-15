@@ -30,12 +30,12 @@ class SpecParser:
         self.num_cases = 0
         self.parsed_spec_count = 0
 
-        self.builder_stack: dict[tuple[int, SingleSpecBuilder]] = {}
+        self.builder_stack: dict[int, SingleSpecBuilder] = {}
         self.builder: SingleSpecBuilder | None = None
         self.current_spec_level = 0
         self.used_current_spec_level = False
         self.current_use_case = None
-        self.in_section = "none"
+        self.in_section: str | None = None
         self.section_is_sticky: bool = False  # headings are sticky, colon-sections are not.
         self.issues: list[str] = []
 
@@ -50,13 +50,20 @@ class SpecParser:
                 del self.builder_stack[level]
         self.header_stack[level] = None
 
-    def single_line_getter(self, node: SyntaxTreeNode, expected_prefix: str) -> str | None:
+    @staticmethod
+    def single_line_getter(node: SyntaxTreeNode, expected_prefix: str) -> str | None:
         """Get the value from a single line field."""
         text = get_text_from_node(node)
         if text.startswith(expected_prefix):
             __, value = text.split(expected_prefix)
             return value
         return None
+
+    @staticmethod
+    def get_if_single_line_section(node: SyntaxTreeNode) -> tuple[str, str] | None:
+        """Get the name and value from a single line field, None otherwise."""
+        text = get_text_from_node(node)
+        return looks_like_single_line_field(text)
 
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
         # figure out which heading level we're at
@@ -140,18 +147,23 @@ class SpecParser:
             self.in_section = section_key or section_name
             self.section_is_sticky = False
         elif self.builder is not None:
-            logger.debug("builder add %s -> %s", self.in_section, text_content)
-            self.builder.section_add_paragraph(self.in_section, text_content)
-            if not self.section_is_sticky:
-                self.in_section = None
+            if self.in_section is not None:
+                logger.debug("builder add %s -> %s", self.in_section, text_content)
+                self.builder.section_add_paragraph(self.in_section, text_content)
+                if not self.section_is_sticky:
+                    self.in_section = None
+            else:
+                logger.debug("builder don't add %s (no section)", text_content)
 
     def _handle_bullet_list(self, node: SyntaxTreeNode) -> None:
         if self.builder is None:
             return
         if self.in_section == "usage" and self.builder is not None:
             self.builder.read_usage_bullets(node)
-        else:
+        elif self.in_section is not None:
             self.builder.read_bullets_to_section(node, self.in_section)
+        else:
+            logger.debug("Unhandled bullet list : %s", node.pretty())
 
     def _handle_code_block(self, node: SyntaxTreeNode) -> None:
         if self.builder is None:
@@ -174,7 +186,8 @@ class SpecParser:
             if self.builder is not None:
                 self.builder.detectability = self.detectability
         else:
-            self.builder.add_code_block(self.in_section, node)
+            if self.in_section is not None:
+                self.builder.add_code_block(self.in_section, node)
 
     def build_specs(self) -> list[SpecElement]:
         return [spec.build() for spec in self.spec_builders]
@@ -184,18 +197,25 @@ class SpecParser:
         # Parse a SyntaxTreeNode for common features.
         logger.debug("Handle %s: %s", node.type, node.pretty())
 
-        if value := self.single_line_getter(node, "Safety related:"):
-            logger.debug("Parsed safety related")
-            self.builder.qualification_related = parse_yes_no(value)
-            return
-        if value := self.single_line_getter(node, "TCL relevant:"):
-            logger.debug("Parsed TCL related")
-            self.builder.qualification_related = parse_yes_no(value)
-            return
-        if value := self.single_line_getter(node, "TQP relevant:"):
-            logger.debug("Parsed TQP related")
-            self.builder.qualification_related = parse_yes_no(value)
-            return
+        if self.builder is not None:
+            if value := self.get_if_single_line_section(node):
+                section_name, content = value
+                section_key = section_name_to_key(section_name)
+                if section_key == "qualification_related":
+                    self.builder.qualification_related = parse_yes_no(content)
+
+            if value := self.single_line_getter(node, "Safety related:"):
+                logger.debug("Parsed safety related")
+                self.builder.qualification_related = parse_yes_no(value)
+                return
+            if value := self.single_line_getter(node, "TCL relevant:"):
+                logger.debug("Parsed TCL related")
+                self.builder.qualification_related = parse_yes_no(value)
+                return
+            if value := self.single_line_getter(node, "TQP relevant:"):
+                logger.debug("Parsed TQP related")
+                self.builder.qualification_related = parse_yes_no(value)
+                return
 
         if self._is_use_case(node):
             logger.debug("Handle use case %s", node.pretty())
@@ -247,3 +267,25 @@ def looks_like_non_sticky_section(text_content: str) -> str | None:
         return None
     # return the name
     return simple_first_line
+
+
+def looks_like_single_line_field(text_content: str) -> tuple[str, str] | None:
+    """Return the section name if this looks like a single line field, otherwise None."""
+    first_line, *lines = text_content.split("\n")
+    # single line fields are only a single line.
+    if lines:
+        return None
+    # single line fields always have a single colon and text on both sides
+    try:
+        simple_preamble, post_colon = first_line.strip().split(":")
+        if not simple_preamble:
+            return None
+        if not post_colon:
+            return None
+    except ValueError:
+        return None
+    # are always short on word count
+    if len(simple_preamble.split(" ")) > 5:
+        return None
+    # return the name
+    return simple_preamble, post_colon

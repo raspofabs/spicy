@@ -43,4 +43,16 @@ def test_expected_links_for_variant() -> None:
 
 
 def test_section_name_to_key() -> None:
+    """Test section_name_to_key function produces the right keys."""
+    # test for the qualification related headings
     assert section_name_to_key("Safety related") == "qualification_related"
+    assert section_name_to_key("Qualification related") == "qualification_related"
+    assert section_name_to_key("TQP related") == "qualification_related"
+    assert section_name_to_key("TCL related") == "qualification_related"
+
+    # other section names
+    assert section_name_to_key("Fulfils") == "fulfils"
+    assert section_name_to_key("Implemented by") == "implemented_by"
+
+    # test a negative with something random
+    assert section_name_to_key("Boiled carrots") is None
