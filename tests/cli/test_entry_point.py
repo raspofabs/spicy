@@ -14,12 +14,14 @@ def test_single_file(test_data_path: Path) -> None:
     """Test accessing a single file."""
     runner = CliRunner()
     result = runner.invoke(
-        run, ["--project-prefix", "TD", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")]
+        run,
+        ["--project-prefix", "TD", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")],
     )
     assert result.exit_code == 0, result.stdout
 
     result = runner.invoke(
-        run, ["--project-prefix", "WRONG_PREFIX", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")]
+        run,
+        ["--project-prefix", "WRONG_PREFIX", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")],
     )
     assert result.exit_code == 1, result.stdout
 

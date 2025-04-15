@@ -79,8 +79,7 @@ _spec_link_optional_mapping = {
 
 @lru_cache
 def expected_links_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
-    """
-    Return a list of (link-name, target-variant) tuples.
+    """Return a list of (link-name, target-variant) tuples.
 
     These are the links that should be present in the spec.
     For example, any testing specs should have links to what requirement they
@@ -94,8 +93,7 @@ def expected_links_for_variant(variant: str, include_optional: bool = False) -> 
 
 @lru_cache
 def expected_backlinks_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
-    """
-    Return a list of (source-variant, link-name) tuples.
+    """Return a list of (source-variant, link-name) tuples.
 
     These are the links that should be present in other specs for this spec.
     For example, any spec which needs testing should have a test spec linking

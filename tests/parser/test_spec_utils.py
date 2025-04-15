@@ -1,9 +1,6 @@
 """Test the use-cases parser."""
 
-import pytest
 
-from spicy.gather import get_elements_from_files
-from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
 from spicy.parser.spec_utils import (
     expected_backlinks_for_variant,
     expected_links_for_variant,

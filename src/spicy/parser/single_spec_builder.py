@@ -3,18 +3,10 @@
 from collections import defaultdict
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, split_list_item
-from spicy.use_cases.mappings import tcl_map
+from spicy.md_read import SyntaxTreeNode, get_text_from_node
 
 from .spec_element import SpecElement
-from .spec_utils import section_name_to_key, spec_name_to_variant
-from .use_case_constants import (
-    DETECTABILITY_CLASS,
-    TOOL_IMPACT_CLASS,
-    _get_usage_subsection,
-    section_map,
-    usage_section_map,
-)
+from .use_case_constants import _get_usage_subsection, usage_section_map
 
 
 class SingleSpecBuilder:

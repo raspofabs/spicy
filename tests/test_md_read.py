@@ -112,7 +112,6 @@ def test_yes_no() -> None:
 
 def test_get_text_from_node() -> None:
     """Tests the get_text_from_node function, verifying it returns the text or code as a string."""
-
     # test basic text
     node = parse_text_to_syntax_tree("Some content")
     assert get_text_from_node(node) == "Some content"
@@ -201,7 +200,7 @@ def test_list_item_parts_with_empty_list() -> None:
 
 
 def test_read_bullet_list() -> None:
-    bullet_list_content = "\n".join((f"- item {i}" for i in range(4)))
+    bullet_list_content = "\n".join(f"- item {i}" for i in range(4))
 
     bullet_tree = parse_text_to_syntax_tree(bullet_list_content)
 
@@ -218,7 +217,7 @@ def test_read_bullet_list() -> None:
 
 
 def test_read_titled_bullet_list() -> None:
-    titled_bullet_list_content = "\n".join((f"- **Title{i}:** item {i}" for i in range(4)))
+    titled_bullet_list_content = "\n".join(f"- **Title{i}:** item {i}" for i in range(4))
 
     titled_bullet_tree = parse_text_to_syntax_tree(titled_bullet_list_content)
 

@@ -46,7 +46,7 @@ class SpecElement:
             (
                 f"{self.variant}:{self.name}({self.file_path}:{self.ordering_id})",
                 f"{self.title} ({len(self.content)})[[{self.all_content}]]",
-            )
+            ),
         )
 
     def get_linked_by(self, linkage_term: str) -> list[str]:
@@ -54,9 +54,8 @@ class SpecElement:
         link_content = self.content.get(linkage_term)
         if isinstance(link_content, list):
             return link_content
-        else:
-            logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
-            return []
+        logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
+        return []
         # return self._links.get(_linkage_term, [])
 
     @property

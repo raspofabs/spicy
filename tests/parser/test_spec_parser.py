@@ -3,8 +3,6 @@
 import logging
 from pathlib import Path
 
-import pytest
-
 from spicy.gather import get_elements_from_files
 from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
 from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
@@ -59,7 +57,7 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
             "TQP relevant: yes",
             "Verification Criteria:",
             "- check we have a simple sys req.",
-        )
+        ),
     )
     tree = parse_text_to_syntax_tree(spec_text)
 
@@ -96,12 +94,12 @@ def test_parse_sys_req(test_data_path: Path) -> None:
     spec_text = "\n\n".join(
         (
             "# TD_SYS_REQ_simple_sys_req",
-            "The **TD** shall have a simple system requirement" "Derived from:",
+            "The **TD** shall have a simple system requirementDerived from:",
             "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
             "TQP relevant: yes",
             "Verification Criteria:",
             "- Check the order list on the operator terminal to verify ordering is successful.",
-        )
+        ),
     )
 
     tree = parse_text_to_syntax_tree("# TD_SYS_REQ_a_system_requirement")
