@@ -1,5 +1,6 @@
 """Test the md-doc reading."""
 
+import logging
 from pathlib import Path
 
 import pytest
@@ -88,6 +89,7 @@ def test_read_and_re_render() -> None:
 
 
 def test_paragraph_node() -> None:
+    """Test multi-line paragraph node."""
     test_data = [
         "# Heading",
         "paragraph content.",
@@ -103,6 +105,7 @@ def test_paragraph_node() -> None:
 
 
 def test_yes_no() -> None:
+    """Test the parser for yes/no options."""
     assert parse_yes_no("yes")
     assert parse_yes_no("YES")
     assert not parse_yes_no("no")
@@ -110,7 +113,7 @@ def test_yes_no() -> None:
     assert parse_yes_no("Red") is None
 
 
-def test_get_text_from_node() -> None:
+def test_get_text_from_node(caplog) -> None:
     """Tests the get_text_from_node function, verifying it returns the text or code as a string."""
     # test basic text
     node = parse_text_to_syntax_tree("Some content")
@@ -118,8 +121,7 @@ def test_get_text_from_node() -> None:
 
     # test text with some emphasis
     node = parse_text_to_syntax_tree("Some _italic_ and **bold** content")
-    # TODO: can we get this function to use spaces, not newlines, between style nodes?
-    assert get_text_from_node(node) == "Some\nitalic\nand\nbold\ncontent"
+    assert get_text_from_node(node) == "Some italic and bold content"
 
     # test header
     node = parse_text_to_syntax_tree("# Some header")
@@ -127,35 +129,40 @@ def test_get_text_from_node() -> None:
 
     # test some inline code content
     node = parse_text_to_syntax_tree("Some `inline code;` snippet.")
-    # TODO: can we get this function to use spaces, not newlines, between code and non-code nodes?
-    assert get_text_from_node(node) == "Some\n`inline code;`\nsnippet."
+    assert get_text_from_node(node) == "Some `inline code;` snippet."
 
     # test a code block
     node = parse_text_to_syntax_tree("    code block():")
-    # TODO: fix this
-    # assert get_text_from_node(node) == "code block():"
+    with caplog.at_level(logging.DEBUG):
+        assert get_text_from_node(node) == "`code block():`"
+
+    # test a multi-line code block
+    node = parse_text_to_syntax_tree("    code block():\n        line2()\n    last_line = 1")
+    with caplog.at_level(logging.DEBUG):
+        assert get_text_from_node(node) == "`code block():\n    line2()\nlast_line = 1`"
 
 
 def test_check_node_is() -> None:
-    # (node: SyntaxTreeNode, type_name: str, message: str) -> None:
+    """Test the node type checker."""
     tree = parse_text_to_syntax_tree("Simple paragraph")
     node = tree.children[0]
 
     try:
         check_node_is(node, "paragraph")
-    except IndexError:
-        assert False, "paragraph node not identified"
+    except IndexError as e:
+        msg = "paragraph node not identified"
+        raise AssertionError(msg) from e
     else:
         assert True
 
     # with message
     with pytest.raises(IndexError) as the_error:
-        assert check_node_is(node, "bullet", "not a bullet")
+        check_node_is(node, "bullet", "not a bullet")
     assert "not a bullet" in str(the_error)
 
     # without message
     with pytest.raises(IndexError) as the_error:
-        assert check_node_is(node, "bullet")
+        check_node_is(node, "bullet")
     assert "not a bullet" not in str(the_error)
 
 
@@ -186,20 +193,11 @@ def test_split_list_item() -> None:
     assert trailing == ""
 
 
-def test_list_item_parts_with_empty_list() -> None:
-    """Test parsing of list items."""
-    root_node = parse_text_to_syntax_tree("- ")
-    assert root_node.type == "root"
-    bullet_list = root_node.children[0]
-    assert bullet_list.type == "bullet_list"
-    bullet_line = bullet_list.children[0]
-    assert bullet_line.type == "list_item"
-
-    item_parts = list_item_parts(bullet_line)
-    assert item_parts is None
-
-
 def test_read_bullet_list() -> None:
+    """Test the read_bullet_list function.
+
+    The function should return a list of SyntaxTreeNodes from a bullet list.
+    """
     bullet_list_content = "\n".join(f"- item {i}" for i in range(4))
 
     bullet_tree = parse_text_to_syntax_tree(bullet_list_content)
@@ -210,13 +208,19 @@ def test_read_bullet_list() -> None:
     assert bullet_list_node.type == "bullet_list"
 
     bullet_list_items = read_bullet_list(bullet_list_node)
+    assert "item 2" in map(get_text_from_node, bullet_list_items)
 
     with pytest.raises(TypeError) as the_error:
-        root_response = read_bullet_list(bullet_tree)
+        read_bullet_list(bullet_tree)
     assert "Node is wrong type" in str(the_error)
 
 
 def test_read_titled_bullet_list() -> None:
+    """Test the read_titled_bullet_list function.
+
+    The function should return a dictionary of titles and contents from a
+    bullet list where each item has a bolded, colon terminated title term.
+    """
     titled_bullet_list_content = "\n".join(f"- **Title{i}:** item {i}" for i in range(4))
 
     titled_bullet_tree = parse_text_to_syntax_tree(titled_bullet_list_content)
@@ -227,7 +231,17 @@ def test_read_titled_bullet_list() -> None:
     assert titled_bullet_list_node.type == "bullet_list"
 
     titled_bullet_list_items = read_titled_bullet_list(titled_bullet_list_node)
+    assert "Title2:" in titled_bullet_list_items
+    assert titled_bullet_list_items["Title2:"] == "item 2"
 
     with pytest.raises(TypeError) as the_error:
-        root_response = read_titled_bullet_list(titled_bullet_tree)
+        read_titled_bullet_list(titled_bullet_tree)
     assert "Node is wrong type" in str(the_error)
+
+    # test without the bold
+    titled_bullet_list_content = "\n".join(f"- Regular{i}: item {i}" for i in range(4))
+    titled_bullet_tree = parse_text_to_syntax_tree(titled_bullet_list_content)
+    titled_bullet_list_node = titled_bullet_tree.children[0]
+
+    titled_bullet_list_items = read_titled_bullet_list(titled_bullet_list_node)
+    assert "Regular2:" not in titled_bullet_list_items

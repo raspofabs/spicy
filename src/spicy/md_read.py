@@ -53,10 +53,14 @@ def get_text_from_node(node: SyntaxTreeNode) -> str:
     buffer = ""
     if node.type == "text":
         buffer = node.content
-    if node.type == "code_inline":
+    elif node.type == "code_inline":
         buffer = f"`{node.content}`"
+    elif node.type == "code_block":
+        buffer = f"`{node.content.strip()}`"
+    else:
+        logger.debug("textless node: %s", node.type)
     for child in node.children:
-        buffer = (buffer + "\n" + get_text_from_node(child)).strip()
+        buffer = (buffer + " " + get_text_from_node(child)).strip()
     return buffer.strip()
 
 
@@ -91,11 +95,15 @@ def split_list_item(node: SyntaxTreeNode) -> tuple[str, str]:
     parts = list_item_parts(node)
     if parts is None:
         return ("", "")
-    __, title_node, *content_parts = parts
-    # collect all the text with content.
-    text_parts = filter(lambda x: x.strip(), map(get_text_from_node, content_parts))
-    # return as a single string.
-    return get_text_from_node(title_node), " ".join(text_parts)
+    try:
+        __, title_node, *content_parts = parts
+        # collect all the text with content.
+        text_parts = filter(lambda x: x.strip(), map(get_text_from_node, content_parts))
+        # return as a single string.
+        return get_text_from_node(title_node), " ".join(text_parts)
+    except ValueError:
+        # nothing
+        return ("", "")
 
 
 def read_bullet_list(node: SyntaxTreeNode) -> list[str]:
@@ -111,4 +119,5 @@ def read_titled_bullet_list(node: SyntaxTreeNode) -> dict[str, str]:
     if node.type != "bullet_list":
         msg = f"Node is wrong type: {node.type}"
         raise TypeError(msg)
-    return dict(split_list_item(item) for item in node.children)
+    items = (split_list_item(item) for item in node.children)
+    return dict(filter(lambda x: x[0], items))
