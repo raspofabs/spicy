@@ -123,8 +123,8 @@ def _get_section_mapping() -> dict[str, str]:
     mapping = {
         "Safety related": "qualification_related",
         "Qualification related": "qualification_related",
-        "TQP related": "qualification_related",
-        "TCL related": "qualification_related",
+        "TQP relevant": "qualification_related",
+        "TCL relevant": "qualification_related",
         "Derived from": "derived_from",
         "Fulfils": "fulfils",
         "Fulfilled by": "fulfilled_by",

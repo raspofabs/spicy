@@ -40,7 +40,7 @@ class SpecParser:
         self.issues: list[str] = []
 
     @property
-    def next_ordering_id(self) -> int:
+    def _next_ordering_id(self) -> int:
         self.parsed_spec_count += 1
         return self.parsed_spec_count - 1
 
@@ -58,12 +58,6 @@ class SpecParser:
             __, value = text.split(expected_prefix)
             return value
         return None
-
-    @staticmethod
-    def get_if_single_line_section(node: SyntaxTreeNode) -> tuple[str, str] | None:
-        """Get the name and value from a single line field, None otherwise."""
-        text = get_text_from_node(node)
-        return looks_like_single_line_field(text)
 
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
         # figure out which heading level we're at
@@ -85,7 +79,7 @@ class SpecParser:
             variant = spec_name_to_variant(name) or "Spec"
             title = content
             logger.debug("Found a spec %s", name)
-            builder = SingleSpecBuilder(name, variant, self.next_ordering_id, self.from_file, title)
+            builder = SingleSpecBuilder(name, variant, self._next_ordering_id, self.from_file, title)
             self.builder = builder
             self.builder_stack[level] = builder
             prefix, *postfix = name.split(self.project_prefix)
@@ -190,6 +184,7 @@ class SpecParser:
                 self.builder.add_code_block(self.in_section, node)
 
     def build_specs(self) -> list[SpecElement]:
+        """Build the gathered specs from the builders and return them as a list."""
         return [spec.build() for spec in self.spec_builders]
 
     def parse_node(self, node: SyntaxTreeNode) -> None:
@@ -198,24 +193,12 @@ class SpecParser:
         logger.debug("Handle %s: %s", node.type, node.pretty())
 
         if self.builder is not None:
-            if value := self.get_if_single_line_section(node):
+            if value := get_if_single_line_section(node):
                 section_name, content = value
                 section_key = section_name_to_key(section_name)
+                logger.info("Single line section: %s/%s -- %s", section_name, section_key, content)
                 if section_key == "qualification_related":
                     self.builder.qualification_related = parse_yes_no(content)
-
-            if value := self.single_line_getter(node, "Safety related:"):
-                logger.debug("Parsed safety related")
-                self.builder.qualification_related = parse_yes_no(value)
-                return
-            if value := self.single_line_getter(node, "TCL relevant:"):
-                logger.debug("Parsed TCL related")
-                self.builder.qualification_related = parse_yes_no(value)
-                return
-            if value := self.single_line_getter(node, "TQP relevant:"):
-                logger.debug("Parsed TQP related")
-                self.builder.qualification_related = parse_yes_no(value)
-                return
 
         if self._is_use_case(node):
             logger.debug("Handle use case %s", node.pretty())
@@ -289,3 +272,9 @@ def looks_like_single_line_field(text_content: str) -> tuple[str, str] | None:
         return None
     # return the name
     return simple_preamble, post_colon
+
+
+def get_if_single_line_section(node: SyntaxTreeNode) -> tuple[str, str] | None:
+    """Get the name and value from a single line field, None otherwise."""
+    text = get_text_from_node(node)
+    return looks_like_single_line_field(text)

@@ -47,8 +47,8 @@ def test_section_name_to_key() -> None:
     # test for the qualification related headings
     assert section_name_to_key("Safety related") == "qualification_related"
     assert section_name_to_key("Qualification related") == "qualification_related"
-    assert section_name_to_key("TQP related") == "qualification_related"
-    assert section_name_to_key("TCL related") == "qualification_related"
+    assert section_name_to_key("TQP relevant") == "qualification_related"
+    assert section_name_to_key("TCL relevant") == "qualification_related"
 
     # other section names
     assert section_name_to_key("Fulfils") == "fulfils"

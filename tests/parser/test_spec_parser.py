@@ -3,6 +3,8 @@
 import logging
 from pathlib import Path
 
+import pytest
+
 from spicy.gather import get_elements_from_files
 from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
 from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
@@ -45,7 +47,7 @@ def test_detect_spec_heading():
     assert parser.parsed_spec_count == 1
 
 
-def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
+def test_parse_sys_req_from_text(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     from_file = test_data_path / "simple" / "sys_req.md"
     project_prefix = "TD"
     spec_text = "\n\n".join(
@@ -156,9 +158,10 @@ def test_valid_use_case(test_data_path: Path) -> None:
     assert not issues
 
 
-def test_valid_sys_req(test_data_path: Path) -> None:
+def test_valid_sys_req(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Positive test the tooling using good data."""
-    spec_element_list = get_elements_from_files("TD", [test_data_path / "simple" / "sys_req.md"])
+    with caplog.at_level(logging.INFO):
+        spec_element_list = get_elements_from_files("TD", [test_data_path / "simple" / "sys_req.md"])
 
     assert isinstance(spec_element_list, list)
     assert len(spec_element_list) == 1

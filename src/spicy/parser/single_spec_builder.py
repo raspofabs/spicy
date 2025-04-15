@@ -24,7 +24,7 @@ class SingleSpecBuilder:
         self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
         self.links: defaultdict[str, list[str]] = defaultdict(list)
-        self.qualification_related: bool = False
+        self.qualification_related: bool | None = None
 
         self.state = ""
 
