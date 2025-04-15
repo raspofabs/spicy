@@ -74,14 +74,30 @@ _spec_link_optional_mapping = {
 
 @lru_cache
 def expected_links_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
-    """Return a list of (link-name, target-variant) tuples.""" 
+    """
+    Return a list of (link-name, target-variant) tuples.
+    
+    These are the links that should be present in the spec.
+    For example, any testing specs should have links to what requirement they
+    test.
+    Lacking regular links implies the spec is in draft: unfinished and
+    incomplete.
+    """ 
     extra = _spec_link_optional_mapping.get(variant, []) if include_optional else []
     return _spec_link_mapping.get(variant, []) + extra
 
 
 @lru_cache
 def expected_backlinks_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
-    """Return a list of (link-name, target-variant) tuples.""" 
+    """
+    Return a list of (source-variant, link-name) tuples.
+
+    These are the links that should be present in other specs for this spec.
+    For example, any spec which needs testing should have a test spec linking
+    to this one.
+    Lacking the required backlinks usually means that the spec has not been
+    refined or tested.
+    """ 
     regular = [
         (source_spec, link)
         for source_spec, links in _spec_link_mapping.items()
