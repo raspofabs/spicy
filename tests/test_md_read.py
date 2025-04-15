@@ -2,7 +2,19 @@
 
 from pathlib import Path
 
-from spicy.md_read import list_item_parts, load_syntax_tree, parse_text_to_syntax_tree, render_node, parse_yes_no, get_text_from_node
+from spicy.md_read import (
+    list_item_parts,
+    load_syntax_tree,
+    parse_text_to_syntax_tree,
+    render_node,
+    parse_yes_no,
+    get_text_from_node,
+    check_node_is,
+    list_item_parts,
+    split_list_item,
+    read_bullet_list,
+    read_titled_bullet_list,
+    )
 
 
 def test_load_markdown_to_syntax_tree(test_data_path: Path) -> None:
@@ -84,7 +96,7 @@ def test_yes_no() -> None:
     assert parse_yes_no("Red") is None
 
 
-def test_get_text_from_node() -> str:
+def test_get_text_from_node() -> None:
     """Tests the get_text_from_node function, verifying it returns the text or code as a string."""
 
     # test basic text
@@ -109,3 +121,20 @@ def test_get_text_from_node() -> str:
     node = parse_text_to_syntax_tree("    code block():")
     # TODO: fix this
     #assert get_text_from_node(node) == "code block():"
+
+#def test_
+def test_check_node_is() -> None:
+    # (node: SyntaxTreeNode, type_name: str, message: str) -> None:
+    pass
+def test_list_item_parts() -> None:
+    #(node: SyntaxTreeNode) -> list[SyntaxTreeNode] | None:
+    pass
+def test_split_list_item() -> None:
+    #(node: SyntaxTreeNode) -> tuple[str, str]:
+    pass
+def test_read_bullet_list() -> None:
+    #(node: SyntaxTreeNode) -> list[str]:
+    pass
+def test_read_titled_bullet_list() -> None:
+    #(node: SyntaxTreeNode) -> dict[str, str]:
+    pass
