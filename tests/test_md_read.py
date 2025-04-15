@@ -1,5 +1,6 @@
 """Test the md-doc reading."""
 
+import pytest
 from pathlib import Path
 
 from spicy.md_read import (
@@ -122,10 +123,31 @@ def test_get_text_from_node() -> None:
     # TODO: fix this
     #assert get_text_from_node(node) == "code block():"
 
-#def test_
+
 def test_check_node_is() -> None:
     # (node: SyntaxTreeNode, type_name: str, message: str) -> None:
-    pass
+    tree = parse_text_to_syntax_tree("Simple paragraph")
+    node = tree.children[0]
+
+    try:
+        check_node_is(node, "paragraph")
+    except IndexError:
+        assert False, "paragraph node not identified"
+    else:
+        assert True
+
+    # with message
+    with pytest.raises(IndexError) as the_error:
+        assert check_node_is(node, "bullet", "not a bullet")
+    assert "not a bullet" in str(the_error)
+
+    #without message
+    with pytest.raises(IndexError) as the_error:
+        assert check_node_is(node, "bullet")
+    assert "not a bullet" not in str(the_error)
+
+    
+
 def test_list_item_parts() -> None:
     #(node: SyntaxTreeNode) -> list[SyntaxTreeNode] | None:
     pass
@@ -133,8 +155,38 @@ def test_split_list_item() -> None:
     #(node: SyntaxTreeNode) -> tuple[str, str]:
     pass
 def test_read_bullet_list() -> None:
-    #(node: SyntaxTreeNode) -> list[str]:
-    pass
+    bullet_list_content = "\n".join((
+        f"- item {i}" for i in range(4)
+        ))
+
+    bullet_tree = parse_text_to_syntax_tree(bullet_list_content)
+
+    assert bullet_tree.type == "root"
+
+    bullet_list_node = bullet_tree.children[0]
+    assert bullet_list_node.type == "bullet_list"
+
+    bullet_list_items = read_bullet_list(bullet_list_node)
+
+    with pytest.raises(TypeError) as the_error:
+        root_response = read_bullet_list(bullet_tree)
+    assert "Node is wrong type" in str(the_error)
+
+
 def test_read_titled_bullet_list() -> None:
-    #(node: SyntaxTreeNode) -> dict[str, str]:
-    pass
+    titled_bullet_list_content = "\n".join((
+        f"- **Title{i}:** item {i}" for i in range(4)
+        ))
+
+    titled_bullet_tree = parse_text_to_syntax_tree(titled_bullet_list_content)
+
+    assert titled_bullet_tree.type == "root"
+
+    titled_bullet_list_node = titled_bullet_tree.children[0]
+    assert titled_bullet_list_node.type == "bullet_list"
+
+    titled_bullet_list_items = read_titled_bullet_list(titled_bullet_list_node)
+
+    with pytest.raises(TypeError) as the_error:
+        root_response = read_titled_bullet_list(titled_bullet_tree)
+    assert "Node is wrong type" in str(the_error)
