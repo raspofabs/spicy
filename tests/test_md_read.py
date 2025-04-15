@@ -46,6 +46,19 @@ def test_list_item_parts() -> None:
     assert list_item_parts(bullet_line) is None
 
 
+def test_list_item_parts_with_empty_list() -> None:
+    """Test parsing of list items."""
+    root_node = parse_text_to_syntax_tree("- ")
+    assert root_node.type == "root"
+    bullet_list = root_node.children[0]
+    assert bullet_list.type == "bullet_list"
+    bullet_line = bullet_list.children[0]
+    assert bullet_line.type == "list_item"
+
+    item_parts = list_item_parts(bullet_line)
+    assert item_parts is None
+
+
 def test_read_and_re_render() -> None:
     """Test the ability to write out what we read."""
 
@@ -148,12 +161,45 @@ def test_check_node_is() -> None:
 
     
 
-def test_list_item_parts() -> None:
-    #(node: SyntaxTreeNode) -> list[SyntaxTreeNode] | None:
-    pass
 def test_split_list_item() -> None:
-    #(node: SyntaxTreeNode) -> tuple[str, str]:
-    pass
+    """Test splitting list items."""
+    root_node = parse_text_to_syntax_tree("- **title:** text content `inline code` more text.")
+    assert root_node.type == "root"
+    bullet_list = root_node.children[0]
+    assert bullet_list.type == "bullet_list"
+    bullet_line = bullet_list.children[0]
+    assert bullet_line.type == "list_item"
+
+    leading, trailing = split_list_item(bullet_line)
+    assert leading
+    assert trailing
+
+    # check title
+    assert leading == "title:"
+    # check content
+    assert trailing == "text content `inline code` more text."
+
+    bullet_line.children = []
+    assert list_item_parts(bullet_line) is None
+
+    bullet_line = parse_text_to_syntax_tree("- ").children[0].children[0]
+    leading, trailing = split_list_item(bullet_line)
+    assert leading == ""
+    assert trailing == ""
+
+def test_list_item_parts_with_empty_list() -> None:
+    """Test parsing of list items."""
+    root_node = parse_text_to_syntax_tree("- ")
+    assert root_node.type == "root"
+    bullet_list = root_node.children[0]
+    assert bullet_list.type == "bullet_list"
+    bullet_line = bullet_list.children[0]
+    assert bullet_line.type == "list_item"
+
+    item_parts = list_item_parts(bullet_line)
+    assert item_parts is None
+
+
 def test_read_bullet_list() -> None:
     bullet_list_content = "\n".join((
         f"- item {i}" for i in range(4)

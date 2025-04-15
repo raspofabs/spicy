@@ -80,7 +80,7 @@ def list_item_parts(node: SyntaxTreeNode) -> list[SyntaxTreeNode] | None:
     check_node_is(paragraph_node, "paragraph", "first child node must be a paragraph")
     try:
         inline_node = paragraph_node.children[0]
-    except IndexError:
+    except IndexError: # pragma: no cover
         return None
     check_node_is(inline_node, "inline", "paragraph must start with inline node")
     return inline_node.children
