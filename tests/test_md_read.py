@@ -113,7 +113,7 @@ def test_yes_no() -> None:
     assert parse_yes_no("Red") is None
 
 
-def test_get_text_from_node(caplog) -> None:
+def test_get_text_from_node(caplog: pytest.LogCaptureFixture) -> None:
     """Tests the get_text_from_node function, verifying it returns the text or code as a string."""
     # test basic text
     node = parse_text_to_syntax_tree("Some content")
