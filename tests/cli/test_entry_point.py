@@ -26,7 +26,7 @@ def test_single_file(test_data_path: Path) -> None:
     assert result.exit_code == 1, result.stdout
 
 
-def test_single_file_no_prefix(test_data_path: Path, caplog) -> None:
+def test_single_file_no_prefix(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test accessing a single file."""
     runner = CliRunner()
     with caplog.at_level(logging.DEBUG):
@@ -35,7 +35,7 @@ def test_single_file_no_prefix(test_data_path: Path, caplog) -> None:
     assert "Unable to scan without a known prefix" in caplog.text
 
 
-def test_simple_use_case(positive_test_data_path: Path, caplog) -> None:
+def test_simple_use_case(positive_test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test the simple positive use case."""
     runner = CliRunner()
     result = runner.invoke(run, ["--project-prefix", "POS", str(positive_test_data_path)])
@@ -68,7 +68,7 @@ def test_various_data(test_data_path: Path) -> None:
 
     # complete directory
     result = runner.invoke(run, ["-p", "TD", str(test_data_path / "spec")])
-    # assert result.exit_code == 1, result.stdout
+    assert result.exit_code == 1, result.stdout
     assert "Needs without a fulfilling stakeholder requirement" in result.stdout
 
     # one file

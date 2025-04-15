@@ -6,7 +6,8 @@ from functools import lru_cache
 def spec_name_to_variant(name: str) -> str | None:
     """Return the variant by guessing from the name, or give up and return None."""
     parts = name.split("_")
-    if len(parts) < 3:
+    minimum_parts = 3
+    if len(parts) < minimum_parts:
         return None
     project_prefix, *variant_parts = parts
     comparison_string = "_".join(variant_parts)
@@ -38,7 +39,9 @@ def spec_name_to_variant(name: str) -> str | None:
     return None
 
 
-_spec_link_mapping = {
+MappingType = dict[str, list[tuple[str, str]]]
+
+_spec_link_mapping: MappingType = {
     "StakeholderRequirement": [("Fulfils", "StakeholderNeed")],
     "SystemRequirement": [("Derived from", "StakeholderRequirement")],
     "SystemElement": [("Implements", "StakeholderRequirement")],
@@ -55,7 +58,7 @@ _spec_link_mapping = {
     "UseCase": [("Fulfils", "StakeholderNeed")],
 }
 
-_spec_link_optional_mapping = {
+_spec_link_optional_mapping: MappingType = {
     "StakeholderNeed": [("Fulfilled by", "StakeholderRequirement"), ("Qualified as", "UseCase")],
     "StakeholderRequirement": [("Derives to", "SystemRequirement"), ("Validated by", "Validation")],
     "SystemRequirement": [
@@ -78,7 +81,7 @@ _spec_link_optional_mapping = {
 
 
 @lru_cache
-def expected_links_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
+def expected_links_for_variant(variant: str, *, include_optional: bool = False) -> list[tuple[str, str]]:
     """Return a list of (link-name, target-variant) tuples.
 
     These are the links that should be present in the spec.
@@ -87,12 +90,12 @@ def expected_links_for_variant(variant: str, include_optional: bool = False) -> 
     Lacking regular links implies the spec is in draft: unfinished and
     incomplete.
     """
-    extra = _spec_link_optional_mapping.get(variant, []) if include_optional else []
+    extra: list[tuple[str, str]] = _spec_link_optional_mapping.get(variant, []) if include_optional else []
     return _spec_link_mapping.get(variant, []) + extra
 
 
 @lru_cache
-def expected_backlinks_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
+def expected_backlinks_for_variant(variant: str, *, include_optional: bool = False) -> list[tuple[str, str]]:
     """Return a list of (source-variant, link-name) tuples.
 
     These are the links that should be present in other specs for this spec.

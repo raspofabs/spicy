@@ -10,6 +10,7 @@ from spicy.parser.spec_utils import (
 
 
 def test_spec_name_to_variant() -> None:
+    """Test variants can be deduced from well formed spec names."""
     assert spec_name_to_variant("Not a spec name") is None
     assert spec_name_to_variant("PRJPREF_NOT_A_SPEC") is None
     assert spec_name_to_variant("PRJPREF_STK_REQ") == "StakeholderRequirement"
@@ -22,11 +23,14 @@ def test_spec_name_to_variant() -> None:
 
 
 def test_expected_links_for_variant() -> None:
+    """Test we can get the list of required and optional links for a spec."""
     assert expected_links_for_variant("SystemRequirement") == [("Derived from", "StakeholderRequirement")]
 
     # expect more if you include optional links (usually bi-directional backlinks)
-    assert expected_links_for_variant("StakeholderRequirement", False) == [("Fulfils", "StakeholderNeed")]
-    assert expected_links_for_variant("StakeholderRequirement", True) == [
+    assert expected_links_for_variant("StakeholderRequirement", include_optional=False) == [
+        ("Fulfils", "StakeholderNeed")
+    ]
+    assert expected_links_for_variant("StakeholderRequirement", include_optional=True) == [
         ("Fulfils", "StakeholderNeed"),
         ("Derives to", "SystemRequirement"),
         ("Validated by", "Validation"),
@@ -36,7 +40,7 @@ def test_expected_links_for_variant() -> None:
         ("StakeholderRequirement", "Fulfils"),
         ("UseCase", "Fulfils"),
     ]
-    assert expected_backlinks_for_variant("StakeholderNeed", True) == [
+    assert expected_backlinks_for_variant("StakeholderNeed", include_optional=True) == [
         ("StakeholderRequirement", "Fulfils"),
         ("UseCase", "Fulfils"),
     ]

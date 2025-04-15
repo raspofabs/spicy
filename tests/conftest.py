@@ -12,12 +12,12 @@ def test_data_path() -> Path:
 
 
 @pytest.fixture
-def positive_test_data_path(test_data_path) -> Path:
+def positive_test_data_path(test_data_path: Path) -> Path:
     """Return the path to the test data directory."""
     return test_data_path / "simple_test_spec"
 
 
 @pytest.fixture
-def cookie_data_path(test_data_path) -> Path:
+def cookie_data_path(test_data_path: Path) -> Path:
     """Return the path to the test data directory."""
     return test_data_path / "cookie_spec"

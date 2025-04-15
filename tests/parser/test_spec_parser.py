@@ -11,6 +11,7 @@ from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elem
 
 
 def test_parse_use_case(test_data_path: Path) -> None:
+    """Test we can parse a use-case file and detect the use case spec."""
     from_file = test_data_path / "use_cases" / "01_simple_valid.md"
     project_prefix = "TD"
     node = load_syntax_tree(from_file)
@@ -38,8 +39,9 @@ def test_parse_use_case(test_data_path: Path) -> None:
     assert not issues
 
 
-def test_detect_spec_heading():
-    parser = SpecParser("my_file.md", "TD")
+def test_detect_spec_heading() -> None:
+    """Test that we can detect a design spec heading from its name."""
+    parser = SpecParser(Path("my_file.md"), "TD")
     assert parser.parsed_spec_count == 0
     tree_part = parse_text_to_syntax_tree("# TD_SYS_REQ_a_system_requirement")
     for child in tree_part.children:
@@ -48,20 +50,21 @@ def test_detect_spec_heading():
 
 
 def test_parse_sys_req_from_text(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    """Test parsing with a simple system requirement, from raw text."""
     from_file = test_data_path / "simple" / "sys_req.md"
     project_prefix = "TD"
-    spec_text = "\n\n".join(
-        (
-            "# TD_SYS_REQ_simple_sys_req",
-            "The **TD** shall have a simple system requirement",
-            "Derived from:",
-            "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
-            "TQP relevant: yes",
-            "Verification Criteria:",
-            "- check we have a simple sys req.",
-        ),
-    )
+    lines = [
+        "# TD_SYS_REQ_simple_sys_req",
+        "The **TD** shall have a simple system requirement",
+        "Derived from:",
+        "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
+        "TQP relevant: yes",
+        "Verification Criteria:",
+        "- check we have a simple sys req.",
+    ]
+    spec_text = "\n\n".join(lines)
     tree = parse_text_to_syntax_tree(spec_text)
+    assert len(lines) == len(tree.children)
 
     parser = SpecParser(from_file, project_prefix)
     with caplog.at_level(logging.DEBUG):
@@ -89,20 +92,10 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog: pytest.LogCapture
 
 
 def test_parse_sys_req(test_data_path: Path) -> None:
+    """Test parsing using a simple system requirement from a file."""
     from_file = test_data_path / "simple" / "sys_req.md"
     project_prefix = "TD"
     node = load_syntax_tree(from_file)
-
-    spec_text = "\n\n".join(
-        (
-            "# TD_SYS_REQ_simple_sys_req",
-            "The **TD** shall have a simple system requirementDerived from:",
-            "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
-            "TQP relevant: yes",
-            "Verification Criteria:",
-            "- Check the order list on the operator terminal to verify ordering is successful.",
-        ),
-    )
 
     tree = parse_text_to_syntax_tree("# TD_SYS_REQ_a_system_requirement")
     parser = SpecParser(from_file, project_prefix)

@@ -35,7 +35,6 @@ class SingleSpecBuilder:
             self.variant,
             self.ordering_id,
             self.file_path,
-            # links=self.links,
         )
 
         element.title = self.title
@@ -45,7 +44,7 @@ class SingleSpecBuilder:
         element.detectability = self.detectability
         element.usage_sections = self.usage_sections
         if self.qualification_related is not None:
-            element._qualification_related = self.qualification_related
+            element.qualification_related = self.qualification_related
         return element
 
     @property

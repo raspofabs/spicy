@@ -19,8 +19,6 @@ class SpecElement:
         variant: str,
         ordering_id: int,
         file_path: Path,
-        *,
-        links: dict[str, list[str]] | None = None,
     ) -> None:
         """Construct the basic properties."""
         self.name = name
@@ -28,8 +26,7 @@ class SpecElement:
         self.ordering_id = ordering_id
         self.file_path = file_path
 
-        self._qualification_related: bool | None = None
-        # self._links: dict[str, list[str]] = links or {}
+        self.qualification_related: bool | None = None
 
         self.title = ""
         self.content: dict[str, list[str]] = {}
@@ -39,9 +36,11 @@ class SpecElement:
 
     @property
     def all_content(self) -> str:
+        """Get all the content, comma separated."""
         return ", ".join((f"{k}:{v}" for k, v in self.content.items()))
 
     def __str__(self) -> str:
+        """Return the string representation of the spec."""
         return " ".join(
             (
                 f"{self.variant}:{self.name}({self.file_path}:{self.ordering_id})",
@@ -56,7 +55,6 @@ class SpecElement:
             return link_content
         logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
         return []
-        # return self._links.get(_linkage_term, [])
 
     @property
     def is_qualification_related(self) -> bool:
@@ -66,11 +64,11 @@ class SpecElement:
             return self.tcl in ["TCL2", "TCL3"]
 
         # All requirements and design specs are optionally qualification related
-        if self._qualification_related is not None:
-            return self._qualification_related
+        if self.qualification_related is not None:
+            return self.qualification_related
         return False
 
-    def verification_criteria(self):
+    def verification_criteria(self) -> list[str]:
         """Return a list of qualification criteria."""
         return self.content.get("verification_criteria", [])
 
