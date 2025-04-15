@@ -1,12 +1,14 @@
 """Test the use-cases parser."""
 
 import logging
-import pytest
 from pathlib import Path
 
+import pytest
+
 from spicy.gather import get_elements_from_files
-from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
 from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
+from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
+
 
 def test_parse_use_case(test_data_path: Path) -> None:
     from_file = test_data_path / "use_cases" / "01_simple_valid.md"
@@ -48,15 +50,17 @@ def test_detect_spec_heading():
 def test_parse_sys_req_from_text(test_data_path: Path, caplog) -> None:
     from_file = test_data_path / "simple" / "sys_req.md"
     project_prefix = "TD"
-    spec_text = "\n\n".join((
-        "# TD_SYS_REQ_simple_sys_req",
-        "The **TD** shall have a simple system requirement",
-        "Derived from:",
-        "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
-        "TQP relevant: yes",
-        "Verification Criteria:",
-        "- check we have a simple sys req.",
-        ))
+    spec_text = "\n\n".join(
+        (
+            "# TD_SYS_REQ_simple_sys_req",
+            "The **TD** shall have a simple system requirement",
+            "Derived from:",
+            "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
+            "TQP relevant: yes",
+            "Verification Criteria:",
+            "- check we have a simple sys req.",
+        )
+    )
     tree = parse_text_to_syntax_tree(spec_text)
 
     parser = SpecParser(from_file, project_prefix)
@@ -89,15 +93,16 @@ def test_parse_sys_req(test_data_path: Path) -> None:
     project_prefix = "TD"
     node = load_syntax_tree(from_file)
 
-    spec_text = "\n\n".join((
-        "# TD_SYS_REQ_simple_sys_req",
-        "The **TD** shall have a simple system requirement"
-        "Derived from:",
-        "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
-        "TQP relevant: yes",
-        "Verification Criteria:",
-        "- Check the order list on the operator terminal to verify ordering is successful."
-        ))
+    spec_text = "\n\n".join(
+        (
+            "# TD_SYS_REQ_simple_sys_req",
+            "The **TD** shall have a simple system requirement" "Derived from:",
+            "- [TD_STK_REQ_simple_stk_req](#td_stk_req_simple_stk_req)",
+            "TQP relevant: yes",
+            "Verification Criteria:",
+            "- Check the order list on the operator terminal to verify ordering is successful.",
+        )
+    )
 
     tree = parse_text_to_syntax_tree("# TD_SYS_REQ_a_system_requirement")
     parser = SpecParser(from_file, project_prefix)
@@ -123,7 +128,9 @@ def test_parse_sys_req(test_data_path: Path) -> None:
     issues = spec.get_issues()
     assert not issues
 
+
 # test high level functions
+
 
 def test_valid_use_case(test_data_path: Path) -> None:
     """Positive test the tooling using good data."""

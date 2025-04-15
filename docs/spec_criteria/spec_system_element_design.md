@@ -1,11 +1,11 @@
 # Identify the products and processes
 
-- Products: 
+- Products:
     - the tools and user documents,
     - hardware and software artefacts,
     - databases, services and credentials, and
     - any other deliverables to meet the stakeholder needs.
-- Processes: 
+- Processes:
     - how to configure the products for use as an integrator or installer of the product,
     - how to use the tools effectively,
     - how to verify the configuration, and

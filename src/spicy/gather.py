@@ -1,8 +1,7 @@
 """Collecting spec data from a file or directory."""
 
-from pathlib import Path
-
 from collections.abc import Callable
+from pathlib import Path
 
 from spicy.md_read import load_syntax_tree
 
@@ -40,5 +39,3 @@ def render_issues_with_elements(
             _render_function("No elements.")
         return True
     return False
-
-

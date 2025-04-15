@@ -30,6 +30,7 @@ usage_section_map = {
     "environment": ENVIRONMENT,
 }
 
+
 def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
     """Return the content of the bullet_list item for the specified variant."""
     if node.type != "bullet_list":

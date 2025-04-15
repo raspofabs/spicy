@@ -1,14 +1,21 @@
 """Builder for a single spec. Used by the parser."""
 
-import logging
 from collections import defaultdict
 from pathlib import Path
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, split_list_item
 from spicy.use_cases.mappings import tcl_map
+
 from .spec_element import SpecElement
-from .use_case_constants import section_map, usage_section_map, _get_usage_subsection, TOOL_IMPACT_CLASS, DETECTABILITY_CLASS
-from .spec_utils import spec_name_to_variant, section_name_to_key
+from .spec_utils import section_name_to_key, spec_name_to_variant
+from .use_case_constants import (
+    DETECTABILITY_CLASS,
+    TOOL_IMPACT_CLASS,
+    _get_usage_subsection,
+    section_map,
+    usage_section_map,
+)
+
 
 class SingleSpecBuilder:
     """Gather information on use-cases and feedback on missing elements."""
@@ -36,7 +43,7 @@ class SingleSpecBuilder:
             self.variant,
             self.ordering_id,
             self.file_path,
-            #links=self.links,
+            # links=self.links,
         )
 
         element.title = self.title

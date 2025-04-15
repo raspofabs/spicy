@@ -13,10 +13,14 @@ from spicy.entry_point import run
 def test_single_file(test_data_path: Path) -> None:
     """Test accessing a single file."""
     runner = CliRunner()
-    result = runner.invoke(run, ["--project-prefix", "TD", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")])
+    result = runner.invoke(
+        run, ["--project-prefix", "TD", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")]
+    )
     assert result.exit_code == 0, result.stdout
 
-    result = runner.invoke(run, ["--project-prefix", "WRONG_PREFIX", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")])
+    result = runner.invoke(
+        run, ["--project-prefix", "WRONG_PREFIX", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")]
+    )
     assert result.exit_code == 1, result.stdout
 
 
@@ -62,7 +66,7 @@ def test_various_data(test_data_path: Path) -> None:
 
     # complete directory
     result = runner.invoke(run, ["-p", "TD", str(test_data_path / "spec")])
-    #assert result.exit_code == 1, result.stdout
+    # assert result.exit_code == 1, result.stdout
     assert "Needs without a fulfilling stakeholder requirement" in result.stdout
 
     # one file

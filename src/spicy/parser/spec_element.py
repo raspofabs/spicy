@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 from spicy.use_cases.mappings import tcl_map
+
 from .use_case_constants import section_map, usage_section_map
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ class SpecElement:
         self.file_path = file_path
 
         self._qualification_related: bool | None = None
-        #self._links: dict[str, list[str]] = links or {}
+        # self._links: dict[str, list[str]] = links or {}
 
         self.title = ""
         self.content: dict[str, list[str]] = {}
@@ -38,14 +39,15 @@ class SpecElement:
 
     @property
     def all_content(self) -> str:
-        return ", ".join((
-            f"{k}:{v}" for k, v in self.content.items()))
+        return ", ".join((f"{k}:{v}" for k, v in self.content.items()))
 
     def __str__(self) -> str:
-        return " ".join((
-            f"{self.variant}:{self.name}({self.file_path}:{self.ordering_id})",
-            f"{self.title} ({len(self.content)})[[{self.all_content}]]"
-            ))
+        return " ".join(
+            (
+                f"{self.variant}:{self.name}({self.file_path}:{self.ordering_id})",
+                f"{self.title} ({len(self.content)})[[{self.all_content}]]",
+            )
+        )
 
     def get_linked_by(self, linkage_term: str) -> list[str]:
         """Return a list of all specs linked by this term."""
@@ -55,7 +57,7 @@ class SpecElement:
         else:
             logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
             return []
-        #return self._links.get(_linkage_term, [])
+        # return self._links.get(_linkage_term, [])
 
     @property
     def is_qualification_related(self) -> bool:
@@ -133,5 +135,3 @@ class SpecElement:
     def tcl(self) -> str | None:
         """Return the tcl class based on the tool impact and error detectability."""
         return tcl_map(self.impact, self.detectability)
-
-

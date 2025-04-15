@@ -18,4 +18,3 @@ Safety related: yes
 Implements:
 
 - [CDU_STK_NEED_get_a_cookie](#cdu_stk_need_get_a_cookie)
-

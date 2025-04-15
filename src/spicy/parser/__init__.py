@@ -6,10 +6,11 @@ from pathlib import Path
 
 from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, split_list_item
 from spicy.use_cases.mappings import tcl_map
-from .spec_element import SpecElement
-from .use_case_constants import section_map, usage_section_map, TOOL_IMPACT_CLASS, DETECTABILITY_CLASS
-from .spec_utils import spec_name_to_variant, section_name_to_key
+
 from .single_spec_builder import SingleSpecBuilder
+from .spec_element import SpecElement
+from .spec_utils import section_name_to_key, spec_name_to_variant
+from .use_case_constants import DETECTABILITY_CLASS, TOOL_IMPACT_CLASS, section_map, usage_section_map
 
 logger = logging.getLogger("SpecParser")
 
@@ -35,7 +36,7 @@ class SpecParser:
         self.used_current_spec_level = False
         self.current_use_case = None
         self.in_section = "none"
-        self.section_is_sticky: bool = False # headings are sticky, colon-sections are not.
+        self.section_is_sticky: bool = False  # headings are sticky, colon-sections are not.
         self.issues: list[str] = []
 
     @property
@@ -64,7 +65,7 @@ class SpecParser:
         for i in reversed(range(level, 5)):
             self._close_section(i)
             self.header_stack[i] = None
-        content = get_text_from_node(node)#node.children[0].children[0].content
+        content = get_text_from_node(node)  # node.children[0].children[0].content
         self.header_stack[level] = content
         self.last_header = content
         self.last_heading_level = level
@@ -77,12 +78,7 @@ class SpecParser:
             variant = spec_name_to_variant(name) or "Spec"
             title = content
             logger.debug("Found a spec %s", name)
-            builder = SingleSpecBuilder(
-                    name,
-                    variant,
-                    self.next_ordering_id,
-                    self.from_file,
-                    title)
+            builder = SingleSpecBuilder(name, variant, self.next_ordering_id, self.from_file, title)
             self.builder = builder
             self.builder_stack[level] = builder
             prefix, *postfix = name.split(self.project_prefix)
@@ -231,6 +227,7 @@ def parse_syntax_tree_to_spec_elements(project_prefix: str, node: SyntaxTreeNode
 
 
 # utility functions
+
 
 def looks_like_non_sticky_section(text_content: str) -> str | None:
     """Return the section name if this looks like a section heading, otherwise None."""

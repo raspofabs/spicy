@@ -27,4 +27,3 @@ def get_specs_from_files(project_prefix: str, file_paths: list[Path]) -> list[Sp
     for filename in file_paths:
         specs.extend(gather_spec_elements(project_prefix, filename))
     return specs
-

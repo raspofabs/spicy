@@ -1,21 +1,21 @@
 """Test the md-doc reading."""
 
-import pytest
 from pathlib import Path
 
+import pytest
+
 from spicy.md_read import (
+    check_node_is,
+    get_text_from_node,
     list_item_parts,
     load_syntax_tree,
     parse_text_to_syntax_tree,
-    render_node,
     parse_yes_no,
-    get_text_from_node,
-    check_node_is,
-    list_item_parts,
-    split_list_item,
     read_bullet_list,
     read_titled_bullet_list,
-    )
+    render_node,
+    split_list_item,
+)
 
 
 def test_load_markdown_to_syntax_tree(test_data_path: Path) -> None:
@@ -97,7 +97,7 @@ def test_paragraph_node() -> None:
     ]
     document = "\n\n".join(test_data)
     tree = parse_text_to_syntax_tree(document)
-    
+
     tree_rep = tree.pretty()
     assert len(tree.children) == 5, tree_rep
 
@@ -134,7 +134,7 @@ def test_get_text_from_node() -> None:
     # test a code block
     node = parse_text_to_syntax_tree("    code block():")
     # TODO: fix this
-    #assert get_text_from_node(node) == "code block():"
+    # assert get_text_from_node(node) == "code block():"
 
 
 def test_check_node_is() -> None:
@@ -154,12 +154,11 @@ def test_check_node_is() -> None:
         assert check_node_is(node, "bullet", "not a bullet")
     assert "not a bullet" in str(the_error)
 
-    #without message
+    # without message
     with pytest.raises(IndexError) as the_error:
         assert check_node_is(node, "bullet")
     assert "not a bullet" not in str(the_error)
 
-    
 
 def test_split_list_item() -> None:
     """Test splitting list items."""
@@ -187,6 +186,7 @@ def test_split_list_item() -> None:
     assert leading == ""
     assert trailing == ""
 
+
 def test_list_item_parts_with_empty_list() -> None:
     """Test parsing of list items."""
     root_node = parse_text_to_syntax_tree("- ")
@@ -201,9 +201,7 @@ def test_list_item_parts_with_empty_list() -> None:
 
 
 def test_read_bullet_list() -> None:
-    bullet_list_content = "\n".join((
-        f"- item {i}" for i in range(4)
-        ))
+    bullet_list_content = "\n".join((f"- item {i}" for i in range(4)))
 
     bullet_tree = parse_text_to_syntax_tree(bullet_list_content)
 
@@ -220,9 +218,7 @@ def test_read_bullet_list() -> None:
 
 
 def test_read_titled_bullet_list() -> None:
-    titled_bullet_list_content = "\n".join((
-        f"- **Title{i}:** item {i}" for i in range(4)
-        ))
+    titled_bullet_list_content = "\n".join((f"- **Title{i}:** item {i}" for i in range(4)))
 
     titled_bullet_tree = parse_text_to_syntax_tree(titled_bullet_list_content)
 

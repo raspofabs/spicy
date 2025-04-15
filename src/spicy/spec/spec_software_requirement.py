@@ -25,7 +25,6 @@ class SoftwareRequirement(SpecElementBase):
         """Return a list of names of system elements from which this software requirement is derived."""
         return self.elements_list
 
-
     def fulfils(self) -> list[str]:
         """Return a list of names of system elements from which this software requirement is derived."""
         return self.elements_list

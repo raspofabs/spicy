@@ -68,7 +68,7 @@ class SystemQualificationTest(SpecElementBase):
         if not self.cases_list:
             issues.append("Does not monitor any test cases.")
         else:
-            test_spec_name_prefix = self.spec_prefix+"_SYS_TEST_"
+            test_spec_name_prefix = self.spec_prefix + "_SYS_TEST_"
             badly_named_tests = [case for case in self.cases_list if not case.startswith(test_spec_name_prefix)]
             if badly_named_tests:
                 issues.append(f"Not all tests are correctly ({test_spec_name_prefix}) named: {badly_named_tests}")

@@ -33,4 +33,3 @@ Safety related: yes
 Interpreted by:
 
 - TLA_STK_REQ_1_numbered_requirements
-

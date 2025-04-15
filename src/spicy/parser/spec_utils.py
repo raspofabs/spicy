@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 
+
 def spec_name_to_variant(name: str) -> str | None:
     """Return the variant by guessing from the name, or give up and return None."""
     parts = name.split("_")
@@ -25,7 +26,7 @@ def spec_name_to_variant(name: str) -> str | None:
         "SYS_INT": "SystemIntegration",
         "SYS_QUAL": "SystemQualification",
         "VAL": "Validation",
-        }.items():
+    }.items():
         if comparison_string.startswith(variant_string):
             try:
                 __, post = comparison_string.split(variant_string)
@@ -52,12 +53,16 @@ _spec_link_mapping = {
     "SoftwareIntegration": [("Integrates", "SoftwareComponent")],
     "SoftwareQualification": [("Tests", "SoftwareRequirement")],
     "UseCase": [("Fulfils", "StakeholderNeed")],
-    }
+}
 
 _spec_link_optional_mapping = {
     "StakeholderNeed": [("Fulfilled by", "StakeholderRequirement"), ("Qualified as", "UseCase")],
     "StakeholderRequirement": [("Derives to", "SystemRequirement"), ("Validated by", "Validation")],
-    "SystemRequirement": [("Implemented as", "SystemElement"), ("Tested by", "SystemQualification"), ("Requires", "SoftwareRequirement")],
+    "SystemRequirement": [
+        ("Implemented as", "SystemElement"),
+        ("Tested by", "SystemQualification"),
+        ("Requires", "SoftwareRequirement"),
+    ],
     "SystemElement": [("Composes", "SoftwareRequirement"), ("Integrated by", "SystemIntegration")],
     "SoftwareRequirement": [],
     "SoftwareArchitecture": [],
@@ -69,20 +74,20 @@ _spec_link_optional_mapping = {
     "SystemIntegration": [],
     "SystemQualification": [],
     "Validation": [],
-    }
+}
 
 
 @lru_cache
 def expected_links_for_variant(variant: str, include_optional: bool = False) -> list[tuple[str, str]]:
     """
     Return a list of (link-name, target-variant) tuples.
-    
+
     These are the links that should be present in the spec.
     For example, any testing specs should have links to what requirement they
     test.
     Lacking regular links implies the spec is in draft: unfinished and
     incomplete.
-    """ 
+    """
     extra = _spec_link_optional_mapping.get(variant, []) if include_optional else []
     return _spec_link_mapping.get(variant, []) + extra
 
@@ -97,19 +102,19 @@ def expected_backlinks_for_variant(variant: str, include_optional: bool = False)
     to this one.
     Lacking the required backlinks usually means that the spec has not been
     refined or tested.
-    """ 
+    """
     regular = [
         (source_spec, link)
         for source_spec, links in _spec_link_mapping.items()
         for link, destination_spec in links
         if destination_spec == variant
-        ]
+    ]
     extra = [
         (source_spec, link)
         for source_spec, links in _spec_link_optional_mapping.items()
         for link, destination_spec in links
         if destination_spec == variant
-        ]
+    ]
     if include_optional:
         return regular + extra
     return regular
