@@ -93,12 +93,19 @@ def test_get_text_from_node() -> str:
 
     # test text with some emphasis
     node = parse_text_to_syntax_tree("Some _italic_ and **bold** content")
+    # TODO: can we get this function to use spaces, not newlines, between style nodes?
     assert get_text_from_node(node) == "Some\nitalic\nand\nbold\ncontent"
 
     # test header
     node = parse_text_to_syntax_tree("# Some header")
     assert get_text_from_node(node) == "Some header"
 
-    # test some code content
+    # test some inline code content
     node = parse_text_to_syntax_tree("Some `inline code;` snippet.")
+    # TODO: can we get this function to use spaces, not newlines, between code and non-code nodes?
     assert get_text_from_node(node) == "Some\n`inline code;`\nsnippet."
+
+    # test a code block
+    node = parse_text_to_syntax_tree("    code block():")
+    # TODO: fix this
+    #assert get_text_from_node(node) == "code block():"
