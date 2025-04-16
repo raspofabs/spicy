@@ -7,8 +7,8 @@ import pytest
 
 from spicy.gather import get_elements_from_files
 from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
-from spicy.parser import SpecParser, parse_syntax_tree_to_spec_elements
 from spicy.parser.spec_element import SpecElement
+from spicy.parser.spec_parser import SpecParser, parse_syntax_tree_to_spec_elements
 
 
 def test_parse_use_case(test_data_path: Path) -> None:
@@ -38,6 +38,20 @@ def test_parse_use_case(test_data_path: Path) -> None:
 
     issues = use_case.get_issues()
     assert not issues
+
+
+def test_parse_multiple_use_cases(test_data_path: Path) -> None:
+    """Test we can parse a file with multiple use-cases and detect the use case specs."""
+    from_file = test_data_path / "use_cases" / "03_multiple_valid.md"
+    project_prefix = "TD"
+    node = load_syntax_tree(from_file)
+    spec_element_list = parse_syntax_tree_to_spec_elements(project_prefix, node, from_file)
+
+    assert isinstance(spec_element_list, list)
+    assert len(spec_element_list) > 1
+
+    assert all(isinstance(x, SpecElement) for x in spec_element_list)
+    assert all(x.variant == "UseCase" for x in spec_element_list)
 
 
 def test_detect_spec_heading() -> None:

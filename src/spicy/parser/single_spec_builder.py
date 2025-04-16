@@ -5,7 +5,7 @@ from pathlib import Path
 
 from markdown_it.tree import SyntaxTreeNode
 
-from spicy.md_read import get_text_from_node
+from spicy.md_read import get_text_from_node, read_bullet_list
 
 from .spec_element import SpecElement
 from .use_case_constants import _get_usage_subsection, usage_section_map
@@ -61,23 +61,15 @@ class SingleSpecBuilder:
 
     def section_add_paragraph(self, section_id: str, content: str) -> None:
         """Append content to section information."""
-        if content.startswith("Fulfils:"):
-            self.state = "expect_fulfils"
-        else:
-            self.content[section_id].append(content)
+        self.content[section_id].append(content)
 
     def add_code_block(self, section_id: str, code_block_node: SyntaxTreeNode) -> None:
         """Use the code block or paste it into content."""
-        if self.state == "expect_fulfils":
-            content = code_block_node.content
-            self.links["fulfils"].extend(line.strip() for line in content.split())
-            self.state = ""
-        else:
-            self.content[section_id].append(code_block_node.content)
+        self.content[section_id].append(code_block_node.content)
 
     def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
         """Consume the bullet list and store in content."""
-        self.content[section].extend(_get_bullet_points(bullet_list))
+        self.content[section].extend(map(get_text_from_node, read_bullet_list(bullet_list)))
 
     def read_usage_bullets(self, bullet_list: SyntaxTreeNode) -> None:
         """Consume the usage list and create the usage slot data."""
@@ -85,11 +77,3 @@ class SingleSpecBuilder:
             slot_content = _get_usage_subsection(bullet_list, lookup)
             if slot_content:
                 self.usage_sections[slot] = slot_content
-
-
-def _get_bullet_points(node: SyntaxTreeNode) -> list[str]:
-    """Return the content of the bullet_list item as a simple list."""
-    if node.type != "bullet_list":
-        msg = f"Node is wrong type: {node.type}"
-        raise TypeError(msg)
-    return [get_text_from_node(bullet) for bullet in node.children]
