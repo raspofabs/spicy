@@ -9,7 +9,7 @@ from click.testing import CliRunner
 from spicy.check_spec import run
 
 
-def test_simple_use_case(positive_test_data_path: Path, caplog) -> None:
+def test_simple_use_case(positive_test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test the simple positive use case."""
     runner = CliRunner()
     result = runner.invoke(run, ["--project-prefix", "POS", str(positive_test_data_path)])

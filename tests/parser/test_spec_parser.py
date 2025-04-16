@@ -7,7 +7,8 @@ import pytest
 
 from spicy.gather import get_elements_from_files
 from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
-from spicy.parser import SpecElement, SpecParser, parse_syntax_tree_to_spec_elements
+from spicy.parser import SpecParser, parse_syntax_tree_to_spec_elements
+from spicy.parser.spec_element import SpecElement
 
 
 def test_parse_use_case(test_data_path: Path) -> None:
@@ -79,7 +80,7 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog: pytest.LogCapture
     spec = spec_element_list[0]
     assert spec.name == "TD_SYS_REQ_simple_sys_req"
 
-    assert "Handle bullet-list" in caplog.text
+    assert "Handle bullet_list" in caplog.text
 
     assert spec.description_text(), str(spec)
     assert spec.is_qualification_related

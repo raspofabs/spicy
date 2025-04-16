@@ -28,7 +28,7 @@ def test_expected_links_for_variant() -> None:
 
     # expect more if you include optional links (usually bi-directional backlinks)
     assert expected_links_for_variant("StakeholderRequirement", include_optional=False) == [
-        ("Fulfils", "StakeholderNeed")
+        ("Fulfils", "StakeholderNeed"),
     ]
     assert expected_links_for_variant("StakeholderRequirement", include_optional=True) == [
         ("Fulfils", "StakeholderNeed"),

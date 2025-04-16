@@ -1,16 +1,14 @@
 """Construct SpecElements as they are read."""
 
 import logging
-from collections import defaultdict
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, split_list_item
-from spicy.use_cases.mappings import tcl_map
+from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no
 
 from .single_spec_builder import SingleSpecBuilder
 from .spec_element import SpecElement
 from .spec_utils import section_name_to_key, spec_name_to_variant
-from .use_case_constants import DETECTABILITY_CLASS, TOOL_IMPACT_CLASS, section_map, usage_section_map
+from .use_case_constants import DETECTABILITY_CLASS, TOOL_IMPACT_CLASS, section_map
 
 logger = logging.getLogger("SpecParser")
 
@@ -39,15 +37,19 @@ class SpecParser:
         self.section_is_sticky: bool = False  # headings are sticky, colon-sections are not.
         self.issues: list[str] = []
 
+    def _check_for_builder(self) -> None:
+        if self.builder is None:
+            msg = "Must have builder."
+            raise AssertionError(msg)
+
     @property
     def _next_ordering_id(self) -> int:
         self.parsed_spec_count += 1
         return self.parsed_spec_count - 1
 
-    def _close_section(self, level: int):
+    def _close_section(self, level: int) -> None:
         if self.header_stack[level] is not None:
-            if builder := self.builder_stack.get(level) is not None:
-                del self.builder_stack[level]
+            self.builder_stack.pop(level, None)
         self.header_stack[level] = None
 
     @staticmethod
@@ -134,54 +136,57 @@ class SpecParser:
         self.spec_builders.append(self.builder)
 
     def _handle_paragraph(self, node: SyntaxTreeNode) -> None:
+        self._check_for_builder()
         text_content = get_text_from_node(node)
         if (section_name := looks_like_non_sticky_section(text_content)) is not None:
             section_key = section_name_to_key(section_name)
             logger.debug("looks like non-sticky section %s -> %s", section_name, section_key)
             self.in_section = section_key or section_name
             self.section_is_sticky = False
-        elif self.builder is not None:
-            if self.in_section is not None:
-                logger.debug("builder add %s -> %s", self.in_section, text_content)
-                self.builder.section_add_paragraph(self.in_section, text_content)
-                if not self.section_is_sticky:
-                    self.in_section = None
-            else:
-                logger.debug("builder don't add %s (no section)", text_content)
+        elif self.in_section is not None:
+            logger.debug("builder add %s -> %s", self.in_section, text_content)
+            self.builder.section_add_paragraph(self.in_section, text_content)
+            if not self.section_is_sticky:
+                self.in_section = None
+        else:
+            logger.debug("builder didn't add %s (no section)", text_content)
 
     def _handle_bullet_list(self, node: SyntaxTreeNode) -> None:
-        if self.builder is None:
-            return
-        if self.in_section == "usage" and self.builder is not None:
+        self._check_for_builder()
+        if self.in_section == "usage":
             self.builder.read_usage_bullets(node)
         elif self.in_section is not None:
             self.builder.read_bullets_to_section(node, self.in_section)
         else:
             logger.debug("Unhandled bullet list : %s", node.pretty())
 
+    def _handle_tool_impact(self, content: str) -> None:
+        self._check_for_builder()
+        if self.in_section != "tool_impact":
+            self.issues.append(f"Tool impact in {self.in_section}")
+        self.impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
+        if self.impact not in ["", "TI1", "TI2"]:
+            self.issues.append(f"In {self.builder.location} == {self.impact=}")
+        self.builder.impact = self.impact
+
+    def _handle_detectability(self, content: str) -> None:
+        self._check_for_builder()
+        if self.in_section != "detectability":
+            self.issues.append(f"Detectabilty in {self.in_section}")
+        self.detectability = content.split(DETECTABILITY_CLASS)[1].strip()
+        if self.detectability not in ["", "TD1", "TD2", "TD3"]:
+            self.issues.append(f"In {self.builder.location} == {self.detectability=}")
+        self.builder.detectability = self.detectability
+
     def _handle_code_block(self, node: SyntaxTreeNode) -> None:
-        if self.builder is None:
-            return
+        self._check_for_builder()
         content = node.content
         if content.startswith(TOOL_IMPACT_CLASS):
-            if self.in_section != "tool_impact":
-                self.issues.append(f"Tool impact in {self.in_section}")
-            self.impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
-            if self.impact not in ["", "TI1", "TI2"]:
-                self.issues.append(f"In {self.builder.location} == {self.impact=}")
-            if self.builder is not None:
-                self.builder.impact = self.impact
+            self._handle_tool_impact(content)
         elif content.startswith(DETECTABILITY_CLASS):
-            if self.in_section != "detectability":
-                self.issues.append(f"Detectabilty in {self.in_section}")
-            self.detectability = content.split(DETECTABILITY_CLASS)[1].strip()
-            if self.detectability not in ["", "TD1", "TD2", "TD3"]:
-                self.issues.append(f"In {self.builder.location} == {self.detectability=}")
-            if self.builder is not None:
-                self.builder.detectability = self.detectability
-        else:
-            if self.in_section is not None:
-                self.builder.add_code_block(self.in_section, node)
+            self._handle_detectability(content)
+        elif self.in_section is not None:
+            self.builder.add_code_block(self.in_section, node)
 
     def build_specs(self) -> list[SpecElement]:
         """Build the gathered specs from the builders and return them as a list."""
@@ -192,13 +197,12 @@ class SpecParser:
         # Parse a SyntaxTreeNode for common features.
         logger.debug("Handle %s: %s", node.type, node.pretty())
 
-        if self.builder is not None:
-            if value := get_if_single_line_section(node):
-                section_name, content = value
-                section_key = section_name_to_key(section_name)
-                logger.info("Single line section: %s/%s -- %s", section_name, section_key, content)
-                if section_key == "qualification_related":
-                    self.builder.qualification_related = parse_yes_no(content)
+        if value := get_if_single_line_section(node):
+            section_name, content = value
+            section_key = section_name_to_key(section_name)
+            logger.info("Single line section: %s/%s -- %s", section_name, section_key, content)
+            if section_key == "qualification_related" and self.builder is not None:
+                self.builder.qualification_related = parse_yes_no(content)
 
         if self._is_use_case(node):
             logger.debug("Handle use case %s", node.pretty())
@@ -210,15 +214,15 @@ class SpecParser:
             self._handle_heading(node)
 
         if self.builder is not None:
+            logger.debug("Handle %sn%s", node.type, node.pretty())
             if node.type == "paragraph":
-                logger.debug("Handle paragraph %s", node.pretty())
                 self._handle_paragraph(node)
             elif node.type == "bullet_list":
-                logger.debug("Handle bullet-list %s", node.pretty())
                 self._handle_bullet_list(node)
             elif node.type == "code_block":
-                logger.debug("Handle code-block %s", node.pretty())
                 self._handle_code_block(node)
+            else:
+                logger.debug("Unhandled %s\n%s", node.type, node.pretty())
 
 
 def parse_syntax_tree_to_spec_elements(project_prefix: str, node: SyntaxTreeNode, from_file: Path) -> list[SpecElement]:
@@ -230,6 +234,8 @@ def parse_syntax_tree_to_spec_elements(project_prefix: str, node: SyntaxTreeNode
 
 
 # utility functions
+
+MAX_WORDS_IN_SECTION_HEADING = 5
 
 
 def looks_like_non_sticky_section(text_content: str) -> str | None:
@@ -246,7 +252,7 @@ def looks_like_non_sticky_section(text_content: str) -> str | None:
     except ValueError:
         return None
     # are always short on word count
-    if len(simple_first_line.split(" ")) > 5:
+    if len(simple_first_line.split(" ")) > MAX_WORDS_IN_SECTION_HEADING:
         return None
     # return the name
     return simple_first_line
@@ -268,7 +274,7 @@ def looks_like_single_line_field(text_content: str) -> tuple[str, str] | None:
     except ValueError:
         return None
     # are always short on word count
-    if len(simple_preamble.split(" ")) > 5:
+    if len(simple_preamble.split(" ")) > MAX_WORDS_IN_SECTION_HEADING:
         return None
     # return the name
     return simple_preamble, post_colon

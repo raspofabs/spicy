@@ -27,7 +27,7 @@ def get_spec_files(root_path: Path | None = None) -> list[Path]:
 def run(
     path_override: Path | None,
     project_prefix: str | None,
-    verbose: bool,
+    verbose: bool,  # noqa: FBT001
 ) -> None:
     """Find paths to read, then print out the TCLs of all the use-cases."""
     spicy_config = load_spicy_config(path_override or Path(), prefix=project_prefix)

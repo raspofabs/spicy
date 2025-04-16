@@ -67,10 +67,7 @@ def get_text_from_node(node: SyntaxTreeNode) -> str:
 def check_node_is(node: SyntaxTreeNode, type_name: str, message: str | None = None) -> None:
     """Check a node is a specific type, raise an IndexError if not."""
     if node.type != type_name:
-        if message is not None:
-            msg = message + f" - was {node.type}"
-        else:
-            msg = f"Node not {type_name} - was {node.type}"
+        msg = (message or f"Node not {type_name}") + f" - was {node.type}"
         raise IndexError(msg)
 
 
