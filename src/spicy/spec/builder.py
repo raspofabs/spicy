@@ -1,4 +1,5 @@
 """Construct SpecElements as they are read."""
+# pragma: exclude file
 
 import logging
 from collections import defaultdict

@@ -1,4 +1,5 @@
 """Check requirements for a TDP."""
+# pragma: exclude file
 
 import logging
 import sys

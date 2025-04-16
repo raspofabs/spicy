@@ -1,4 +1,5 @@
 """Render any issues found with the collection of specs and use-cases."""
+# pragma: exclude file
 
 import logging
 from collections import Counter

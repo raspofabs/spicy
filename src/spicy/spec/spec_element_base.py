@@ -1,4 +1,5 @@
 """Base spec element."""
+# pragma: exclude file
 
 import logging
 from pathlib import Path

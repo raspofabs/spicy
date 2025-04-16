@@ -49,15 +49,6 @@ class SpecParser:
             self.builder_stack.pop(level, None)
         self.header_stack[level] = None
 
-    @staticmethod
-    def single_line_getter(node: SyntaxTreeNode, expected_prefix: str) -> str | None:
-        """Get the value from a single line field."""
-        text = get_text_from_node(node)
-        if text.startswith(expected_prefix):
-            __, value = text.split(expected_prefix)
-            return value
-        return None
-
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
         # figure out which heading level we're at
         level = int(node.tag[1]) - 1

@@ -40,6 +40,6 @@ def _get_usage_subsection(node: SyntaxTreeNode, variant: str) -> str:
         raise TypeError(msg)
     for bullet_point in node.children:
         title, content = split_list_item(bullet_point)
-        if title == variant:
+        if title.lower() == variant.lower():
             return content
     return ""

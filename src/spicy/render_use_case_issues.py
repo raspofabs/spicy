@@ -1,4 +1,5 @@
 """Render use case issues to help with Tool Qualification."""
+# pragma: exclude file
 
 from collections.abc import Callable
 

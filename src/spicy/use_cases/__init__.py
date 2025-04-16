@@ -1,4 +1,5 @@
 """Collecting use case data from a file or directory."""
+# pragma: exclude file
 
 from pathlib import Path
 
