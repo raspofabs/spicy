@@ -18,7 +18,14 @@ def basic_builder() -> SingleSpecBuilder:
     return SingleSpecBuilder(TEST_NAME, TEST_VARIANT, ARBITRARY_NTH, TEST_PATH, TEST_NAME)
 
 
-def test_simple_spec_building(basic_builder: SingleSpecBuilder) -> None:
-    """Test a simple builder which only passes name and basic required details."""
+def test_single_spec_builder_construction(basic_builder: SingleSpecBuilder) -> None:
+    """Test a simple builder using only name and basic required details."""
+    assert str(TEST_PATH) in basic_builder.location
+    assert str(ARBITRARY_NTH) in basic_builder.location
+    assert TEST_NAME in basic_builder.location
+
+
+def test_single_spec_builder_build_method(basic_builder: SingleSpecBuilder) -> None:
+    """Test building from a simple builder."""
     spec_element = basic_builder.build()
     assert f"{TEST_VARIANT}:{TEST_NAME}({TEST_PATH}:{ARBITRARY_NTH})" in str(spec_element)

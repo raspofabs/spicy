@@ -62,14 +62,14 @@ class SpecParser:
         self.used_current_spec_level = False
 
         if self.is_spec_heading(content):
-            self.used_current_spec_level = True
-            self.current_spec_level = level
             name = content.strip()
             variant = spec_name_to_variant(name) or "Spec"
             title = content
             logger.debug("Found a spec %s", name)
             self.builder = SingleSpecBuilder(name, variant, self._next_ordering_id, self.from_file, title)
-            self.builder_stack[level] = self.builder
+
+            self._replace_builder_at_level(self.builder, level)
+
             prefix, *postfix = name.split(self.project_prefix)
             # don't add to list if it's a rejected spec
             if prefix != "REJECTED_":
@@ -96,7 +96,7 @@ class SpecParser:
         self.current_spec_level = spec_level
         self.used_current_spec_level = True
 
-        builders_to_delete = [k for k in self.builder_stack if k >= self.current_spec_level]
+        builders_to_delete = [k for k in self.builder_stack if k >= spec_level]
         logger.debug("builders to delete %s", builders_to_delete)
         for level in builders_to_delete:
             del self.builder_stack[level]
