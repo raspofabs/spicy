@@ -5,18 +5,16 @@ from collections import Counter
 from collections.abc import Callable, Sequence
 from typing import Any, TypeVar
 
-from .spec import SpecElementBase
-from .spec.builder import (
-    SoftwareComponent,
-    SoftwareRequirement,
-    StakeholderNeed,
-    StakeholderRequirement,
-    SystemElement,
-    SystemIntegrationTest,
-    SystemQualificationTest,
-    SystemRequirement,
-)
-from .use_cases import UseCase
+from .spec.spec_element_base import SpecElementBase
+from .spec.spec_software_component import SoftwareComponent
+from .spec.spec_software_requirement import SoftwareRequirement
+from .spec.spec_stakeholder_need import StakeholderNeed
+from .spec.spec_stakeholder_requirement import StakeholderRequirement
+from .spec.spec_system_element import SystemElement
+from .spec.spec_system_integration import SystemIntegrationTest
+from .spec.spec_system_qualification import SystemQualificationTest
+from .spec.spec_system_requirement import SystemRequirement
+from .use_cases.use_case import UseCase
 
 logger = logging.getLogger(__name__)
 
