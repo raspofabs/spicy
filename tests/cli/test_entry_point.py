@@ -61,7 +61,7 @@ def test_simple_use_case(positive_test_data_path: Path, caplog: pytest.LogCaptur
     assert "Discovered 13 elements." in caplog.text
 
 
-@pytest.mark.skip
+@pytest.mark.xfail
 def test_various_data(test_data_path: Path) -> None:
     """Test the general test data folder."""
     runner = CliRunner()
@@ -77,7 +77,7 @@ def test_various_data(test_data_path: Path) -> None:
     assert re.search(r"SoftwareRequirement.*\n.*Does not fulfil any system requirement", result.stdout, re.MULTILINE)
 
 
-@pytest.mark.skip
+@pytest.mark.xfail
 def test_larger_spec(cookie_data_path: Path) -> None:
     """Test the complete test spec data."""
     runner = CliRunner()

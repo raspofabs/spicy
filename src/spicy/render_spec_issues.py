@@ -2,8 +2,8 @@
 
 import logging
 from collections import Counter
-from collections.abc import Callable
-from functools import partial
+from collections.abc import Callable, Sequence
+from typing import Any, TypeVar
 
 from .spec import SpecElementBase
 from .spec.builder import (
@@ -19,6 +19,8 @@ from .spec.builder import (
 from .use_cases import UseCase
 
 logger = logging.getLogger(__name__)
+
+RenderFunction = Callable[[str], None]
 
 
 class LinkageRequirement:
@@ -47,53 +49,10 @@ class LinkageRequirement:
         return spec_class == self.primary_spec
 
 
-def get_linkage_issues(
-    specs: list[SpecElementBase],
-    considered_case_class: type,
-    linkages: dict,
-) -> list[str]:
-    """Check all use cases are connected to at least one stakeholder need."""
-    issues: list[str] = []
-
-    considered_specs = list(just(considered_case_class)(specs))
-    logger.debug("Have %s %s", len(considered_specs), considered_case_class.__name__)
-
-    c_name = considered_case_class.__name__
-
-    spec_map = {n.name: n for n in considered_specs}
-    spec_names = set(spec_map.keys())
-
-    for link in linkages:
-        if not link.relevant_to(considered_case_class):
-            continue
-        # reset per link type
-        unused_specs = set(spec_names)
-
-        o_name = link.other_spec.__name__
-        other_specs = list(just(link.other_spec)(specs))
-        for other_spec in other_specs:
-            fulfilment = set(link.fulfils(other_spec))
-            if other_spec.safety_case:
-                relevant_considered: list[SpecElementBase] = list(filter(None, [spec_map.get(a) for a in fulfilment]))
-                if not any(spec.is_qualification_related for spec in relevant_considered):
-                    issues.append(f"{o_name} {other_spec.name} is safety related, but none of it's {c_name} links are:")
-                    issues.extend(f"\t{spec.name}" for spec in relevant_considered)
-
-            if disconnected := fulfilment - spec_names:
-                issues.append(f"{o_name} {other_spec.name} fulfils unexpected {c_name} {disconnected}.")
-            unused_specs = unused_specs - fulfilment
-
-        if unused_specs:
-            issues.append(f"{c_name} specs without a {o_name}:")
-            issues.extend(f"\t{spec}" for spec in sorted(unused_specs))
-
-    return issues
-
-
 def render_issues(
     specs: list[SpecElementBase],
     use_cases: list[UseCase],
-    render_function: Callable | None = None,
+    render_function: RenderFunction | None = None,
 ) -> bool:
     """Render unresolved issues for each use-case."""
     render_function = render_function or print
@@ -152,12 +111,12 @@ def render_issues(
 def render_use_case_linkage_issues(
     specs: list[SpecElementBase],
     use_cases: list[UseCase],
-    render_function: Callable,
+    render_function: RenderFunction,
 ) -> bool:
     """Check all use cases are connected to at least one stakeholder need."""
     any_errors = False
 
-    stakeholder_needs = list(just(StakeholderNeed)(specs))
+    stakeholder_needs = only(StakeholderNeed, specs)
     logger.debug("Have %s stakeholder needs", len(stakeholder_needs))
 
     stakeholder_needs_map = {n.name: n for n in stakeholder_needs}
@@ -171,8 +130,8 @@ def render_use_case_linkage_issues(
             if not any(need.is_qualification_related for need in uc_needs):
                 any_errors = True
                 render_function(f"Use case {use_case.name} is safety related, but none of it's needs are:")
-                for need in uc_needs:
-                    render_function(f"\t{need.name}")
+                for use_case_need in uc_needs:
+                    render_function(f"\t{use_case_need.name}")
 
         if disconnected := fulfilment - stakeholder_needs_names:
             any_errors = True
@@ -182,20 +141,20 @@ def render_use_case_linkage_issues(
     if unused_needs:
         any_errors = True
         render_function("Needs without a use-case:")
-        for need in sorted(unused_needs):
-            render_function(f"\t{need}")
+        for unused_need in sorted(unused_needs):
+            render_function(f"\t{unused_need}")
 
     return any_errors
 
 
 def render_stakeholder_requirement_linkage_issues(
     specs: list[SpecElementBase],
-    render_function: Callable,
+    render_function: RenderFunction,
 ) -> bool:
     """Check all stakeholder needs are refined into at least one stakeholder requirement."""
     any_errors = False
-    stakeholder_reqs = list(just(StakeholderRequirement)(specs))
-    stakeholder_needs = list(just(StakeholderNeed)(specs))
+    stakeholder_reqs = only(StakeholderRequirement, specs)
+    stakeholder_needs: list[StakeholderNeed] = only(StakeholderNeed, specs)
     logger.debug("Have %s stakeholder requirements", len(stakeholder_reqs))
 
     stakeholder_needs_names = {n.name for n in stakeholder_needs}
@@ -211,8 +170,8 @@ def render_stakeholder_requirement_linkage_issues(
     if unfulfilled_needs:
         any_errors = True
         render_function("Needs without a fulfilling stakeholder requirement:")
-        for need in sorted(unfulfilled_needs):
-            render_function(f"\t{need}")
+        for unfulfilled_need in sorted(unfulfilled_needs):
+            render_function(f"\t{unfulfilled_need}")
 
     for need in stakeholder_needs:
         result, messages = check_safety(need, stakeholder_reqs, lambda x: x.fulfils())
@@ -225,12 +184,12 @@ def render_stakeholder_requirement_linkage_issues(
 
 def render_system_requirement_linkage_issues(
     specs: list[SpecElementBase],
-    render_function: Callable,
+    render_function: RenderFunction,
 ) -> bool:
     """Check all stakeholder requirements are fulfilled by at least one system requirement."""
     any_errors = False
-    stakeholder_reqs = list(just(StakeholderRequirement)(specs))
-    system_reqs = list(just(SystemRequirement)(specs))
+    stakeholder_reqs = only(StakeholderRequirement, specs)
+    system_reqs = only(SystemRequirement, specs)
     logger.debug("Have %s system requirements", len(system_reqs))
 
     stakeholder_reqs_names = {n.name for n in stakeholder_reqs}
@@ -260,12 +219,12 @@ def render_system_requirement_linkage_issues(
 
 def render_system_element_linkage_issues(
     specs: list[SpecElementBase],
-    render_function: Callable,
+    render_function: RenderFunction,
 ) -> bool:
     """Check all system requirements are captured by at least one system element."""
     any_errors = False
-    system_reqs = list(just(SystemRequirement)(specs))
-    system_elements = list(just(SystemElement)(specs))
+    system_reqs = only(SystemRequirement, specs)
+    system_elements = only(SystemElement, specs)
     logger.debug("Have %s system elements", len(system_elements))
 
     system_req_names = {n.name for n in system_reqs}
@@ -288,12 +247,12 @@ def render_system_element_linkage_issues(
 
 def render_software_requirement_linkage_issues(
     specs: list[SpecElementBase],
-    render_function: Callable,
+    render_function: RenderFunction,
 ) -> bool:
     """Check all system elements which are software elements derive to at least one software requirement."""
     any_errors = False
-    system_elements = list(just(SystemElement)(specs))
-    software_requirements = list(just(SoftwareRequirement)(specs))
+    system_elements = only(SystemElement, specs)
+    software_requirements = only(SoftwareRequirement, specs)
     logger.debug("Have %s software requirements", len(software_requirements))
 
     system_element_names = {n.name for n in system_elements if n.is_software_element()}
@@ -316,40 +275,40 @@ def render_software_requirement_linkage_issues(
 
 def render_software_component_linkage_issues(
     specs: list[SpecElementBase],
-    _render_function: Callable,
+    _render_function: RenderFunction,
 ) -> bool:
     """Check all software requirements are satisfied by at least one software component."""
     any_errors = False
-    software_components = list(just(SoftwareComponent)(specs))
+    software_components = only(SoftwareComponent, specs)
     logger.debug("Have %s software components", len(software_components))
     return any_errors
 
 
 def render_software_integration_linkage_issues(
     specs: list[SpecElementBase],
-    _render_function: Callable,
+    _render_function: RenderFunction,
 ) -> bool:
     """Check all software components have integration tests."""
     any_errors = False
-    software_components = list(just(SoftwareComponent)(specs))
+    software_components = only(SoftwareComponent, specs)
     logger.debug("Have %s software components", len(software_components))
     return any_errors
 
 
 def render_software_qualification_linkage_issues(
     specs: list[SpecElementBase],
-    _render_function: Callable,
+    _render_function: RenderFunction,
 ) -> bool:
     """Check all software requirements have qualification tests."""
     any_errors = False
-    software_components = list(just(SoftwareComponent)(specs))
+    software_components = only(SoftwareComponent, specs)
     logger.debug("Have %s software components", len(software_components))
     return any_errors
 
 
 def render_software_unit_linkage_issues(
     _specs: list[SpecElementBase],
-    _render_function: Callable,
+    _render_function: RenderFunction,
 ) -> bool:
     """Check all software components have at least one software unit design."""
     return False
@@ -357,12 +316,12 @@ def render_software_unit_linkage_issues(
 
 def render_system_integration_linkage_issues(
     specs: list[SpecElementBase],
-    render_function: Callable,
+    render_function: RenderFunction,
 ) -> bool:
     """Check all system elements have integration tests."""
     any_errors = False
-    system_elements = list(just(SystemElement)(specs))
-    system_integration_tests = list(just(SystemIntegrationTest)(specs))
+    system_elements = only(SystemElement, specs)
+    system_integration_tests = only(SystemIntegrationTest, specs)
     logger.debug("Have %s system integration tests", len(system_integration_tests))
 
     system_element_names = {n.name for n in system_elements}
@@ -387,12 +346,12 @@ def render_system_integration_linkage_issues(
 
 def render_system_qualification_linkage_issues(
     specs: list[SpecElementBase],
-    render_function: Callable,
+    render_function: RenderFunction,
 ) -> bool:
     """Check all system requirements have system qualification tests."""
     any_errors = False
-    system_reqs = list(just(SystemRequirement)(specs))
-    system_qualification_tests = list(just(SystemQualificationTest)(specs))
+    system_reqs = only(SystemRequirement, specs)
+    system_qualification_tests = only(SystemQualificationTest, specs)
     logger.debug("Have %s system qualification tests", len(system_qualification_tests))
 
     system_reqs_names = {n.name for n in system_reqs}
@@ -422,15 +381,18 @@ def render_system_qualification_linkage_issues(
     return any_errors
 
 
-def just(checked_class: type) -> Callable:
-    """Return a function which filters by checked_class."""
-    return partial(filter, lambda x: isinstance(x, checked_class))
+T = TypeVar("T")
+
+
+def only(checked_class: type[T], objects: list[Any]) -> list[T]:
+    """Return a list filtered by checked_class."""
+    return [x for x in objects if isinstance(x, checked_class)]
 
 
 def check_safety(
     safe_spec: SpecElementBase,
-    other_specs: list[SpecElementBase],
-    fulfilment: Callable,
+    other_specs: Sequence[SpecElementBase],
+    fulfilment: Callable[[Any], list[str]],
 ) -> tuple[bool, list[str]]:
     """Check and return whether there are safety linkage issues."""
     if not safe_spec.is_qualification_related:

@@ -32,7 +32,7 @@ def get_elements_from_files(project_prefix: str, file_paths: list[Path]) -> list
 
 def render_issues_with_elements(
     _spec_elements: list[SpecElement],
-    _render_function: Callable | None = None,
+    _render_function: Callable[[str], None] | None = None,
 ) -> bool:
     """Render unresolved issues for each Spec Element."""
     if not _spec_elements:

@@ -4,14 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from spicy.spec import SpecElementBase, gather_spec_elements
-from spicy.spec.builder import (
-    SoftwareRequirement,
-    StakeholderNeed,
-    StakeholderRequirement,
-    SystemElement,
-    SystemRequirement,
-)
+from spicy.spec import gather_spec_elements
+from spicy.spec.spec_element_base import SpecElementBase
+from spicy.spec.spec_software_requirement import SoftwareRequirement
+from spicy.spec.spec_stakeholder_need import StakeholderNeed
+from spicy.spec.spec_stakeholder_requirement import StakeholderRequirement
+from spicy.spec.spec_system_element import SystemElement
+from spicy.spec.spec_system_requirement import SystemRequirement
 
 
 def test_simple_spec(test_data_path: Path) -> None:
