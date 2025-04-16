@@ -49,11 +49,20 @@ def test_larger_spec(cookie_data_path: Path) -> None:
     assert "Needs without a fulfilling stakeholder requirement" in result.stdout
 
 
+def test_broken_use_cases(test_data_path: Path) -> None:
+    """Test the general test data folder."""
+    runner = CliRunner()
+
+    # one file
+    result = runner.invoke(run, ["-p", "TD", str(test_data_path / "use_cases" / "05_more_invalid.md")])
+    assert result.exit_code == 1, result.stdout
+
+
 def test_various_data(test_data_path: Path) -> None:
     """Test the general test data folder."""
     runner = CliRunner()
 
-    # complete directory
+    # complete test directory
     result = runner.invoke(run, ["-p", "TD", str(test_data_path)])
     assert result.exit_code == 1, result.stdout
     assert "Needs without a fulfilling stakeholder requirement" in result.stdout

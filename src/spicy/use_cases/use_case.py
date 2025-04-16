@@ -72,7 +72,10 @@ class UseCase:
     @property
     def tcl(self) -> str | None:
         """Return the tcl class based on the tool impact and error detectability."""
-        return tcl_map(self.impact, self.detectability)
+        try:
+            return tcl_map(self.impact, self.detectability)
+        except ValueError:
+            return None
 
     def fulfils(self) -> list[str]:
         """Return a list of all the needs this use-case fulfils."""

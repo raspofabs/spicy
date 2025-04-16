@@ -54,6 +54,20 @@ def test_parse_multiple_use_cases(test_data_path: Path) -> None:
     assert all(x.variant == "UseCase" for x in spec_element_list)
 
 
+def test_parse_invalid_use_cases(test_data_path: Path) -> None:
+    """Test we can parse a file with multiple use-cases and detect the use case specs."""
+    from_file = test_data_path / "use_cases" / "05_more_invalid.md"
+    project_prefix = "TD"
+    node = load_syntax_tree(from_file)
+    spec_element_list = parse_syntax_tree_to_spec_elements(project_prefix, node, from_file)
+
+    assert isinstance(spec_element_list, list)
+    assert len(spec_element_list) > 1
+
+    assert all(isinstance(x, SpecElement) for x in spec_element_list)
+    assert all(x.variant == "UseCase" for x in spec_element_list)
+
+
 def test_detect_spec_heading() -> None:
     """Test that we can detect a design spec heading from its name."""
     parser = SpecParser(Path("my_file.md"), "TD")
