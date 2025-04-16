@@ -36,7 +36,7 @@
 - supported inputs
 - expected outputs
 
-## Dymamic aspects of the system
+## Dynamic aspects of the system
 
 - version management of the elements
 - sequential coupling between elements

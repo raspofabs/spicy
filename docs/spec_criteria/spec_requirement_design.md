@@ -9,7 +9,7 @@
         - could the requirement be misinterpreted?
         - does it specify enough? i.e. is it so simple it's subject to perverse interpretation?
     4. free from design or implementation details,
-        - Is the requirement limited to the scope of the requirment type?
+        - Is the requirement limited to the scope of the requirement type?
           (System requirements do not mention software architecture, or define
           stakeholder needs or requirements)
     4. feasible,

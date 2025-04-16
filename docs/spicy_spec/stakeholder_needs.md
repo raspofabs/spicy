@@ -141,7 +141,7 @@ Only when the model was created would the issues be rendered.
 
 This decision was taken for reasons, but those reasons were not written down at the time.
 
-This need explictely requires that any architectural decisions are recorded.
+This need explicitly requires that any architectural decisions are recorded.
 Alternatives must be considered.
 Any costs associated with the decision and the payoff are documented.
 

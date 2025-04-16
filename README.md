@@ -20,7 +20,7 @@ Configure the tool with the locations of:
     - SYS.1 stakeholder requirements
     - SYS.2 system requirements
     - SYS.3 system architecture
-    - SWE.1 software requirments
+    - SWE.1 software requirements
     - SWE.2 software architecture
     - SWE.3 software detailed design
     - SWE.4 software unit verification
