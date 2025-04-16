@@ -37,7 +37,6 @@ class SpecParser:
         self.current_use_case = None
         self.in_section: str | None = None
         self.section_is_sticky: bool = False  # headings are sticky, colon-sections are not.
-        self.issues: list[str] = []
 
     @property
     def _next_ordering_id(self) -> int:
@@ -93,6 +92,16 @@ class SpecParser:
         """Return true if the node is a use-case code-block."""
         return bool(node.type == "code_block" and node.content.strip().startswith("ID: "))
 
+    def _replace_builder_at_level(self, builder: SingleSpecBuilder, spec_level: int) -> None:
+        self.current_spec_level = spec_level
+        self.used_current_spec_level = True
+
+        builders_to_delete = [k for k in self.builder_stack if k >= self.current_spec_level]
+        logger.debug("builders to delete %s", builders_to_delete)
+        for level in builders_to_delete:
+            del self.builder_stack[level]
+        self.builder_stack[spec_level] = builder
+
     def _handle_use_case_node(self, node: SyntaxTreeNode) -> None:
         use_case_name = node.content.strip().split("ID: ")[1]
         self.in_section = "prologue"
@@ -108,17 +117,12 @@ class SpecParser:
             self.from_file,
             self.last_header,
         )
-        self.current_spec_level = self.last_heading_level
-        self.used_current_spec_level = True
-
-        builders_to_delete = [k for k in self.builder_stack if k >= self.current_spec_level]
-        for level in builders_to_delete:
-            del self.builder_stack[level]
-        self.builder_stack[self.current_spec_level] = self.builder
-
         if self.used_current_spec_level:
-            self.issues.append(f"{self.builder.location} reuses {self.header_stack[-1]} in {self.from_file}")
-        self.used_current_spec_level = True
+            self.builder.parsing_issues.append(
+                f"{self.builder.location} reuses {self.header_stack[-1]} in {self.from_file}",
+            )
+
+        self._replace_builder_at_level(self.builder, self.last_heading_level)
 
         self.spec_builders.append(self.builder)
 
@@ -147,18 +151,18 @@ class SpecParser:
 
     def _handle_tool_impact(self, content: str) -> None:
         if self.in_section != "tool_impact":
-            self.issues.append(f"Tool impact in {self.in_section}")
+            self.builder.parsing_issues.append(f"Tool impact in {self.in_section}")
         self.impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
         if self.impact not in ["", "TI1", "TI2"]:
-            self.issues.append(f"In {self.builder.location} == {self.impact=}")
+            self.builder.parsing_issues.append(f"In {self.builder.location} == {self.impact=}")
         self.builder.impact = self.impact
 
     def _handle_detectability(self, content: str) -> None:
         if self.in_section != "detectability":
-            self.issues.append(f"Detectabilty in {self.in_section}")
+            self.builder.parsing_issues.append(f"Detectabilty in {self.in_section}")
         self.detectability = content.split(DETECTABILITY_CLASS)[1].strip()
         if self.detectability not in ["", "TD1", "TD2", "TD3"]:
-            self.issues.append(f"In {self.builder.location} == {self.detectability=}")
+            self.builder.parsing_issues.append(f"In {self.builder.location} == {self.detectability=}")
         self.builder.detectability = self.detectability
 
     def _handle_code_block(self, node: SyntaxTreeNode) -> None:

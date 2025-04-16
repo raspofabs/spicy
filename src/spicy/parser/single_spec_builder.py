@@ -29,6 +29,7 @@ class SingleSpecBuilder:
         self.qualification_related: bool | None = None
 
         self.state = ""
+        self.parsing_issues: list[str] = []
 
     @staticmethod
     def make_null() -> "SingleSpecBuilder":
