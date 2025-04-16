@@ -44,17 +44,19 @@ class SpecParser:
         return self.parsed_spec_count - 1
 
     def _close_section(self, level: int) -> None:
-        if self.header_stack[level] is not None:
-            self.builder_stack.pop(level, None)
-        self.header_stack[level] = None
+        builders_to_delete = [k for k in self.builder_stack if k >= level]
+        logger.debug("builders to delete %s from %s", builders_to_delete, self.builder_stack)
+        for builder_level in builders_to_delete:
+            del self.builder_stack[builder_level]
+        for i in reversed(range(level, 5)):
+            self.header_stack[i] = None
 
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
         # figure out which heading level we're at
         level = int(node.tag[1]) - 1
         # clear all levels below this level (use max key from header_stack)
-        for i in reversed(range(level, 5)):
-            self._close_section(i)
-            self.header_stack[i] = None
+        self._close_section(level)
+
         content = get_text_from_node(node)  # node.children[0].children[0].content
         self.header_stack[level] = content
         self.last_header = content
@@ -95,11 +97,6 @@ class SpecParser:
     def _replace_builder_at_level(self, builder: SingleSpecBuilder, spec_level: int) -> None:
         self.current_spec_level = spec_level
         self.used_current_spec_level = True
-
-        builders_to_delete = [k for k in self.builder_stack if k >= spec_level]
-        logger.debug("builders to delete %s", builders_to_delete)
-        for level in builders_to_delete:
-            del self.builder_stack[level]
         self.builder_stack[spec_level] = builder
 
     def _handle_use_case_node(self, node: SyntaxTreeNode) -> None:

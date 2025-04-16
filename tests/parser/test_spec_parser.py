@@ -78,6 +78,37 @@ def test_detect_spec_heading() -> None:
     assert parser.parsed_spec_count == 1
 
 
+@pytest.mark.parametrize(("header_level", "spec_count"), [(1, 3), (2, 2)])
+def test_builder_stack(
+    test_data_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    header_level: int,
+    spec_count: int,
+) -> None:
+    """Test that we can parse with sub-builders."""
+    from_file = test_data_path / "simple" / "sys_req.md"
+    project_prefix = "TD"
+
+    lines: list[str] = []
+    for i in range(spec_count):
+        lines.extend(
+            [
+                "#" * header_level + f" TD_SYS_REQ_simple_sys_req_{i}",
+                "The **TD** shall have a few simple system requirements",
+            ],
+        )
+    spec_text = "\n\n".join(lines)
+    tree = parse_text_to_syntax_tree(spec_text)
+    assert len(lines) == len(tree.children)
+
+    parser = SpecParser(from_file, project_prefix)
+    with caplog.at_level(logging.DEBUG):
+        for child in tree.children:
+            parser.parse_node(child)
+    assert parser.parsed_spec_count == spec_count
+    assert f"builders to delete [{header_level-1}]" in caplog.text, caplog.text
+
+
 def test_parse_sys_req_from_text(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test parsing with a simple system requirement, from raw text."""
     from_file = test_data_path / "simple" / "sys_req.md"
