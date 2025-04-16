@@ -3,7 +3,9 @@
 from collections import defaultdict
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node
+from markdown_it.tree import SyntaxTreeNode
+
+from spicy.md_read import get_text_from_node
 
 from .spec_element import SpecElement
 from .use_case_constants import _get_usage_subsection, usage_section_map

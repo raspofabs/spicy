@@ -3,7 +3,9 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no, read_bullet_list
+from markdown_it.tree import SyntaxTreeNode
+
+from spicy.md_read import get_text_from_node, parse_yes_no, read_bullet_list
 
 from .spec_element_base import SpecElementBase
 

@@ -4,7 +4,9 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node
+from markdown_it.tree import SyntaxTreeNode
+
+from spicy.md_read import get_text_from_node
 
 from .spec_element_base import SpecElementBase
 from .spec_software_component import SoftwareComponent

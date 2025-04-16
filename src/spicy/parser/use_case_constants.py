@@ -1,6 +1,8 @@
 """Use case specific constants and utility functions."""
 
-from spicy.md_read import SyntaxTreeNode, split_list_item
+from markdown_it.tree import SyntaxTreeNode
+
+from spicy.md_read import split_list_item
 
 FEATURES_TITLE = "Features, functions, and technical properties"
 DESCRIPTION_OF_USAGE = "Description of usage"

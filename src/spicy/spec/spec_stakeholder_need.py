@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode
+from markdown_it.tree import SyntaxTreeNode
 
 from .spec_element_base import SpecElementBase
 

@@ -4,7 +4,9 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, split_list_item
+from markdown_it.tree import SyntaxTreeNode
+
+from spicy.md_read import get_text_from_node, split_list_item
 
 from .use_case import UseCase, section_map, usage_section_map
 

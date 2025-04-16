@@ -3,7 +3,9 @@
 import logging
 from pathlib import Path
 
-from spicy.md_read import SyntaxTreeNode, get_text_from_node, parse_yes_no
+from markdown_it.tree import SyntaxTreeNode
+
+from spicy.md_read import get_text_from_node, parse_yes_no
 
 from .single_spec_builder import SingleSpecBuilder
 from .spec_element import SpecElement
@@ -98,7 +100,7 @@ class SpecParser:
     @staticmethod
     def _is_use_case(node: SyntaxTreeNode) -> bool:
         """Return true if the node is a use-case code-block."""
-        return node.type == "code_block" and node.content.strip().startswith("ID: ")
+        return bool(node.type == "code_block" and node.content.strip().startswith("ID: "))
 
     def _handle_use_case_node(self, node: SyntaxTreeNode) -> None:
         use_case_name = node.content.strip().split("ID: ")[1]
