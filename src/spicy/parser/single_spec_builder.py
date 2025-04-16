@@ -28,6 +28,11 @@ class SingleSpecBuilder:
 
         self.state = ""
 
+    @staticmethod
+    def make_null() -> "SingleSpecBuilder":
+        """Create a null-object version as a placeholder."""
+        return SingleSpecBuilder("null", "null", 0, Path(), "null")
+
     def build(self) -> SpecElement:
         """Build a Spec Element from the gathered data."""
         element = SpecElement(

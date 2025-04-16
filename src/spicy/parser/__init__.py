@@ -29,18 +29,13 @@ class SpecParser:
         self.parsed_spec_count = 0
 
         self.builder_stack: dict[int, SingleSpecBuilder] = {}
-        self.builder: SingleSpecBuilder | None = None
+        self.builder = SingleSpecBuilder.make_null()
         self.current_spec_level = 0
         self.used_current_spec_level = False
         self.current_use_case = None
         self.in_section: str | None = None
         self.section_is_sticky: bool = False  # headings are sticky, colon-sections are not.
         self.issues: list[str] = []
-
-    def _check_for_builder(self) -> None:
-        if self.builder is None:
-            msg = "Must have builder."
-            raise AssertionError(msg)
 
     @property
     def _next_ordering_id(self) -> int:
@@ -81,13 +76,12 @@ class SpecParser:
             variant = spec_name_to_variant(name) or "Spec"
             title = content
             logger.debug("Found a spec %s", name)
-            builder = SingleSpecBuilder(name, variant, self._next_ordering_id, self.from_file, title)
-            self.builder = builder
-            self.builder_stack[level] = builder
+            self.builder = SingleSpecBuilder(name, variant, self._next_ordering_id, self.from_file, title)
+            self.builder_stack[level] = self.builder
             prefix, *postfix = name.split(self.project_prefix)
             # don't add to list if it's a rejected spec
             if prefix != "REJECTED_":
-                self.spec_builders.append(builder)
+                self.spec_builders.append(self.builder)
             self.in_section = "prologue"
             self.section_is_sticky = True
         else:
@@ -136,7 +130,6 @@ class SpecParser:
         self.spec_builders.append(self.builder)
 
     def _handle_paragraph(self, node: SyntaxTreeNode) -> None:
-        self._check_for_builder()
         text_content = get_text_from_node(node)
         if (section_name := looks_like_non_sticky_section(text_content)) is not None:
             section_key = section_name_to_key(section_name)
@@ -152,7 +145,6 @@ class SpecParser:
             logger.debug("builder didn't add %s (no section)", text_content)
 
     def _handle_bullet_list(self, node: SyntaxTreeNode) -> None:
-        self._check_for_builder()
         if self.in_section == "usage":
             self.builder.read_usage_bullets(node)
         elif self.in_section is not None:
@@ -161,7 +153,6 @@ class SpecParser:
             logger.debug("Unhandled bullet list : %s", node.pretty())
 
     def _handle_tool_impact(self, content: str) -> None:
-        self._check_for_builder()
         if self.in_section != "tool_impact":
             self.issues.append(f"Tool impact in {self.in_section}")
         self.impact = content.split(TOOL_IMPACT_CLASS)[1].strip()
@@ -170,7 +161,6 @@ class SpecParser:
         self.builder.impact = self.impact
 
     def _handle_detectability(self, content: str) -> None:
-        self._check_for_builder()
         if self.in_section != "detectability":
             self.issues.append(f"Detectabilty in {self.in_section}")
         self.detectability = content.split(DETECTABILITY_CLASS)[1].strip()
@@ -179,7 +169,6 @@ class SpecParser:
         self.builder.detectability = self.detectability
 
     def _handle_code_block(self, node: SyntaxTreeNode) -> None:
-        self._check_for_builder()
         content = node.content
         if content.startswith(TOOL_IMPACT_CLASS):
             self._handle_tool_impact(content)
