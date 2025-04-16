@@ -12,7 +12,7 @@ from .use_case_constants import _get_usage_subsection, usage_section_map
 
 
 class SingleSpecBuilder:
-    """Gather information on use-cases and feedback on missing elements."""
+    """Gather information on specs or use-cases ready to build a SpecElement."""
 
     def __init__(self, name: str, variant: str, ordering_id: int, file_path: Path, title: str) -> None:
         """Construct the basic properties."""
