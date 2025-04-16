@@ -8,7 +8,12 @@ import pytest
 from spicy.gather import get_elements_from_files
 from spicy.md_read import load_syntax_tree, parse_text_to_syntax_tree
 from spicy.parser.spec_element import SpecElement
-from spicy.parser.spec_parser import SpecParser, parse_syntax_tree_to_spec_elements
+from spicy.parser.spec_parser import (
+    SpecParser,
+    looks_like_non_sticky_section,
+    looks_like_single_line_field,
+    parse_syntax_tree_to_spec_elements,
+)
 
 
 def test_parse_use_case(test_data_path: Path) -> None:
@@ -230,3 +235,39 @@ def test_valid_sys_req(test_data_path: Path, caplog: pytest.LogCaptureFixture) -
 
     issues = spec.get_issues()
     assert not issues
+
+
+# test the free functions
+
+
+def test_looks_like_non_sticky_section() -> None:
+    """Test the looks_like_non_sticky_section function."""
+    assert looks_like_non_sticky_section("Ok:")
+
+    # nothing after
+    assert not looks_like_non_sticky_section("Ok: yes")
+
+    # one line only
+    assert not looks_like_non_sticky_section("not\nOk:")
+
+    # not too many words
+    assert looks_like_non_sticky_section("Could be a valid section:")
+    assert not looks_like_non_sticky_section("Almost certainly not a valid section:")
+
+
+def test_looks_like_single_line_field() -> None:
+    """Test the looks_like_single_line_field function."""
+    assert looks_like_single_line_field("Ok: yes")
+
+    # must have something after
+    assert not looks_like_single_line_field("Ok:")
+
+    # must have something before
+    assert not looks_like_single_line_field(": nope")
+
+    # but only two parts, please!
+    assert not looks_like_single_line_field("before: middle: oops")
+
+    # not too many words
+    assert looks_like_single_line_field("Could be a valid option: yes!")
+    assert not looks_like_single_line_field("Almost certainly not a valid section: nope!")

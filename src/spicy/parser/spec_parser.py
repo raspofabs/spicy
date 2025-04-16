@@ -143,7 +143,7 @@ class SpecParser:
             self.builder.read_usage_bullets(node)
         elif self.in_section is not None:
             self.builder.read_bullets_to_section(node, self.in_section)
-        else:
+        else:  # pragma: no cover
             logger.debug("Unhandled bullet list : %s", node.pretty())
 
     def _handle_tool_impact(self, content: str) -> None:
