@@ -7,7 +7,8 @@ from pathlib import Path
 
 import click
 
-from .use_cases import UseCase, gather_use_cases
+from .use_cases import gather_use_cases
+from .use_cases.use_case import UseCase
 
 
 def get_use_case_files(root_path: Path | None = None) -> list[Path]:

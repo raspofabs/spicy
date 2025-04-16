@@ -2,7 +2,8 @@
 
 from pathlib import Path
 
-from spicy.use_cases import UseCase, gather_use_cases
+from spicy.use_cases import gather_use_cases
+from spicy.use_cases.use_case import UseCase
 
 
 def test_valid_use_case(test_data_path: Path) -> None:

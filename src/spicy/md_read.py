@@ -103,7 +103,7 @@ def split_list_item(node: SyntaxTreeNode) -> tuple[str, str]:
         return ("", "")
 
 
-def read_bullet_list(node: SyntaxTreeNode) -> list[str]:
+def read_bullet_list(node: SyntaxTreeNode) -> list[SyntaxTreeNode]:
     """Return the lines of the bullet_list item."""
     if node.type != "bullet_list":
         msg = f"Node is wrong type: {node.type}"

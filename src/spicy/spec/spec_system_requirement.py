@@ -62,12 +62,12 @@ class SystemRequirement(SpecElementBase):
             self.state = ""
         if node.type == "bullet_list":
             if self.state == "reqs_list":
-                reqs_list = read_bullet_list(node)
-                self.derived_from_list.extend([get_text_from_node(x) for x in reqs_list])
+                reqs_list = list(map(get_text_from_node, read_bullet_list(node)))
+                self.derived_from_list.extend(reqs_list)
                 self.state = ""
             if self.state == "verification_list":
-                elements_list = read_bullet_list(node)
-                self.verification_list.extend([get_text_from_node(x) for x in elements_list])
+                elements_list = list(map(get_text_from_node, read_bullet_list(node)))
+                self.verification_list.extend(elements_list)
                 self.state = ""
             if self.state == "specification_list":
                 new_spec = {a.strip().strip(":").lower(): b.strip() for a, b in read_titled_bullet_list(node).items()}

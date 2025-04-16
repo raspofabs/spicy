@@ -117,7 +117,7 @@ class SpecElementBuilder:
         return [spec.build() for spec in spec_element_builders]
 
     @staticmethod
-    def _class_for_header(name: str) -> type:
+    def _class_for_header(name: str) -> type[SpecElementBase]:
         for spec_class in SpecElementBuilder.SPEC_CLASSES:
             if spec_class.is_spec_heading(name):
                 return spec_class

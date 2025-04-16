@@ -2,10 +2,10 @@
 
 from collections.abc import Callable
 
-from .use_cases import UseCase
+from .use_cases.use_case import UseCase
 
 
-def render_issues(use_cases: list[UseCase], render_function: Callable | None = None) -> bool:
+def render_issues(use_cases: list[UseCase], render_function: Callable[[str], None] | None = None) -> bool:
     """Render unresolved issues for each use-case."""
     render_function = render_function or print
     any_errors = False
