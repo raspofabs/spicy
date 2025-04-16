@@ -122,7 +122,7 @@ class SpecElement:
         # section check
         no_section = [slot for slot in section_map.values() if slot not in self.content and slot not in ["usage"]]
         if no_section:
-            issues.append(f"{len(no_section)} no section information for :{','.join(no_section)}")
+            issues.append(f"{len(no_section)} no section information for:{','.join(no_section)}")
 
         if issues:
             issues = [f"Issues in {self.file_path.name}, {self.name}", *issues]

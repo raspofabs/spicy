@@ -14,11 +14,13 @@ TEST_PATH = Path("path/to/spec.md")
 
 @pytest.fixture
 def basic_spec_element() -> SpecElement:
+    """Fixture for basic spec element without any details."""
     return SpecElement(TEST_NAME, TEST_VARIANT, ARBITRARY_NTH, TEST_PATH)
 
 
 @pytest.fixture
 def spec_element_with_links(basic_spec_element: SpecElement) -> SpecElement:
+    """Fixture for basic spec element with a link to another spec."""
     basic_spec_element.content["verification_criteria"] = ["Can be used by someone who reads"]
     basic_spec_element.content["fulfils"] = ["PRJ_SYS_REQ_installation_guidance"]
     return basic_spec_element
@@ -26,6 +28,7 @@ def spec_element_with_links(basic_spec_element: SpecElement) -> SpecElement:
 
 @pytest.fixture
 def spec_element_for_qualification(basic_spec_element: SpecElement) -> SpecElement:
+    """Fixture for basic spec element which is qualification relevant."""
     basic_spec_element.qualification_related = True
     return basic_spec_element
 
@@ -41,7 +44,7 @@ def test_spec_element_construction(basic_spec_element: SpecElement) -> None:
 
 
 def test_spec_element_links(spec_element_with_links: SpecElement) -> None:
-    """Test the basic spec element construction."""
+    """Test a spec which links to another spec."""
     assert not spec_element_with_links.is_qualification_related
     assert spec_element_with_links.verification_criteria()
     assert not spec_element_with_links.description_text()
@@ -49,9 +52,51 @@ def test_spec_element_links(spec_element_with_links: SpecElement) -> None:
 
 
 def test_spec_element_qualification(spec_element_for_qualification: SpecElement) -> None:
-    """Test the basic spec element construction."""
+    """Test a qualification relevant spec."""
     assert spec_element_for_qualification.is_qualification_related
 
 
 def test_spec_element_as_use_case() -> None:
+    """Test the construction of use-cases as they are a bit different."""
     use_case = SpecElement("use_case_1", "UseCase", 0, Path())
+
+    assert not use_case.is_qualification_related
+
+    use_case.impact = "TI1"
+    use_case.detectability = "TD1"
+
+    assert not use_case.is_qualification_related
+
+    use_case.impact = "TI2"
+    use_case.detectability = "TD2"
+
+    assert use_case.is_qualification_related
+
+
+def test_spec_element_use_case_issues() -> None:
+    """Test the issue detection code for a simple UseCase SpecElement."""
+    use_case = SpecElement("use_case_1", "UseCase", 0, Path())
+    issues = use_case.get_issues()
+    assert issues
+    assert "no impact" in issues
+    assert "no detectability" in issues
+    all_text = " ".join(issues)
+    assert "no usage:" in all_text
+    assert "no section information for:" in all_text
+
+    use_case.impact = "TI1"
+    use_case.detectability = "TD1"
+
+    issues = use_case.get_issues()
+    assert issues
+    assert "no impact" not in issues
+    assert "no detectability" not in issues
+    all_text = " ".join(issues)
+    assert "no usage:" in all_text
+    assert "no section information for:" in all_text
+
+
+def test_spec_element_issues(basic_spec_element: SpecElement) -> None:
+    """Test the issue detection code for a simple SpecElement."""
+    issues = basic_spec_element.get_issues()
+    assert not issues
