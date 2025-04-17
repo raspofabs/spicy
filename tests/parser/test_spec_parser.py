@@ -83,8 +83,8 @@ def test_detect_spec_heading() -> None:
     assert parser.parsed_spec_count == 1
 
 
-@pytest.mark.parametrize(("header_level", "spec_count"), [(1, 3), (2, 2)])
-def test_builder_stack(
+@pytest.mark.parametrize(("header_level", "spec_count"), [(1, 3), (2, 2), (3, 4)])
+def test_builder_depth(
     test_data_path: Path,
     caplog: pytest.LogCaptureFixture,
     header_level: int,
@@ -111,7 +111,6 @@ def test_builder_stack(
         for child in tree.children:
             parser.parse_node(child)
     assert parser.parsed_spec_count == spec_count
-    assert f"builders to delete [{header_level-1}]" in caplog.text, caplog.text
 
 
 def test_parse_sys_req_from_text(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:

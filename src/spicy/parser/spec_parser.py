@@ -24,13 +24,11 @@ class SpecParser:
         self.project_prefix = project_prefix
 
         self.spec_builders: list[SingleSpecBuilder] = []
-        self.header_stack: list[str | None] = [None] * 5
         self.last_heading_level = 0
         self.last_header = ""
         self.num_cases = 0
         self.parsed_spec_count = 0
 
-        self.builder_stack: dict[int, SingleSpecBuilder] = {}
         self.builder = SingleSpecBuilder.make_null()
         self.current_spec_level = 0
         self.used_current_spec_level = False
@@ -43,22 +41,11 @@ class SpecParser:
         self.parsed_spec_count += 1
         return self.parsed_spec_count - 1
 
-    def _close_section(self, level: int) -> None:
-        builders_to_delete = [k for k in self.builder_stack if k >= level]
-        logger.debug("builders to delete %s from %s", builders_to_delete, self.builder_stack)
-        for builder_level in builders_to_delete:
-            del self.builder_stack[builder_level]
-        for i in reversed(range(level, 5)):
-            self.header_stack[i] = None
-
     def _handle_heading(self, node: SyntaxTreeNode) -> None:
         # figure out which heading level we're at
         level = int(node.tag[1]) - 1
-        # clear all levels below this level (use max key from header_stack)
-        self._close_section(level)
 
-        content = get_text_from_node(node)  # node.children[0].children[0].content
-        self.header_stack[level] = content
+        content = get_text_from_node(node)
         self.last_header = content
         self.last_heading_level = level
         self.used_current_spec_level = False
@@ -70,7 +57,8 @@ class SpecParser:
             logger.debug("Found a spec %s", name)
             self.builder = SingleSpecBuilder(name, variant, self._next_ordering_id, self.from_file, title)
 
-            self._replace_builder_at_level(self.builder, level)
+            self.current_spec_level = level
+            self.used_current_spec_level = True
 
             prefix, *postfix = name.split(self.project_prefix)
             # don't add to list if it's a rejected spec
@@ -94,19 +82,11 @@ class SpecParser:
         """Return true if the node is a use-case code-block."""
         return bool(node.type == "code_block" and node.content.strip().startswith("ID: "))
 
-    def _replace_builder_at_level(self, builder: SingleSpecBuilder, spec_level: int) -> None:
-        self.current_spec_level = spec_level
-        self.used_current_spec_level = True
-        self.builder_stack[spec_level] = builder
-
     def _handle_use_case_node(self, node: SyntaxTreeNode) -> None:
         use_case_name = node.content.strip().split("ID: ")[1]
         self.in_section = "prologue"
         self.section_is_sticky = True
         self.num_cases += 1
-        if self.header_stack[self.last_heading_level] is None:  # pragma: no cover
-            msg = f"Invalid header stack: {self.header_stack=}"
-            raise ValueError(msg)
         self.builder = SingleSpecBuilder(
             use_case_name,
             "UseCase",
@@ -116,10 +96,11 @@ class SpecParser:
         )
         if self.used_current_spec_level:
             self.builder.parsing_issues.append(
-                f"{self.builder.location} reuses {self.header_stack[-1]} in {self.from_file}",
+                f"{self.builder.location} reuses {self.last_header} in {self.from_file}",
             )
 
-        self._replace_builder_at_level(self.builder, self.last_heading_level)
+        self.current_spec_level = self.last_heading_level
+        self.used_current_spec_level = True
 
         self.spec_builders.append(self.builder)
 
