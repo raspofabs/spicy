@@ -22,32 +22,6 @@ logger = logging.getLogger(__name__)
 RenderFunction = Callable[[str], None]
 
 
-class LinkageRequirement:
-    """Hold information about requirements of spec links."""
-
-    def __init__(
-        self,
-        primary_spec: type,
-        other_spec: type,
-        forward_name: str,
-        backward_name: str,
-        linkage_requirement: str,
-    ) -> None:
-        """Store the spec classes, linkage names, and the requirements for linkage to be valid."""
-        self.primary_spec = primary_spec
-        self.other_spec = other_spec
-        self.linkage_names = (forward_name, backward_name)
-        self.linkage_requirement = linkage_requirement
-
-    def fulfils(self, other_spec_instance: SpecElementBase) -> list[str]:
-        """Return the fulfilment data from the other spec."""
-        return other_spec_instance.get_linked(self.linkage_names[1])
-
-    def relevant_to(self, spec_class: type) -> bool:
-        """Return whether this linkage requirement is relevant to this spec class."""
-        return spec_class == self.primary_spec
-
-
 def render_issues(
     specs: list[SpecElementBase],
     use_cases: list[UseCase],
