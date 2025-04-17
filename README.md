@@ -12,33 +12,14 @@ uv tool install . -e
 
 # Operation
 
-Configure the tool with the locations of:
+Tool configuration is minimal.
+Either supply the project prefix on the command line or
+provide a `.spicy.yaml` config file.
 
-- spec
-    - SPL.2 supply process needs
-    - SYS.1 stakeholder needs
-    - SYS.1 stakeholder requirements
-    - SYS.2 system requirements
-    - SYS.3 system architecture
-    - SWE.1 software requirements
-    - SWE.2 software architecture
-    - SWE.3 software detailed design
-    - SWE.4 software unit verification
-    - SWE.5 software integration tests
-    - SWE.6 software qualification tests
-    - SYS.4 system integration verification
-    - SYS.5 system verification
-    - VAL.1 product validation
-    - SUP.8 configuration documents
-    - SUP.9 problem resolution process
-    - SUP.10 change request process
-- tool development plan
-    - Use cases
-    - tool classification
-    - qualification methods
-    - qualification report
+The configuration is currently only the prefix.
+Examples can be found in the test data, but also in the Spicy
+docs directory.
 
-
-Or, just have a .spicy file at the root.
-This file should contain a list of directories to load in.
-What format should it be?
+```yaml
+prefix: PROJ
+```
