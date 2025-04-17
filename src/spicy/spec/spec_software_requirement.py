@@ -58,9 +58,9 @@ class SoftwareRequirement(SpecElementBase):
         """Get issues with this spec."""
         issues = []
         if not self.elements_list:
-            issues.append("Does not refine from any system element.")
+            issues.append("Missing links for [Decomposes SystemElement]")
         if not self.sys_reqs_list:
-            issues.append("Does not fulfil any system requirement.")
+            issues.append("Missing links for [Realises SystemRequirement]")
         if issues:
             issues = [f"SoftwareRequirement({self.name}):", *issues]
         return issues

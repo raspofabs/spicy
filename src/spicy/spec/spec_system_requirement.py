@@ -81,7 +81,7 @@ class SystemRequirement(SpecElementBase):
         if not self.verification_list:
             issues.append("Has no verification criteria.")
         if not self.derived_from_list:
-            issues.append("Does not derive from any stakeholder requirements.")
+            issues.append("Missing links for [Derives from StakeholderRequirement]")
         if not self.specification:
             issues.append("Has no detailed specification.")
         if issues:

@@ -54,7 +54,8 @@ class SpecElement:
         link_content = self.content.get(linkage_term)
         if isinstance(link_content, list):
             return link_content
-        logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
+        if link_content is not None:
+            logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
         return []
 
     @property
@@ -114,7 +115,7 @@ class SpecElement:
                 issues.append(f"Missing links for [{link} {target}]")
 
         if issues:
-            issues = [f"Spec {self.name} has {len(issues)} issues:", *issues]
+            issues = [f"{self.variant}({self.name}):", *issues]
         return issues
 
     def get_use_case_issues(self) -> list[str]:

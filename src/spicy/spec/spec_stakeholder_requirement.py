@@ -48,7 +48,7 @@ class StakeholderRequirement(SpecElementBase):
         """Get issues with this spec."""
         issues = []
         if not self.implements_list:
-            issues.append("Does not implement any stakeholder needs.")
+            issues.append("Missing links for [Implements StakeholderNeed]")
         if issues:
             issues = [f"StakeholderRequirement({self.name}):", *issues]
         return issues

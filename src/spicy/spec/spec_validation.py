@@ -67,7 +67,7 @@ class ValidationTest(SpecElementBase):
         """Get issues with this spec."""
         issues = []
         if not self.tests_list:
-            issues.append("Does not test any stakeholder requirements.")
+            issues.append("Missing links for [Tests StakeholderRequirement]")
         if not self.cases_list:
             issues.append("Does not monitor any test cases.")
         else:

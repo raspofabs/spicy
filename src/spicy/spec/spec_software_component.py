@@ -47,7 +47,7 @@ class SoftwareComponent(SpecElementBase):
         """Get issues with this spec."""
         issues = []
         if not self.implements_list:
-            issues.append("Does not implement any software requirement.")
+            issues.append("Missing links for [Implements SoftwareRequirement]")
         if issues:
             issues = [f"SoftwareComponent({self.name}):", *issues]
         return issues

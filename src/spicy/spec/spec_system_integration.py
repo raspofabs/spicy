@@ -66,7 +66,7 @@ class SystemIntegrationTest(SpecElementBase):
         """Get issues with this spec."""
         issues = []
         if not self.integrates_list:
-            issues.append("Does not integrate any system elements.")
+            issues.append("Missing links for [Integrates SystemElement]")
         elif len(self.integrates_list) == 1:
             issues.append(f"Only integrates {len(self.integrates_list)} item.")
         else:

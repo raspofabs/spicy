@@ -59,7 +59,7 @@ class SystemElement(SpecElementBase):
         if self._is_software is None:
             issues.append("Whether the element is software or not is not set.")
         if not self.implements_list:
-            issues.append("Does not implement any system requirements.")
+            issues.append("Missing links for [Implements SystemRequirement]")
         if issues:
             issues = [f"SystemElement({self.name}):", *issues]
         return issues

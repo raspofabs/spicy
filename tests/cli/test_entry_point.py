@@ -74,7 +74,9 @@ def test_various_data(test_data_path: Path) -> None:
     # one file
     result = runner.invoke(run, ["-p", "TD", str(test_data_path / "spec" / "spec_swe1_software_requirements.md")])
     assert result.exit_code == 1, result.stdout
-    assert re.search(r"SoftwareRequirement.*\n.*Does not fulfil any system requirement", result.stdout, re.MULTILINE)
+    line1 = r"SoftwareRequirement.*\n"
+    line2 = r"Missing links for \[Realises SystemRequirement\]"
+    assert re.search(line1 + line2, result.stdout, re.MULTILINE)
 
 
 @pytest.mark.xfail

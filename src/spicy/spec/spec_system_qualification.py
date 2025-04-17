@@ -67,7 +67,7 @@ class SystemQualificationTest(SpecElementBase):
         """Get issues with this spec."""
         issues = []
         if not self.tests_list:
-            issues.append("Does not test any system requirements.")
+            issues.append("Missing links for [Tests SystemRequirement]")
         if not self.cases_list:
             issues.append("Does not monitor any test cases.")
         else:
