@@ -1,5 +1,6 @@
 """Collecting spec data from a file or directory."""
 
+from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 
@@ -31,12 +32,25 @@ def get_elements_from_files(project_prefix: str, file_paths: list[Path]) -> list
 
 
 def render_issues_with_elements(
-    _spec_elements: list[SpecElement],
-    _render_function: Callable[[str], None] | None = None,
+    spec_elements: list[SpecElement],
+    render_function: Callable[[str], None] | None = None,
 ) -> bool:
     """Render unresolved issues for each Spec Element."""
-    if not _spec_elements:
-        if _render_function:
-            _render_function("No elements.")
+    render_function = render_function or print
+    if not spec_elements:
+        render_function("No elements.")
         return True
-    return False
+    any_errors = False
+    # check for non-unique specs
+    for spec_name, count in Counter(x.name for x in spec_elements).items():
+        if count > 1:
+            render_function(f"Non unique name {spec_name} has {count} instances")
+    # check each spec for any issues
+    for spec in spec_elements:
+        for issue in spec.get_issues():
+            render_function(issue)
+            any_errors = True
+
+    if not any_errors:
+        render_function("No spec issues found.")
+    return any_errors
