@@ -29,7 +29,7 @@ class SoftwareRequirement(SpecElementBase):
         return self.elements_list
 
     def fulfils(self) -> list[str]:
-        """Return a list of names of system elements from which this software requirement is derived."""
+        """Return a list of names of system requirements which this software requirement realises."""
         return self.elements_list
 
     @staticmethod
@@ -47,7 +47,7 @@ class SoftwareRequirement(SpecElementBase):
             elements_list = read_bullet_list(node)
             self.elements_list.extend([get_text_from_node(x) for x in elements_list])
             self.state = ""
-        if get_text_from_node(node) == "Fulfils:":
+        if get_text_from_node(node) == "Realises:":
             self.state = "reqs_list"
         if node.type == "bullet_list" and self.state == "reqs_list":
             reqs_list = read_bullet_list(node)

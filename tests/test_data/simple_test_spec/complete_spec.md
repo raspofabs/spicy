@@ -148,7 +148,7 @@ Decomposes:
 
 - [POS_SYS_ELEMENT_the_software](#pos_sys_element_the_software)
 
-Fulfils:
+Realises:
 
 - [POS_SYS_REQ_have_a_sys_req](#pos_sys_req_have_a_sys_req)
 

@@ -42,13 +42,13 @@ def spec_name_to_variant(name: str) -> str | None:
 MappingType = dict[str, list[tuple[str, str]]]
 
 _spec_link_mapping: MappingType = {
-    "StakeholderRequirement": [("Fulfils", "StakeholderNeed")],
+    "StakeholderRequirement": [("Implements", "StakeholderNeed")],
     "SystemRequirement": [("Derived from", "StakeholderRequirement")],
     "SystemElement": [("Implements", "StakeholderRequirement")],
     "SystemIntegration": [("Integrates", "SystemElement")],
     "SystemQualification": [("Tests", "SystemRequirement")],
     "Validation": [("Tests", "StakeholderRequirement")],
-    "SoftwareRequirement": [("Required by", "SystemRequirement"), ("Decomposes", "SystemElement")],
+    "SoftwareRequirement": [("Realises", "SystemRequirement"), ("Decomposes", "SystemElement")],
     "SoftwareArchitecture": [("Fulfils", "SoftwareRequirement")],
     "SoftwareComponent": [("Implements", "SoftwareArchitecture")],
     "SoftwareUnit": [("Implements", "SoftwareComponent")],

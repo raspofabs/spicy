@@ -5,6 +5,7 @@ from pathlib import Path
 
 from spicy.use_cases.mappings import tcl_map
 
+from .spec_utils import expected_links_for_variant, section_name_to_key
 from .use_case_constants import section_map, usage_section_map
 
 logger = logging.getLogger(__name__)
@@ -104,7 +105,17 @@ class SpecElement:
 
     def get_spec_issues(self) -> list[str]:
         """Return a list of problems with this spec."""
-        return []
+        # check we have the minimum linkage
+        issues = []
+        required_links = expected_links_for_variant(self.variant)
+        for link, target in required_links:
+            link_key = section_name_to_key(link) or link
+            if not self.get_linked_by(link_key):
+                issues.append(f"Missing links for [{link} {target}]")
+
+        if issues:
+            issues = [f"Spec {self.name} has {len(issues)} issues:", *issues]
+        return issues
 
     def get_use_case_issues(self) -> list[str]:
         """Return a list of problems with this use case."""
