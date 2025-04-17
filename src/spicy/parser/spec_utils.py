@@ -146,3 +146,9 @@ def _get_section_mapping() -> dict[str, str]:
 def section_name_to_key(section_name: str) -> str | None:
     """Return a proper key for the section name or None."""
     return _get_section_mapping().get(section_name.lower())
+
+
+@lru_cache
+def spec_is_defined(spec_type_name: str) -> bool:
+    """Return whether a spec type is part of the defined set of spec types."""
+    return spec_type_name in set(_spec_link_mapping).union(set(_spec_link_optional_mapping))

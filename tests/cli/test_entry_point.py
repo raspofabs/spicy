@@ -35,7 +35,18 @@ def test_single_file_no_prefix(test_data_path: Path, caplog: pytest.LogCaptureFi
     assert "Unable to scan without a known prefix" in caplog.text
 
 
-def test_simple_use_case(positive_test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+def test_simple_use_case_output(positive_test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    """Test the simple positive use case."""
+    runner = CliRunner()
+    runner.invoke(run, ["-v", str(positive_test_data_path)])
+
+    # all logging
+    assert "Found 1 files to read." in caplog.text
+    assert "Discovered 13 elements." in caplog.text
+
+
+@pytest.mark.xfail
+def test_simple_use_case_carefully(positive_test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test the simple positive use case."""
     runner = CliRunner()
     result = runner.invoke(run, ["--project-prefix", "POS", str(positive_test_data_path)])

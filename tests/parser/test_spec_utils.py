@@ -5,6 +5,7 @@ from spicy.parser.spec_utils import (
     expected_backlinks_for_variant,
     expected_links_for_variant,
     section_name_to_key,
+    spec_is_defined,
     spec_name_to_variant,
 )
 
@@ -60,3 +61,15 @@ def test_section_name_to_key() -> None:
 
     # test a negative with something random
     assert section_name_to_key("Boiled carrots") is None
+
+
+def test_spec_is_defined() -> None:
+    """Test the spec_is_defined function works, returning True iff the spec is valid."""
+    assert spec_is_defined("SystemRequirement")
+    assert not spec_is_defined("SystemRequirements")
+    assert spec_is_defined("UseCase")
+    assert spec_is_defined("StakeholderNeed")
+    assert spec_is_defined("SoftwareRequirement")
+    assert spec_is_defined("SystemElement")
+    assert not spec_is_defined("SoftwareElement")
+    assert not spec_is_defined("")
