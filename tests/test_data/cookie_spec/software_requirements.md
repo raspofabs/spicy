@@ -10,7 +10,7 @@ Decomposes:
 
 - [CDU_SYS_ELEMENT_stock_database](#cdu_sys_element_stock_database)
 
-Fulfils:
+Realises:
 
 - [CDU_SYS_REQ_cookie_stock](#cdu_sys_req_cookie_stock)
 - [CDU_SYS_REQ_bag_stock](#cdu_sys_req_bag_stock)
@@ -26,7 +26,7 @@ Decomposes:
 
 - [CDU_SYS_ELEMENT_cookie_website](#cdu_sys_arch_cookie_website)
 
-Fulfils:
+Realises:
 
 - [CDU_SYS_REQ_cookie_ordering](#cdu_sys_arch_cookie_website)
 
@@ -38,7 +38,7 @@ Decomposes:
 
 - [CDU_SYS_ELEMENT_operations_terminal](#CDU_SYS_ELEMENT_operations_terminal)
 
-Fulfils:
+Realises:
 
 - [CDU_SYS_REQ_stock_and_order_tracking](#cdu_sys_req_stock_and_order_tracking)
 
@@ -52,6 +52,6 @@ Decomposes:
 
 - [CDU_SYS_ELEMENT_operations_terminal](#cdu_sys_element_operations_terminal)
 
-Fulfils:
+Realises:
 
 - [CDU_SYS_REQ_cookie_baking](#cdu_sys_req_cookie_baking)
