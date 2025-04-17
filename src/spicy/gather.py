@@ -1,5 +1,6 @@
 """Collecting spec data from a file or directory."""
 
+import logging
 from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
@@ -8,6 +9,11 @@ from spicy.md_read import load_syntax_tree
 
 from .parser import parse_syntax_tree_to_spec_elements
 from .parser.spec_element import SpecElement
+from .parser.spec_utils import expected_links_for_variant, section_name_to_key
+
+logger = logging.getLogger(__name__)
+
+RenderFunction = Callable[[str], None]
 
 
 def gather_all_elements(project_prefix: str, from_file: Path) -> list[SpecElement]:
@@ -33,7 +39,7 @@ def get_elements_from_files(project_prefix: str, file_paths: list[Path]) -> list
 
 def render_issues_with_elements(
     spec_elements: list[SpecElement],
-    render_function: Callable[[str], None] | None = None,
+    render_function: RenderFunction | None = None,
 ) -> bool:
     """Render unresolved issues for each Spec Element."""
     render_function = render_function or print
@@ -53,4 +59,42 @@ def render_issues_with_elements(
 
     if not any_errors:
         render_function("No spec issues found.")
+    return any_errors
+
+
+def render_spec_linkage_issues(
+    specs: list[SpecElement],
+    render_function: RenderFunction,
+    spec_type_to_inspect: str,
+) -> bool:
+    """Check all specs links are connected to real specs and any required backlinks are observed."""
+    any_errors = False
+
+    inspected_specs = [spec for spec in specs if spec.variant == spec_type_to_inspect]
+    logger.debug("Have %s stakeholder needs", len(inspected_specs))
+
+    inspected_specs_map = {n.name: n for n in inspected_specs}
+    inspected_specs_names = set(inspected_specs_map.keys())
+    unused_specs = set(inspected_specs_names)
+
+    for link, target in expected_links_for_variant(spec_type_to_inspect):
+        link_key = section_name_to_key(link) or link
+        target_specs = [spec for spec in specs if spec.variant == target]
+        target_spec_names = {n.name for n in target_specs}
+
+        for inspected_spec in inspected_specs:
+            fulfilment = set(inspected_spec.get_linked_by(link_key))
+            if disconnected := fulfilment - target_spec_names:
+                any_errors = True
+                render_function(
+                    f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected}",
+                )
+            unused_specs = unused_specs - fulfilment
+
+    if unused_specs:
+        any_errors = True
+        render_function("Needs without a use-case:")
+        for unused_need in sorted(unused_specs):
+            render_function(f"\t{unused_need}")
+
     return any_errors

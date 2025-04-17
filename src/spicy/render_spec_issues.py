@@ -172,7 +172,9 @@ def render_system_requirement_linkage_issues(
         fulfilment = set(sys_req.fulfils())
         if disconnected := fulfilment - stakeholder_reqs_names:
             any_errors = True
-            render_function(f"System requirement {sys_req.name} fulfils unexpected need {disconnected}.")
+            render_function(
+                f"System requirement {sys_req.name} fulfils unexpected stakeholder requirement {disconnected}.",
+            )
         unrefined_stk_reqs = unrefined_stk_reqs - fulfilment
 
     if unrefined_stk_reqs:
