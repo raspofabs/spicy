@@ -21,6 +21,8 @@ dependencies = [
 [project.scripts]
 spicy = "spicy.check_spec:run"
 spicecheck = "spicy.check_use_cases:run"
+oldspice = "spicy.check_spec:run"
+newspice = "spicy.entry_point:run"
 
 [build-system]
 requires = ["hatchling"]

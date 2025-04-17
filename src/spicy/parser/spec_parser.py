@@ -164,7 +164,7 @@ class SpecParser:
         if value := get_if_single_line_section(node):
             section_name, content = value
             section_key = section_name_to_key(section_name)
-            logger.info("Single line section: %s/%s -- %s", section_name, section_key, content)
+            logger.debug("Single line section: %s/%s -- %s", section_name, section_key, content)
             if section_key == "qualification_related" and self.builder is not None:
                 self.builder.qualification_related = parse_yes_no(content)
 
