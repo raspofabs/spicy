@@ -1,5 +1,6 @@
 """Test the use-cases parser."""
 
+import logging
 from pathlib import Path
 
 import pytest
@@ -41,6 +42,15 @@ def test_spec_element_construction(basic_spec_element: SpecElement) -> None:
     assert not basic_spec_element.verification_criteria()
     assert not basic_spec_element.description_text()
     assert not basic_spec_element.get_linked_by("fulfils")
+
+
+def test_spec_element_misuse(basic_spec_element: SpecElement, caplog: pytest.LogCaptureFixture) -> None:
+    """Test the basic spec element construction."""
+    basic_spec_element.content["non-list"] = "This is just a string"  # type: ignore[assignment]
+
+    with caplog.at_level(logging.DEBUG):
+        assert basic_spec_element.get_linked_by("non-list") == []
+    assert "No list content for non-list" in caplog.text
 
 
 def test_spec_element_links(spec_element_with_links: SpecElement) -> None:
