@@ -57,8 +57,7 @@ def render_issues_with_elements(
             render_function(issue)
             any_errors = True
 
-    if not any_errors:
-        render_function("No spec issues found.")
+    render_spec_linkage_issues(spec_elements, render_function, "SystemRequirement")
     return any_errors
 
 
@@ -71,13 +70,14 @@ def render_spec_linkage_issues(
     any_errors = False
 
     inspected_specs = [spec for spec in specs if spec.variant == spec_type_to_inspect]
-    logger.debug("Have %s stakeholder needs", len(inspected_specs))
+    logger.debug("Have %s spec of type %s", len(inspected_specs), spec_type_to_inspect)
 
     inspected_specs_map = {n.name: n for n in inspected_specs}
     inspected_specs_names = set(inspected_specs_map.keys())
-    unused_specs = set(inspected_specs_names)
 
     for link, target in expected_links_for_variant(spec_type_to_inspect):
+        unused_specs = set(inspected_specs_names)
+
         link_key = section_name_to_key(link) or link
         target_specs = [spec for spec in specs if spec.variant == target]
         target_spec_names = {n.name for n in target_specs}
@@ -86,15 +86,16 @@ def render_spec_linkage_issues(
             fulfilment = set(inspected_spec.get_linked_by(link_key))
             if disconnected := fulfilment - target_spec_names:
                 any_errors = True
+                disconnected_list = ", ".join(disconnected)
                 render_function(
-                    f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected}",
+                    f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected_list}",
                 )
             unused_specs = unused_specs - fulfilment
 
-    if unused_specs:
-        any_errors = True
-        render_function("Needs without a use-case:")
-        for unused_need in sorted(unused_specs):
-            render_function(f"\t{unused_need}")
+        if unused_specs:
+            any_errors = True
+            render_function(f"{spec_type_to_inspect} without a {target}:")
+            for unused_need in sorted(unused_specs):
+                render_function(f"\t{unused_need}")
 
     return any_errors

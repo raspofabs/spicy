@@ -29,8 +29,14 @@ def test_render_issues_with_elements(test_data_path: Path) -> None:
 
 
 CASE_LIST = [
-    ("simple/duped.md", ["Non unique name TD_SYS_REQ_dupe.*"]),
+    ("simple/duped.md", [r"Non unique name TD_SYS_REQ_dupe.*"]),
     ("simple/missing_links.md", [r"Missing links for \[Derived from StakeholderRequirement\]"]),
+    (
+        "simple/unexpected_links.md",
+        [
+            r"SystemRequirement TD_SYS_REQ_unexpected Derived from unexpected StakeholderRequirement TD_STK_REQ_oops",
+        ],
+    ),
 ]
 
 
@@ -46,5 +52,6 @@ def test_render_issues_with_elements_expected_errors(
     lines = []
     with caplog.at_level(logging.DEBUG):
         render_issues_with_elements(spec_elements, lambda x: lines.append(x))
+    assert lines
     for expected_error in expected_errors:
         assert any(re.search(expected_error, line) for line in lines), lines
