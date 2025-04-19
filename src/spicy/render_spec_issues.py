@@ -137,7 +137,8 @@ def render_stakeholder_requirement_linkage_issues(
         fulfilment = set(stk_req.fulfils())
         if disconnected := fulfilment - stakeholder_needs_names:
             any_errors = True
-            render_function(f"Stakeholder requirement {stk_req.name} fulfils unexpected need {disconnected}.")
+            disconnected_list = ", ".join(disconnected)
+            render_function(f"Stakeholder requirement {stk_req.name} Implements unexpected need {disconnected_list}.")
         unfulfilled_needs = unfulfilled_needs - fulfilment
 
     if unfulfilled_needs:

@@ -111,10 +111,15 @@ def render_spec_linkage_issues(
         raise AssertionError(msg)
 
     inspected_specs = [spec for spec in specs if spec.variant == spec_type_to_inspect]
-    logger.debug("Have %s spec of type %s", len(inspected_specs), spec_type_to_inspect)
 
     inspected_specs_map = {n.name: n for n in inspected_specs}
     inspected_specs_names = set(inspected_specs_map.keys())
+    logger.debug(
+        "Have %s spec of type %s (%s)",
+        len(inspected_specs),
+        spec_type_to_inspect,
+        ", ".join(inspected_specs_names),
+    )
 
     for link, target in expected_links_for_variant(spec_type_to_inspect):
         unused_specs = set(inspected_specs_names)
@@ -122,9 +127,11 @@ def render_spec_linkage_issues(
         link_key = section_name_to_key(link) or link
         target_specs = [spec for spec in specs if spec.variant == target]
         target_spec_names = {n.name for n in target_specs}
+        logger.debug("Target spec names: %s", ", ".join(target_spec_names))
 
         for inspected_spec in inspected_specs:
             fulfilment = set(inspected_spec.get_linked_by(link_key))
+            logger.debug("Fulfilment: %s", ", ".join(fulfilment))
             if disconnected := fulfilment - target_spec_names:
                 any_errors = True
                 disconnected_list = ", ".join(disconnected)

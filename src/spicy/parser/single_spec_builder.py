@@ -66,11 +66,11 @@ class SingleSpecBuilder:
 
     def add_code_block(self, section_id: str, code_block_node: SyntaxTreeNode) -> None:
         """Use the code block or paste it into content."""
-        self.content[section_id].append(code_block_node.content)
+        self.content[section_id].append(code_block_node.content.rstrip())
 
     def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
         """Consume the bullet list and store in content."""
-        self.content[section].extend(map(get_text_from_node, read_bullet_list(bullet_list)))
+        self.content[section].extend(map(str.rstrip, map(get_text_from_node, read_bullet_list(bullet_list))))
 
     def read_usage_bullets(self, bullet_list: SyntaxTreeNode) -> None:
         """Consume the usage list and create the usage slot data."""

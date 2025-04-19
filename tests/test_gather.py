@@ -55,3 +55,28 @@ def test_render_issues_with_elements_expected_errors(
     assert lines
     for expected_error in expected_errors:
         assert any(re.search(expected_error, line) for line in lines), lines
+
+
+LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
+    ("use_case_to_stakeholder_need.md", [], ["Fulfils unexpected StakeholderNeed"]),
+]
+
+
+@pytest.mark.parametrize(("test_filename", "expected_outputs", "unexpected_outputs"), LINKAGE_CASES)
+def test_linkage(
+    test_data_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    test_filename: str,
+    expected_outputs: list[str],
+    unexpected_outputs: list[str],
+) -> None:
+    """Test linkages with different cases."""
+    spec_elements = gather_all_elements("TD", test_data_path / "linkage" / test_filename)
+    lines = []
+    with caplog.at_level(logging.DEBUG):
+        render_issues_with_elements(spec_elements, lambda x: lines.append(x))
+
+    for expected_output in expected_outputs:
+        assert any(re.search(expected_output, line) for line in lines), lines
+    for unexpected_output in unexpected_outputs:
+        assert not any(re.search(unexpected_output, line) for line in lines), lines
