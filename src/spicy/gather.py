@@ -1,7 +1,7 @@
 """Collecting spec data from a file or directory."""
 
 import logging
-from collections import Counter
+from collections import Counter, defaultdict
 from collections.abc import Callable
 from pathlib import Path
 
@@ -37,6 +37,9 @@ def get_elements_from_files(project_prefix: str, file_paths: list[Path]) -> list
     return specs
 
 
+SpecVariantMap = defaultdict[str, dict[str, SpecElement]]
+
+
 def render_issues_with_elements(
     spec_elements: list[SpecElement],
     render_function: RenderFunction | None = None,
@@ -57,50 +60,55 @@ def render_issues_with_elements(
             render_function(issue)
             any_errors = True
 
+    # prerequisite for this map is that all specs have unique names
+    spec_variant_map: SpecVariantMap = defaultdict(dict)
+    for spec in spec_elements:
+        spec_variant_map[spec.variant][spec.name] = spec
+
     # Tool Qualification: UseCase
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "UseCase")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "UseCase")
 
     # SYS.1: StakeholderNeeds
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "StakeholderNeed")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "StakeholderNeed")
 
     # SYS.1: StakeholderRequirements
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "StakeholderRequirement")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "StakeholderRequirement")
 
     # SYS.2: SystemRequirements
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SystemRequirement")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemRequirement")
 
     # SYS.3: SystemElements
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SystemElement")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemElement")
 
     # SWE.1: SoftwareRequirements
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SoftwareRequirement")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareRequirement")
 
     # SWE.2: SoftwareComponents
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SoftwareComponent")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareComponent")
 
     # SWE.3: SoftwareUnits
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SoftwareUnit")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareUnit")
 
     # SWE.5: SoftwareIntegration
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SoftwareIntegration")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareIntegration")
 
     # SWE.6: SoftwareQualification
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SoftwareQualification")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareQualification")
 
     # SYS.4: SystemIntegration
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SystemIntegration")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemIntegration")
 
     # SYS.5: SystemQualification
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "SystemQualification")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemQualification")
 
     # VAL.1: Validation
-    any_errors |= render_spec_linkage_issues(spec_elements, render_function, "Validation")
+    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "Validation")
 
     return any_errors
 
 
 def render_spec_linkage_issues(
-    specs: list[SpecElement],
+    spec_variant_map: SpecVariantMap,
     render_function: RenderFunction,
     spec_type_to_inspect: str,
 ) -> bool:
@@ -110,13 +118,11 @@ def render_spec_linkage_issues(
         msg = f"Spec type [{spec_type_to_inspect}] is not defined."
         raise AssertionError(msg)
 
-    inspected_specs = [spec for spec in specs if spec.variant == spec_type_to_inspect]
-
-    inspected_specs_map = {n.name: n for n in inspected_specs}
+    inspected_specs_map = spec_variant_map[spec_type_to_inspect]
     inspected_specs_names = set(inspected_specs_map.keys())
     logger.debug(
         "Have %s spec of type %s (%s)",
-        len(inspected_specs),
+        len(inspected_specs_map),
         spec_type_to_inspect,
         ", ".join(inspected_specs_names),
     )
@@ -124,12 +130,12 @@ def render_spec_linkage_issues(
     for link, target in expected_links_for_variant(spec_type_to_inspect):
 
         link_key = section_name_to_key(link) or link
-        target_specs = [spec for spec in specs if spec.variant == target]
-        target_spec_names = {n.name for n in target_specs}
+        target_specs_map = spec_variant_map[target]
+        target_spec_names = set(target_specs_map.keys())
         logger.debug("Target spec names: %s", ", ".join(target_spec_names))
         unused_target_specs = set(inspected_specs_names)
 
-        for inspected_spec in inspected_specs:
+        for inspected_spec in inspected_specs_map.values():
             fulfilment = set(inspected_spec.get_linked_by(link_key))
             logger.debug("Fulfilment: %s", ", ".join(fulfilment))
             if disconnected := fulfilment - target_spec_names:
