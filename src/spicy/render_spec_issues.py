@@ -113,7 +113,7 @@ def render_use_case_linkage_issues(
 
     if unused_needs:
         any_errors = True
-        render_function("Needs without a use-case:")
+        render_function("StakeholderNeed without a UseCase:")
         for unused_need in sorted(unused_needs):
             render_function(f"\t{unused_need}")
 
@@ -138,12 +138,14 @@ def render_stakeholder_requirement_linkage_issues(
         if disconnected := fulfilment - stakeholder_needs_names:
             any_errors = True
             disconnected_list = ", ".join(disconnected)
-            render_function(f"Stakeholder requirement {stk_req.name} Implements unexpected need {disconnected_list}.")
+            render_function(
+                f"StakeholderRequirement {stk_req.name} Implements unexpected StakeholderNeed {disconnected_list}",
+            )
         unfulfilled_needs = unfulfilled_needs - fulfilment
 
     if unfulfilled_needs:
         any_errors = True
-        render_function("Needs without a fulfilling stakeholder requirement:")
+        render_function("StakeholderNeed without a fulfilling StakeholderRequirement:")
         for unfulfilled_need in sorted(unfulfilled_needs):
             render_function(f"\t{unfulfilled_need}")
 
@@ -174,13 +176,13 @@ def render_system_requirement_linkage_issues(
         if disconnected := fulfilment - stakeholder_reqs_names:
             any_errors = True
             render_function(
-                f"System requirement {sys_req.name} fulfils unexpected stakeholder requirement {disconnected}.",
+                f"SystemRequirement {sys_req.name} fulfils unexpected StakeholderRequirement {disconnected}.",
             )
         unrefined_stk_reqs = unrefined_stk_reqs - fulfilment
 
     if unrefined_stk_reqs:
         any_errors = True
-        render_function("Stakeholder requirements without a system requirement:")
+        render_function("StakeholderRequirement without a SystemRequirement:")
         for unrefined_stk_req in sorted(unrefined_stk_reqs):
             render_function(f"\t{unrefined_stk_req}")
 
@@ -210,12 +212,12 @@ def render_system_element_linkage_issues(
         fulfilment = set(sys_element.fulfils())
         if disconnected := fulfilment - system_req_names:
             any_errors = True
-            render_function(f"System requirement {sys_element.name} fulfils unexpected need {disconnected}.")
+            render_function(f"SystemRequirement {sys_element.name} fulfils unexpected StakeholderNeed {disconnected}.")
         unsatisfied_system_reqs = unsatisfied_system_reqs - fulfilment
 
     if unsatisfied_system_reqs:
         any_errors = True
-        render_function("System requirements without a system element:")
+        render_function("SystemRequirement without a SystemElement:")
         for unrefined_stk_req in sorted(unsatisfied_system_reqs):
             render_function(f"\t{unrefined_stk_req}")
     return any_errors
@@ -238,12 +240,12 @@ def render_software_requirement_linkage_issues(
         fulfilment = set(sw_req.fulfils())
         if disconnected := fulfilment - system_element_names:
             any_errors = True
-            render_function(f"Software requirement {sw_req.name} refined from unexpected element {disconnected}.")
+            render_function(f"SoftwareRequirement {sw_req.name} refined from unexpected SystemElement {disconnected}.")
         unrefined_system_elements = unrefined_system_elements - fulfilment
 
     if unrefined_system_elements:
         any_errors = True
-        render_function("System software elements without software requirements:")
+        render_function("SystemElement without a SoftwareRequirement:")
         for unrefined_stk_req in sorted(unrefined_system_elements):
             render_function(f"\t{unrefined_stk_req}")
     return any_errors
@@ -308,13 +310,13 @@ def render_system_integration_linkage_issues(
         if disconnected := fulfilment - system_element_names:
             any_errors = True
             render_function(
-                f"System integration test {sys_int_test.name} tests unexpected element {disconnected}.",
+                f"SystemIntegration {sys_int_test.name} tests unexpected SystemElement {disconnected}.",
             )
         untested_integrations = untested_integrations - fulfilment
 
     if untested_integrations:
         any_errors = True
-        render_function("System elements without any integration tests:")
+        render_function("SystemElement without any SystemIntegration tests:")
         for untested_req in sorted(untested_integrations):
             render_function(f"\t{untested_req}")
     return any_errors
@@ -338,13 +340,13 @@ def render_system_qualification_linkage_issues(
         if disconnected := tested_list - system_reqs_names:
             any_errors = True
             render_function(
-                f"System qualification test {sys_qual_test.name} tests unexpected requirement {disconnected}.",
+                f"SystemQualification test {sys_qual_test.name} tests unexpected SystemRequirement {disconnected}.",
             )
         untested_reqs = untested_reqs - tested_list
 
     if untested_reqs:
         any_errors = True
-        render_function("System requirements without a qualification test:")
+        render_function("SystemRequirement without a SystemQualification test:")
         for untested_req in sorted(untested_reqs):
             render_function(f"\t{untested_req}")
 
