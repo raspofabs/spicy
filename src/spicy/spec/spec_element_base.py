@@ -62,6 +62,8 @@ class SpecElementBase:
         logger.debug("Parsing common features")
         if value := self.single_line_getter(node, "Safety related:"):
             self._qualification_related = parse_yes_no(value)
+        if value := self.single_line_getter(node, "Qualification relevant:"):
+            self._qualification_related = parse_yes_no(value)
         if value := self.single_line_getter(node, "TCL relevant:"):
             self._qualification_related = parse_yes_no(value)
 

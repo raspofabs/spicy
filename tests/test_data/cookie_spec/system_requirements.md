@@ -11,7 +11,7 @@ Derived from:
 Specification:
 
 - **Type:** user
-- **Safety related:** no
+- **Qualification relevant:** no
 
 Verification Criteria:
 
@@ -29,7 +29,7 @@ Derived from:
 Specification:
 
 - **Type:** design
-- **Safety related:** no
+- **Qualification relevant:** no
 
 Verification Criteria:
 
@@ -47,7 +47,7 @@ Derived from:
 Specification:
 
 - **Type:** functional
-- **Safety related:** no
+- **Qualification relevant:** no
 
 Verification Criteria:
 
@@ -68,7 +68,7 @@ Derived from:
 Specification:
 
 - **Type:** functional
-- **Safety related:** no
+- **Qualification relevant:** no
 
 Verification Criteria:
 
@@ -90,7 +90,7 @@ Derived from:
 Specification:
 
 - **Type:** functional
-- **Safety related:** yes
+- **Qualification relevant:** yes
 
 Verification criteria:
 
@@ -109,7 +109,7 @@ Derived from:
 Specification:
 
 - **Type:** functional
-- **Safety related:** no
+- **Qualification relevant:** no
 
 Verification Criteria:
 
@@ -133,7 +133,7 @@ Derived from:
 Specification:
 
 - **Type:** functional
-- **Safety related:** no
+- **Qualification relevant:** no
 
 Verification Criteria:
 

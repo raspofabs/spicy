@@ -27,7 +27,7 @@ for cookies in the last hour.
 
 Specification:
 
-- **Safety related:** yes
+- **Qualification relevant:** yes
 
 Implements:
 

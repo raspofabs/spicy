@@ -34,6 +34,7 @@ def test_expected_links_for_variant() -> None:
     assert expected_links_for_variant("StakeholderRequirement", include_optional=True) == [
         ("Implements", "StakeholderNeed"),
         ("Derives to", "SystemRequirement"),
+        ("Implemented by", "SystemElement"),
         ("Validated by", "Validation"),
     ]
 
@@ -52,6 +53,7 @@ def test_section_name_to_key() -> None:
     # test for the qualification related headings
     assert section_name_to_key("Safety related") == "qualification_related"
     assert section_name_to_key("Qualification related") == "qualification_related"
+    assert section_name_to_key("Qualification relevant") == "qualification_related"
     assert section_name_to_key("TQP relevant") == "qualification_related"
     assert section_name_to_key("TCL relevant") == "qualification_related"
 

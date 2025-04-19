@@ -98,11 +98,11 @@ def render_use_case_linkage_issues(
 
     for use_case in use_cases:
         fulfilment = set(use_case.fulfils())
-        if use_case.safety_case:
+        if use_case.qualification_relevant:
             uc_needs: list[SpecElementBase] = list(filter(None, [stakeholder_needs_map.get(a) for a in fulfilment]))
             if not any(need.is_qualification_related for need in uc_needs):
                 any_errors = True
-                render_function(f"Use case {use_case.name} is safety related, but none of it's needs are:")
+                render_function(f"Use case {use_case.name} is qualification relevant, but none of it's needs are:")
                 for use_case_need in uc_needs:
                     render_function(f"\t{use_case_need.name}")
 
@@ -147,7 +147,7 @@ def render_stakeholder_requirement_linkage_issues(
             render_function(f"\t{unfulfilled_need}")
 
     for need in stakeholder_needs:
-        result, messages = check_safety(need, stakeholder_reqs, lambda x: x.fulfils())
+        result, messages = check_qualification_relevance(need, stakeholder_reqs, lambda x: x.fulfils())
         any_errors |= result
         for m in messages:
             render_function(m)
@@ -184,7 +184,7 @@ def render_system_requirement_linkage_issues(
             render_function(f"\t{unrefined_stk_req}")
 
     for stk_req in stakeholder_reqs:
-        result, messages = check_safety(stk_req, system_reqs, lambda x: x.fulfils())
+        result, messages = check_qualification_relevance(stk_req, system_reqs, lambda x: x.fulfils())
         any_errors |= result
         for m in messages:
             render_function(m)
@@ -348,7 +348,7 @@ def render_system_qualification_linkage_issues(
             render_function(f"\t{untested_req}")
 
     for system_req in system_reqs:
-        result, messages = check_safety(system_req, system_qualification_tests, lambda x: x.tests())
+        result, messages = check_qualification_relevance(system_req, system_qualification_tests, lambda x: x.tests())
         any_errors |= result
         for m in messages:
             render_function(m)
@@ -364,19 +364,19 @@ def only(checked_class: type[T], objects: list[Any]) -> list[T]:
     return [x for x in objects if isinstance(x, checked_class)]
 
 
-def check_safety(
+def check_qualification_relevance(
     safe_spec: SpecElementBase,
     other_specs: Sequence[SpecElementBase],
     fulfilment: Callable[[Any], list[str]],
 ) -> tuple[bool, list[str]]:
-    """Check and return whether there are safety linkage issues."""
+    """Check and return whether there are qualification linkage issues."""
     if not safe_spec.is_qualification_related:
         return False, []
     relevant_specs = [spec for spec in other_specs if safe_spec.name in fulfilment(spec)]
-    target = "safety related spec"
+    target = "qualification relevant spec"
     if relevant_specs:
         spec, *__ = relevant_specs
-        target = f"safety related {spec.__class__.__name__}"
+        target = f"qualification relevant {spec.__class__.__name__}"
     if any(x.is_qualification_related for x in relevant_specs):
         return False, []
     # nothing safe connected

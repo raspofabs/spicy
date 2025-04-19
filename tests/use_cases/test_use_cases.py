@@ -73,4 +73,4 @@ def test_high_tcl(test_data_path: Path) -> None:
     assert use_case.impact == "TI2"
     assert use_case.detectability == "TD2"
     assert use_case.tcl == "TCL2"
-    assert use_case.safety_case
+    assert use_case.qualification_relevant

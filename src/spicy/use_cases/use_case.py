@@ -65,8 +65,8 @@ class UseCase:
         self.fulfils_needs = needs_fulfilled
 
     @property
-    def safety_case(self) -> bool:
-        """Return whether the use case is safety related."""
+    def qualification_relevant(self) -> bool:
+        """Return whether the use case is qualification relevant."""
         return self.tcl in ["TCL2", "TCL3"]
 
     @property

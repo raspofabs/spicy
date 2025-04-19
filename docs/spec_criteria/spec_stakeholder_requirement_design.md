@@ -13,7 +13,7 @@ combination of requirements.
 
 **TLA** shall do a thing.
 
-Safety related: yes
+Qualification relevant: yes
 
 Implements:
 

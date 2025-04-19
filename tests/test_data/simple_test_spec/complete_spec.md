@@ -9,7 +9,7 @@ The **STAKEHOLDER** needs **POS** to have a spec.
 
 Elicitation date: March 2020
 
-Safety related: no
+Qualification relevant: no
 
 ## POS_STK_NEED_have_a_safety_need
 
@@ -17,7 +17,7 @@ The **STAKEHOLDER** needs **POS** to have safety as a concern.
 
 Elicitation date: April 2020
 
-Safety related: yes
+Qualification relevant: yes
 
 ## POS_STK_REQ_have_a_stakeholder_requirement
 
@@ -27,7 +27,7 @@ Implements:
 
 - POS_STK_NEED_have_a_stakeholder_need
 
-Safety related: no
+Qualification relevant: no
 
 ## POS_STK_REQ_safe_stakeholder_requirement
 
@@ -37,7 +37,7 @@ Implements:
 
 - POS_STK_NEED_have_a_safety_need
 
-Safety related: yes
+Qualification relevant: yes
 
 # System level requirements
 
@@ -61,7 +61,7 @@ Derived from:
 - **Constraints:** None
 - **Operational and environmental limits and capabilities:** None.
 - **Documentation:** Just this document.
-- **Safety related:** Yes.
+- **Qualification relevant:** Yes.
 - **Auditable:** No.
 
 ## POS_SYS_ELEMENT_the_spec
@@ -105,7 +105,7 @@ Results:
 
 Test that this spec exists.
 
-Safety related: yes
+Qualification relevant: yes
 
 Tests:
 

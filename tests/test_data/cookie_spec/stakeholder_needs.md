@@ -15,7 +15,7 @@ The **KIDS** need the **CDU** to provide them with cookies.
 
 Elicitation date: 1970
 
-Safety related: yes
+Qualification relevant: yes
 
 #### CDU_STK_NEED_bag_for_cookies
 

@@ -29,7 +29,7 @@ Results:
 
 The **CDU** operations terminal must be tested.
 
-Safety related: yes
+Qualification relevant: yes
 
 Tests:
 

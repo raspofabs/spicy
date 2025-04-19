@@ -22,6 +22,8 @@ def spec_name_to_variant(name: str) -> str | None:
         "SW_COMP": "SoftwareComponent",
         "SW_UNIT": "SoftwareUnit",
         "SW_UNIT_TEST": "SoftwareUnitTest",
+        "SW_UNIT_INT": "SoftwareUnitIntegration",
+        "SW_COMP_TEST": "SoftwareComponentTest",
         "SW_INT": "SoftwareIntegration",
         "SW_QUAL": "SoftwareQualification",
         "SYS_INT": "SystemIntegration",
@@ -53,6 +55,8 @@ _spec_link_mapping: MappingType = {
     "SoftwareComponent": [("Implements", "SoftwareArchitecture")],
     "SoftwareUnit": [("Implements", "SoftwareComponent")],
     "SoftwareUnitTest": [("Tests", "SoftwareUnit")],
+    "SoftwareUnitIntegration": [("Integrates", "SoftwareUnit")],
+    "SoftwareComponentTest": [("Tests", "SoftwareComponent")],
     "SoftwareIntegration": [("Integrates", "SoftwareComponent")],
     "SoftwareQualification": [("Tests", "SoftwareRequirement")],
     "UseCase": [("Fulfils", "StakeholderNeed")],
@@ -60,23 +64,25 @@ _spec_link_mapping: MappingType = {
 
 _spec_link_optional_mapping: MappingType = {
     "StakeholderNeed": [("Fulfilled by", "StakeholderRequirement"), ("Qualified as", "UseCase")],
-    "StakeholderRequirement": [("Derives to", "SystemRequirement"), ("Validated by", "Validation")],
+    "StakeholderRequirement": [
+        ("Derives to", "SystemRequirement"),
+        ("Implemented by", "SystemElement"),
+        ("Validated by", "Validation"),
+    ],
     "SystemRequirement": [
         ("Implemented as", "SystemElement"),
         ("Tested by", "SystemQualification"),
         ("Requires", "SoftwareRequirement"),
     ],
     "SystemElement": [("Composes", "SoftwareRequirement"), ("Integrated by", "SystemIntegration")],
-    "SoftwareRequirement": [],
-    "SoftwareArchitecture": [],
-    "SoftwareComponent": [],
-    "SoftwareUnit": [],
-    "SoftwareUnitTest": [],
-    "SoftwareIntegration": [],
-    "SoftwareQualification": [],
-    "SystemIntegration": [],
-    "SystemQualification": [],
-    "Validation": [],
+    "SoftwareRequirement": [("Fulfilled by", "SoftwareArchitecture"), ("Tested by", "SoftwareQualification")],
+    "SoftwareArchitecture": [("Implemented by", "SoftwareComponent")],
+    "SoftwareComponent": [
+        ("Implemented by", "SoftwareUnit"),
+        ("Integrated by", "SoftwareIntegration"),
+        ("Tested by", "SoftwareComponentTest"),
+    ],
+    "SoftwareUnit": [("Integrated by", "SoftwareUnitIntegration"), ("Tested by", "SoftwareUnitTest")],
 }
 
 
@@ -126,6 +132,7 @@ def _get_section_mapping() -> dict[str, str]:
     mapping = {
         "Safety related": "qualification_related",
         "Qualification related": "qualification_related",
+        "Qualification relevant": "qualification_related",
         "TQP relevant": "qualification_related",
         "TCL relevant": "qualification_related",
         "Derived from": "derived_from",

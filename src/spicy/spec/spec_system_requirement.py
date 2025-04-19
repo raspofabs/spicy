@@ -31,8 +31,10 @@ class SystemRequirement(SpecElementBase):
 
     @property
     def is_qualification_related(self) -> bool:
-        """Return whether the spec is safety related based on specification first."""
+        """Return whether the spec is qualification relevant based on specification first."""
         if self.specification.get("safety related", "").lower().strip(".") == "yes":
+            return True
+        if self.specification.get("qualification relevant", "").lower().strip(".") == "yes":
             return True
         if self.specification.get("tcl relevant", "").lower().strip(".") == "yes":
             return True
