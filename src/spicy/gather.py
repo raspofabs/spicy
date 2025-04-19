@@ -9,7 +9,7 @@ from spicy.md_read import load_syntax_tree
 
 from .parser import parse_syntax_tree_to_spec_elements
 from .parser.spec_element import SpecElement
-from .parser.spec_utils import expected_links_for_variant, section_name_to_key, spec_is_defined
+from .parser.spec_utils import expected_links_for_variant, expected_variants, section_name_to_key, spec_is_defined
 
 logger = logging.getLogger(__name__)
 
@@ -65,44 +65,8 @@ def render_issues_with_elements(
     for spec in spec_elements:
         spec_variant_map[spec.variant][spec.name] = spec
 
-    # Tool Qualification: UseCase
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "UseCase")
-
-    # SYS.1: StakeholderNeeds
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "StakeholderNeed")
-
-    # SYS.1: StakeholderRequirements
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "StakeholderRequirement")
-
-    # SYS.2: SystemRequirements
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemRequirement")
-
-    # SYS.3: SystemElements
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemElement")
-
-    # SWE.1: SoftwareRequirements
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareRequirement")
-
-    # SWE.2: SoftwareComponents
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareComponent")
-
-    # SWE.3: SoftwareUnits
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareUnit")
-
-    # SWE.5: SoftwareIntegration
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareIntegration")
-
-    # SWE.6: SoftwareQualification
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SoftwareQualification")
-
-    # SYS.4: SystemIntegration
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemIntegration")
-
-    # SYS.5: SystemQualification
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "SystemQualification")
-
-    # VAL.1: Validation
-    any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, "Validation")
+    for variant in expected_variants():
+        any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, variant)
 
     return any_errors
 

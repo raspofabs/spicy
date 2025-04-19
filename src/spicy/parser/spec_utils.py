@@ -158,6 +158,12 @@ def section_name_to_key(section_name: str) -> str | None:
 
 
 @lru_cache
+def expected_variants() -> set[str]:
+    """Return the set of all expected variants."""
+    return set(_spec_link_mapping).union(set(_spec_link_optional_mapping))
+
+
+@lru_cache
 def spec_is_defined(spec_type_name: str) -> bool:
     """Return whether a spec type is part of the defined set of spec types."""
-    return spec_type_name in set(_spec_link_mapping).union(set(_spec_link_optional_mapping))
+    return spec_type_name in expected_variants()
