@@ -122,12 +122,12 @@ def render_spec_linkage_issues(
     )
 
     for link, target in expected_links_for_variant(spec_type_to_inspect):
-        unused_specs = set(inspected_specs_names)
 
         link_key = section_name_to_key(link) or link
         target_specs = [spec for spec in specs if spec.variant == target]
         target_spec_names = {n.name for n in target_specs}
         logger.debug("Target spec names: %s", ", ".join(target_spec_names))
+        unused_target_specs = set(inspected_specs_names)
 
         for inspected_spec in inspected_specs:
             fulfilment = set(inspected_spec.get_linked_by(link_key))
@@ -138,12 +138,13 @@ def render_spec_linkage_issues(
                 render_function(
                     f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected_list}",
                 )
-            unused_specs = unused_specs - fulfilment
+            else:
+                unused_target_specs = unused_target_specs - {inspected_spec.name}
 
-        if unused_specs:
+        if unused_target_specs:
             any_errors = True
-            render_function(f"{spec_type_to_inspect} without a {target}:")
-            for unused_need in sorted(unused_specs):
-                render_function(f"\t{unused_need}")
+            render_function(f"{target} without a {spec_type_to_inspect}:")
+            for unused_target in sorted(unused_target_specs):
+                render_function(f"\t{unused_target}")
 
     return any_errors

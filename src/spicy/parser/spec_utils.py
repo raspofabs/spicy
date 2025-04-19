@@ -46,7 +46,7 @@ MappingType = dict[str, list[tuple[str, str]]]
 _spec_link_mapping: MappingType = {
     "StakeholderRequirement": [("Implements", "StakeholderNeed")],
     "SystemRequirement": [("Derived from", "StakeholderRequirement")],
-    "SystemElement": [("Implements", "StakeholderRequirement")],
+    "SystemElement": [("Implements", "SystemRequirement")],
     "SystemIntegration": [("Integrates", "SystemElement")],
     "SystemQualification": [("Tests", "SystemRequirement")],
     "Validation": [("Tests", "StakeholderRequirement")],
