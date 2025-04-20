@@ -63,6 +63,7 @@ LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
     ("software_component_to_software_requirement.md", [], ["Realises unexpected SoftwareArchitecture"]),
     ("system_requirement_to_system_element.md", [], ["SystemRequirement without a SystemElement"]),
     ("non_software_system_element.md", [], ["SystemElement without a SoftwareRequirement"]),
+    ("stakeholder_requirement_qualification_relevant.md", [], ["Qualification"]),
 ]
 
 
@@ -75,7 +76,8 @@ def test_linkage(
     unexpected_outputs: list[str],
 ) -> None:
     """Test linkages with different cases."""
-    spec_elements = gather_all_elements("TD", test_data_path / "linkage" / test_filename)
+    with caplog.at_level(logging.DEBUG):
+        spec_elements = gather_all_elements("TD", test_data_path / "linkage" / test_filename)
     lines = []
     with caplog.at_level(logging.DEBUG):
         render_issues_with_elements(spec_elements, lambda x: lines.append(x))
