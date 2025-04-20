@@ -11,3 +11,9 @@ TQP relevant: yes
 Verification Criteria:
 
 - Check we have a simple sys req
+
+Not part of the verification criteria.
+
+Notes:
+
+This is just a little note.

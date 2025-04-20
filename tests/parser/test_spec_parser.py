@@ -230,7 +230,16 @@ def test_valid_sys_req(test_data_path: Path, caplog: pytest.LogCaptureFixture) -
     assert spec.is_qualification_related
     assert spec.variant == "SystemRequirement"
     assert spec.verification_criteria(), str(spec)
+
+    verification_criteria = spec.verification_criteria()
+    assert "Check we have a simple sys req" in verification_criteria
+    assert "Not part of the verification criteria." not in verification_criteria
+
     assert spec.get_linked_by("derived_from"), str(spec)
+
+    notes: list[str] | None = spec.content.get("Notes")
+    assert notes is not None
+    assert "This is just a little note." in notes
 
     issues = spec.get_issues()
     assert not issues
@@ -257,6 +266,9 @@ def test_looks_like_non_sticky_section() -> None:
 def test_looks_like_single_line_field() -> None:
     """Test the looks_like_single_line_field function."""
     assert looks_like_single_line_field("Ok: yes")
+
+    # one line only
+    assert not looks_like_single_line_field("not\nOk:")
 
     # must have something after
     assert not looks_like_single_line_field("Ok:")

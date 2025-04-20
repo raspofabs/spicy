@@ -10,7 +10,7 @@ import click
 from .config import load_spicy_config
 from .gather import get_elements_from_files, render_issues_with_elements
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
