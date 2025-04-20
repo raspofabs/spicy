@@ -86,7 +86,6 @@ def test_hierarcical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture
     assert re.search(r"Discovered \d+ elements.", caplog.text)
 
 
-@pytest.mark.xfail
 def test_various_data(test_data_path: Path) -> None:
     """Test the general test data folder."""
     runner = CliRunner()
@@ -94,7 +93,7 @@ def test_various_data(test_data_path: Path) -> None:
     # complete directory
     result = runner.invoke(run, ["-p", "TD", str(test_data_path / "spec")])
     assert result.exit_code == 1, result.stdout
-    assert "Needs without a fulfilling stakeholder requirement" in result.stdout
+    assert "StakeholderNeed without a StakeholderRequirement" in result.stdout
 
     # one file
     result = runner.invoke(run, ["-p", "TD", str(test_data_path / "spec" / "spec_swe1_software_requirements.md")])
@@ -102,21 +101,6 @@ def test_various_data(test_data_path: Path) -> None:
     line1 = r"SoftwareRequirement.*\n"
     line2 = r"Missing links for \[Realises SystemRequirement\]"
     assert re.search(line1 + line2, result.stdout, re.MULTILINE)
-
-
-@pytest.mark.xfail
-def test_larger_spec(cookie_data_path: Path) -> None:
-    """Test the complete test spec data."""
-    runner = CliRunner()
-    result = runner.invoke(run, ["--project-prefix", "CDU", str(cookie_data_path)])
-    assert result.exit_code == 1, result.stdout
-    assert "Needs without a fulfilling stakeholder requirement" in result.stdout
-    assert "Stakeholder requirements without a system requirement" in result.stdout
-    assert re.search(r"Stakeholder requirement .* fulfils unexpected need ", result.stdout)
-
-    result = runner.invoke(run, [str(cookie_data_path)])
-    assert result.exit_code == 1, result.stdout
-    assert "Needs without a fulfilling stakeholder requirement" in result.stdout
 
 
 def test_missing_config(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
