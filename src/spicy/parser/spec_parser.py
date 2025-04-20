@@ -68,7 +68,8 @@ class SpecParser:
             self.section_is_sticky = True
         else:
             # enable tracking content if the section name matches
-            section = section_map.get(self.last_header, self.in_section)
+            last_section = self.in_section if self.section_is_sticky else None
+            section = section_map.get(self.last_header, last_section)
             if section is not None:
                 self.in_section = section
                 self.section_is_sticky = True
@@ -126,6 +127,8 @@ class SpecParser:
             self.builder.read_bullets_to_section(node, self.in_section)
         else:  # pragma: no cover
             logger.debug("Unhandled bullet list : %s", node.pretty())
+        if not self.section_is_sticky:
+            self.in_section = None
 
     def _handle_tool_impact(self, content: str) -> None:
         if self.in_section != "tool_impact":
@@ -151,6 +154,8 @@ class SpecParser:
             self._handle_detectability(content)
         elif self.in_section is not None:
             self.builder.add_code_block(self.in_section, node)
+        if not self.section_is_sticky:
+            self.in_section = None
 
     def build_specs(self) -> list[SpecElement]:
         """Build the gathered specs from the builders and return them as a list."""
@@ -159,7 +164,7 @@ class SpecParser:
     def parse_node(self, node: SyntaxTreeNode) -> None:
         """Parse a single node."""
         # Parse a SyntaxTreeNode for common features.
-        logger.debug("Handle %s: %s", node.type, node.pretty())
+        logger.debug("Handle %s: %s", node.type, get_text_from_node(node))
 
         if value := get_if_single_line_section(node):
             section_name, content = value
@@ -173,16 +178,13 @@ class SpecParser:
                 return
 
         if self._is_use_case(node):
-            logger.debug("Handle use case %s", node.pretty())
+            logger.debug("Consume as UseCase")
             self._handle_use_case_node(node)
-            return
-
-        if node.type == "heading":
-            logger.debug("Handle heading %s", node.pretty())
+        elif node.type == "heading":
+            logger.debug("Handle heading")
             self._handle_heading(node)
-
-        if self.builder is not None:
-            logger.debug("Handle %sn%s", node.type, node.pretty())
+        elif self.builder is not None:
+            logger.debug("Handle %s", node.type)
             if node.type == "paragraph":
                 self._handle_paragraph(node)
             elif node.type == "bullet_list":

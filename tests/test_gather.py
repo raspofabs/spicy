@@ -64,6 +64,15 @@ LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
     ("system_requirement_to_system_element.md", [], ["SystemRequirement without a SystemElement"]),
     ("non_software_system_element.md", [], ["SystemElement without a SoftwareRequirement"]),
     ("stakeholder_requirement_qualification_relevant.md", [], ["Qualification"]),
+    (
+        "sys_req_with_specification.md",
+        [
+            "unexpected StakeholderRequirement "
+            "TD_STK_REQ_have_a_stakeholder_requirement, "
+            "TD_STK_REQ_safe_stakeholder_requirement",
+        ],
+        ["Qualification relevant"],
+    ),
 ]
 
 

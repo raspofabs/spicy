@@ -57,8 +57,7 @@ def get_text_from_node(node: SyntaxTreeNode) -> str:
         buffer = f"`{node.content}`"
     elif node.type == "code_block":
         buffer = f"`{node.content.strip()}`"
-    else:
-        logger.debug("textless node: %s", node.type)
+
     for child in node.children:
         buffer = (buffer + " " + get_text_from_node(child)).strip()
     return buffer.strip()

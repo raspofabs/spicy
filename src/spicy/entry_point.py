@@ -51,3 +51,4 @@ def run(
     logger.debug("Discovered %s elements.", len(elements))
     if render_issues_with_elements(elements, print):
         sys.exit(1)
+    logger.info("No issues found with spec")

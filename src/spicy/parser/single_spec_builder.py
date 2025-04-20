@@ -1,5 +1,6 @@
 """Builder for a single spec. Used by the parser."""
 
+import logging
 from collections import defaultdict
 from pathlib import Path
 
@@ -9,6 +10,8 @@ from spicy.md_read import get_text_from_node, read_bullet_list
 
 from .spec_element import SpecElement
 from .use_case_constants import _get_usage_subsection, usage_section_map
+
+logger = logging.getLogger(__name__)
 
 
 class SingleSpecBuilder:
@@ -65,15 +68,20 @@ class SingleSpecBuilder:
 
     def section_add_paragraph(self, section_id: str, content: str) -> None:
         """Append content to section information."""
+        logger.debug("Adding para-content: %s", content)
         self.content[section_id].append(content)
 
     def add_code_block(self, section_id: str, code_block_node: SyntaxTreeNode) -> None:
         """Use the code block or paste it into content."""
-        self.content[section_id].append(code_block_node.content.rstrip())
+        new_content = code_block_node.content.rstrip()
+        logger.debug("Adding code-block: %s", new_content)
+        self.content[section_id].append(new_content)
 
     def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
         """Consume the bullet list and store in content."""
-        self.content[section].extend(map(str.rstrip, map(get_text_from_node, read_bullet_list(bullet_list))))
+        new_content = list(map(str.rstrip, map(get_text_from_node, read_bullet_list(bullet_list))))
+        logger.debug("Adding bullets: %s", new_content)
+        self.content[section].extend(new_content)
 
     def read_usage_bullets(self, bullet_list: SyntaxTreeNode) -> None:
         """Consume the usage list and create the usage slot data."""
