@@ -54,10 +54,8 @@ _spec_link_mapping: MappingType = {
     "SystemQualification": [("Tests", "SystemRequirement")],
     "Validation": [("Tests", "StakeholderRequirement")],
     "SoftwareRequirement": [("Realises", "SystemRequirement"), ("Decomposes", "SystemElement")],
-    "SoftwareComponent": [("Implements", "SoftwareRequirement")],
-    # TODO(fabs): update to these
-    # "SoftwareArchitecture": [("Fulfils", "SoftwareRequirement")], # noqa: ERA001
-    # "SoftwareComponent": [("Implements", "SoftwareArchitecture"), ("Fulfils", "SoftwareRequirement")], # noqa: ERA001
+    "SoftwareArchitecture": [("Fulfils", "SoftwareRequirement")],
+    "SoftwareComponent": [("Implements", "SoftwareArchitecture"), ("Fulfils", "SoftwareRequirement")],
     "SoftwareUnit": [("Implements", "SoftwareComponent")],
     "SoftwareUnitTest": [("Tests", "SoftwareUnit")],
     "SoftwareUnitIntegration": [("Integrates", "SoftwareUnit")],

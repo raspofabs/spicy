@@ -1,6 +1,7 @@
-# System elements
+# System Qualification
 
-For each element, we need the static aspects, the dynamic aspects, and more.
+Once the system is integrated, we need to verify the system requirements are met.
+
 
 #### CDU_SYS_QUAL_order_cookies
 

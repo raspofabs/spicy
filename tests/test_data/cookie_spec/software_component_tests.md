@@ -1,4 +1,4 @@
-# Components
+# Component Tests
 
 # CDU_SW_COMP_TEST_cookie_order_database
 

@@ -1,4 +1,4 @@
-# Components
+# Software Units Integration
 
 # CDU_SW_UNIT_INT_cookie_customer_server
 

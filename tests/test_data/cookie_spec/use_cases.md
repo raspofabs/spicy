@@ -1,4 +1,4 @@
-# Ordering cookies
+# Use Cases for Ordering cookies - qualification plan classification document
 
 <!-- toc -->
 

@@ -119,7 +119,7 @@ class SpecElementBuilder:
 
     @staticmethod
     def _class_for_header(name: str) -> type[SpecElementBase]:
-        if any(x in name for x in ["_SW_COMP_TEST_", "_SW_UNIT_TEST_", "_SW_UNIT_INT_", "_SW_INT_"]):
+        if any(x in name for x in ["_SW_COMP_TEST_", "_SW_UNIT_TEST_", "_SW_UNIT_INT_", "_SW_INT_", "_SW_ARCH_"]):
             return IgnoredComponent
         for spec_class in SpecElementBuilder.SPEC_CLASSES:
             if spec_class.is_spec_heading(name):

@@ -1,4 +1,4 @@
-# Stakeholder needs
+# Stakeholder Needs
 
 The needs statement is formatted, "The <stakeholder(s)> needs the <entity> to ..."
 e.g. "The _Captain_ needs the _ship_ to reach at least 30 knots when on calm seas."

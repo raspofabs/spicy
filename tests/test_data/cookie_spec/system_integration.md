@@ -1,6 +1,7 @@
-# System elements
+# System Integration
 
-For each element, we need the static aspects, the dynamic aspects, and more.
+Each element needs to be integrated into the complete system.
+
 
 #### CDU_SYS_INT_order_triggers_baking
 

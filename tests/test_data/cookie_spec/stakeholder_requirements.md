@@ -1,4 +1,4 @@
-# Stakeholder requirements
+# Stakeholder Requirements
 
 Stakeholder requirements are written from
 the perspective of the user and fulfil needs.

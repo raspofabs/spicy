@@ -1,4 +1,4 @@
-# System elements
+# System Elements
 
 For each element, we need the static aspects, the dynamic aspects, and more.
 

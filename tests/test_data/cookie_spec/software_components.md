@@ -1,10 +1,14 @@
-# Components
+# Software Components
 
 ## CDU_SW_COMP_cookie_order_database
 
 The **CDU** keeps a database to hold information on inventory levels and unfulfilled orders.
 
 Implements:
+
+- CDU_SW_ARCH_database_backed
+
+Fulfils:
 
 - [CDU_SW_REQ_cookie_order_persistence](#cdu_sw_req_cookie_order_persistence)
 
@@ -14,7 +18,11 @@ The web page on which the **KIDS** can order cookies.
 
 Implements:
 
-- [CDU_SW_REQ_ordering_page](#)
+- CDU_SW_ARCH_web_based_operation
+
+Fulfils:
+
+- [CDU_SW_REQ_ordering_page](#cdu_sw_req_ordering_page)
 
 ## CDU_SW_COMP_inventory_checker_logic
 
@@ -24,8 +32,11 @@ more bags are ordered.
 
 Implements:
 
-- [CDU_SW_REQ_cookie_baking_trigger](#cdu_sw_req_cookie_baking_trigger)
-- [CDU_SW_REQ_bag_ordering_trigger](#cdu_sw_req_bag_ordering_trigger)
+- CDU_SW_ARCH_event_based_operator_triggers
+
+Fulfils:
+
+- CDU_SW_REQ_cookie_operator_terminal
 
 ## CDU_SW_COMP_operator_terminal
 
