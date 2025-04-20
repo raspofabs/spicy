@@ -128,6 +128,7 @@ This test verifies the document is provisioned with the spicy toolkit.
 Tests:
 
 - POS_STK_REQ_have_a_stakeholder_requirement
+- POS_STK_REQ_safe_stakeholder_requirement
 
 Cases:
 
@@ -151,6 +152,185 @@ Decomposes:
 Realises:
 
 - [POS_SYS_REQ_have_a_sys_req](#pos_sys_req_have_a_sys_req)
+
+## POS_SW_ARCH_use_two_components
+
+The **POS** uses two software components to realise the spec so it can have a
+component integration spec.
+
+Fulfils:
+
+- POS_SW_REQ_have_some_software
+
+## POS_SW_COMP_primary_component
+
+Implements:
+
+- POS_SW_ARCH_use_two_components
+
+Fulfils:
+
+- POS_SW_REQ_have_some_software
+
+## POS_SW_COMP_secondary_component
+
+Implements:
+
+- POS_SW_ARCH_use_two_components
+
+Fulfils:
+
+- POS_SW_REQ_have_some_software
+
+## POS_SW_UNIT_primary_interface
+
+Implements:
+
+- POS_SW_COMP_primary_component
+
+## POS_SW_UNIT_primary_logic
+
+Implements:
+
+- POS_SW_COMP_primary_component
+
+## POS_SW_UNIT_secondary_interface
+
+Implements:
+
+- POS_SW_COMP_secondary_component
+
+## POS_SW_UNIT_secondary_logic
+
+Implements:
+
+- POS_SW_COMP_secondary_component
+
+## Unit tests
+
+### POS_SW_UNIT_TEST_primary_interface
+
+Tests:
+
+- POS_SW_UNIT_primary_interface
+
+Cases:
+
+- POS_UNIT_TEST_a_test
+
+Reults:
+
+- POS_UNIT_TEST_a_test: PASS
+
+### POS_SW_UNIT_TEST_primary_logic
+
+Tests:
+
+- POS_SW_UNIT_primary_logic
+
+Cases:
+
+- POS_UNIT_TEST_a_test
+
+Reults:
+
+- POS_UNIT_TEST_a_test: PASS
+
+### POS_SW_UNIT_TEST_secondary_interface
+
+Tests:
+
+- POS_SW_UNIT_secondary_interface
+
+Cases:
+
+- POS_UNIT_TEST_a_test
+
+Reults:
+
+- POS_UNIT_TEST_a_test: PASS
+
+### POS_SW_UNIT_TEST_secondary_logic
+
+Tests:
+
+- POS_SW_UNIT_secondary_logic
+
+Cases:
+
+- POS_UNIT_TEST_a_test
+
+Reults:
+
+- POS_UNIT_TEST_a_test: PASS
+
+## Unit integration
+
+### POS_SW_UNIT_INT_integrate_primary
+
+Integrates:
+
+- POS_SW_UNIT_primary_interface
+- POS_SW_UNIT_primary_logic
+
+### POS_SW_UNIT_INT_integrate_secondary
+
+Integrates:
+
+- POS_SW_UNIT_secondary_interface
+- POS_SW_UNIT_secondary_logic
+
+## Component tests
+
+### POS_SW_COMP_TEST_primary_test
+
+Tests:
+
+- POS_SW_COMP_primary_component
+
+Cases:
+
+- POS_TEST_primary_function
+
+Results:
+
+- POS_TEST_primary_function: PASS
+
+### POS_SW_COMP_TEST_secondary_test
+
+Tests:
+
+- POS_SW_COMP_secondary_component
+
+Cases:
+
+- POS_TEST_secondary_function
+
+Results:
+
+- POS_TEST_secondary_function: PASS
+
+## POS_SW_INT_integrate_everything
+
+Integrates:
+
+- POS_SW_COMP_primary_component
+- POS_SW_COMP_secondary_component
+
+
+## POS_SW_QUAL_test_the_software
+
+Tests:
+
+- POS_SW_REQ_have_some_software
+
+Cases:
+
+- POS_TEST_check_software_is_present
+
+Results:
+
+- POS_TEST_check_software_is_present: PASS
 
 # Use case section
 
@@ -201,7 +381,6 @@ A developer wants to see how safety works.
 
 Fulfils:
 
-    POS_STK_NEED_have_a_stakeholder_need
     POS_STK_NEED_have_a_safety_need
 
 ### Features, functions, and technical properties
