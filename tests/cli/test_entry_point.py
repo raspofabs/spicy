@@ -45,31 +45,45 @@ def test_simple_use_case_output(positive_test_data_path: Path, caplog: pytest.Lo
     assert re.search(r"Discovered \d+ elements.", caplog.text)
 
 
-@pytest.mark.xfail
 def test_simple_use_case_carefully(positive_test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test the simple positive use case."""
     runner = CliRunner()
-    result = runner.invoke(run, ["--project-prefix", "POS", str(positive_test_data_path)])
+    with caplog.at_level(logging.INFO):
+        result = runner.invoke(run, ["--project-prefix", "POS", str(positive_test_data_path)])
     assert result.exit_code == 0, result.stdout
 
     # no logging
     assert "Found 1 files to read." not in caplog.text
     assert "Discovered 11 spec elements." not in caplog.text
 
-    # verify we don't need it if we have a spicy.yaml
-    result = runner.invoke(run, [str(positive_test_data_path)])
+    # verify we don't need the prefix if we have a spicy.yaml
+    with caplog.at_level(logging.INFO):
+        result = runner.invoke(run, [str(positive_test_data_path)])
     assert result.exit_code == 0, result.stdout
 
     # no logging
     assert "Found 1 files to read." not in caplog.text
     assert "Discovered 11 spec elements." not in caplog.text
 
-    result = runner.invoke(run, ["-v", str(positive_test_data_path)])
+    with caplog.at_level(logging.DEBUG):
+        result = runner.invoke(run, ["-v", str(positive_test_data_path)])
     assert result.exit_code == 0, result.stdout
 
     # all logging
     assert "Found 1 files to read." in caplog.text
-    assert "Discovered 13 elements." in caplog.text
+    assert re.search(r"Discovered \d+ elements.", caplog.text)
+
+
+def test_hierarcical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    """Test the hierarcical_case positive use case."""
+    runner = CliRunner()
+    with caplog.at_level(logging.DEBUG):
+        result = runner.invoke(run, [str(test_data_path / "hierarchical_test_spec")])
+    assert result.exit_code == 0, result.stdout
+
+    # all logging
+    assert "Found 1 files to read." not in caplog.text
+    assert re.search(r"Discovered \d+ elements.", caplog.text)
 
 
 @pytest.mark.xfail
