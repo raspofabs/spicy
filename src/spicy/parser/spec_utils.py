@@ -12,6 +12,7 @@ def spec_name_to_variant(name: str) -> str | None:
     project_prefix, *variant_parts = parts
     comparison_string = "_".join(variant_parts)
 
+    guesses = []
     for variant_string, variant in {
         "STK_NEED": "StakeholderNeed",
         "STK_REQ": "StakeholderRequirement",
@@ -19,12 +20,12 @@ def spec_name_to_variant(name: str) -> str | None:
         "SYS_ELEMENT": "SystemElement",
         "SW_REQ": "SoftwareRequirement",
         "SW_ARCH": "SoftwareArchitecture",
+        "SW_UNIT": "SoftwareUnit",
         "SW_UNIT_TEST": "SoftwareUnitTest",
         "SW_UNIT_INT": "SoftwareUnitIntegration",
-        "SW_UNIT": "SoftwareUnit",
+        "SW_COMP": "SoftwareComponent",
         "SW_COMP_TEST": "SoftwareComponentTest",
         "SW_INT": "SoftwareIntegration",
-        "SW_COMP": "SoftwareComponent",
         "SW_QUAL": "SoftwareQualification",
         "SYS_INT": "SystemIntegration",
         "SYS_QUAL": "SystemQualification",
@@ -37,7 +38,9 @@ def spec_name_to_variant(name: str) -> str | None:
                 return None
             if post and post[0] not in " _-":
                 return None
-            return variant
+            guesses.append(variant)
+    if guesses:
+        return sorted(guesses, reverse=True, key=lambda x: len(x))[0]
     return None
 
 

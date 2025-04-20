@@ -1,6 +1,6 @@
 # Component integration
 
-# CDU_SW_COMP_INT_cookie_order_to_delivery
+# CDU_SW_INT_cookie_order_to_delivery
 
 Integrates:
 
@@ -9,7 +9,7 @@ Integrates:
 - CDU_SW_COMP_operator_terminal
 
 
-# CDU_SW_COMP_INT_cookie_stock_alerts
+# CDU_SW_INT_cookie_stock_alerts
 
 Integrates:
 
