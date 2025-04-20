@@ -19,12 +19,12 @@ def spec_name_to_variant(name: str) -> str | None:
         "SYS_ELEMENT": "SystemElement",
         "SW_REQ": "SoftwareRequirement",
         "SW_ARCH": "SoftwareArchitecture",
-        "SW_COMP": "SoftwareComponent",
-        "SW_UNIT": "SoftwareUnit",
         "SW_UNIT_TEST": "SoftwareUnitTest",
         "SW_UNIT_INT": "SoftwareUnitIntegration",
+        "SW_UNIT": "SoftwareUnit",
         "SW_COMP_TEST": "SoftwareComponentTest",
         "SW_INT": "SoftwareIntegration",
+        "SW_COMP": "SoftwareComponent",
         "SW_QUAL": "SoftwareQualification",
         "SYS_INT": "SystemIntegration",
         "SYS_QUAL": "SystemQualification",
@@ -158,9 +158,9 @@ def section_name_to_key(section_name: str) -> str | None:
 
 
 @lru_cache
-def expected_variants() -> set[str]:
+def expected_variants() -> list[str]:
     """Return the set of all expected variants."""
-    return set(_spec_link_mapping).union(set(_spec_link_optional_mapping))
+    return sorted(set(_spec_link_mapping).union(set(_spec_link_optional_mapping)))
 
 
 @lru_cache

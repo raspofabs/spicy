@@ -78,3 +78,27 @@ class SpecElementBase:
     def get_issues(self) -> list[str]:
         """Get issues with this spec."""
         return [f"Spec {self.name} is of an unknown type."]
+
+
+class IgnoredComponent(SpecElementBase):
+    """Handles intentionally ignored components."""
+
+    def __init__(self, name: str, ordering: int, from_file: Path) -> None:
+        """Construct super and placeholder fields."""
+        super().__init__(name, ordering, from_file, spec_type="Ignored Component")
+
+    def fulfils(self) -> list[str]:
+        """Return nothing."""
+        return []
+
+    @staticmethod
+    def is_spec_heading(_header_text: str) -> bool:
+        """Return false because we are not a parsing node, but a null object of sorts."""
+        return False
+
+    def parse_node(self, _node: SyntaxTreeNode) -> None:
+        """Don't parse a SyntaxTreeNode."""
+
+    def get_issues(self) -> list[str]:
+        """Return no issues."""
+        return []

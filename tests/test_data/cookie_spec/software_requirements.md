@@ -12,8 +12,7 @@ Decomposes:
 
 Realises:
 
-- [CDU_SYS_REQ_cookie_stock](#cdu_sys_req_cookie_stock)
-- [CDU_SYS_REQ_bag_stock](#cdu_sys_req_bag_stock)
+- [CDU_SYS_REQ_calculate_nominal_stock_level](#cdu_sys_req_calculate_nominal_stock_level)
 
 #### CDU_SW_REQ_ordering_page
 
@@ -41,6 +40,7 @@ Decomposes:
 Realises:
 
 - [CDU_SYS_REQ_stock_and_order_tracking](#cdu_sys_req_stock_and_order_tracking)
+- [CDU_SYS_REQ_bag_ordering](#cdu_sys_req_bag_ordering)
 
 ## Dynamic aspects
 

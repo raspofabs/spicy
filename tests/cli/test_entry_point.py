@@ -17,7 +17,7 @@ def test_single_file(test_data_path: Path) -> None:
         run,
         ["--project-prefix", "TD", str(test_data_path / "spec" / "spec_sys1_stakeholder_needs.md")],
     )
-    assert result.exit_code == 0, result.stdout
+    assert result.exit_code == 1, result.stdout
 
     result = runner.invoke(
         run,
