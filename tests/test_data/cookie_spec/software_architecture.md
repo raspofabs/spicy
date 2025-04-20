@@ -20,6 +20,14 @@ Fulfils:
 
 - CDU_SW_REQ_cookie_operator_terminal
 
+# CDU_SW_ARCH_dynamic_status
+
+The **CDU** keeps track of time for deliveries.
+
+Fulfils:
+
+- CDU_SW_REQ_cookie_delivery
+
 # CDU_SW_ARCH_database_backed
 
 The **CDU** uses a simple database to store data. No stored procedures. Just

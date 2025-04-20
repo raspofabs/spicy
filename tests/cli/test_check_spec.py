@@ -40,13 +40,13 @@ def test_larger_spec(cookie_data_path: Path) -> None:
     runner = CliRunner()
     result = runner.invoke(run, ["--project-prefix", "CDU", str(cookie_data_path)])
     assert result.exit_code == 1, result.stdout
-    assert "StakeholderNeed without a fulfilling StakeholderRequirement" in result.stdout
+    assert "StakeholderNeed without a StakeholderRequirement" in result.stdout
     assert "StakeholderRequirement without a SystemRequirement" in result.stdout
     assert re.search(r"StakeholderRequirement .* Implements unexpected StakeholderNeed ", result.stdout)
 
     result = runner.invoke(run, [str(cookie_data_path)])
     assert result.exit_code == 1, result.stdout
-    assert "StakeholderNeed without a fulfilling StakeholderRequirement" in result.stdout
+    assert "StakeholderNeed without a StakeholderRequirement" in result.stdout
 
 
 def test_broken_use_cases(test_data_path: Path) -> None:
@@ -65,7 +65,7 @@ def test_various_data(test_data_path: Path) -> None:
     # complete test directory
     result = runner.invoke(run, ["-p", "TD", str(test_data_path)])
     assert result.exit_code == 1, result.stdout
-    assert "StakeholderNeed without a fulfilling StakeholderRequirement" in result.stdout
+    assert "StakeholderNeed without a StakeholderRequirement" in result.stdout
 
     # one file
     result = runner.invoke(run, ["-p", "TD", str(test_data_path / "spec" / "spec_swe1_software_requirements.md")])

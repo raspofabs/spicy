@@ -12,17 +12,23 @@ Fulfils:
 
 - [CDU_SW_REQ_cookie_order_persistence](#cdu_sw_req_cookie_order_persistence)
 
+
 ## CDU_SW_COMP_cookie_ordering_website
 
 The web page on which the **KIDS** can order cookies.
 
+They must also be able to review the order status and ETA.
+
 Implements:
 
 - CDU_SW_ARCH_web_based_operation
+- CDU_SW_ARCH_dynamic_status
 
 Fulfils:
 
 - [CDU_SW_REQ_ordering_page](#cdu_sw_req_ordering_page)
+- [CDU_SW_REQ_cookie_delivery](#cdu_sw_req_cookie_delivery)
+
 
 ## CDU_SW_COMP_inventory_checker_logic
 
@@ -46,5 +52,9 @@ It needs to have a button to confirm more bags have been ordered.
 It needs to have inputs for when cookies have finished baking and bags have arrived.
 
 Implements:
+
+- CDU_SW_ARCH_web_based_operation
+
+Fulfils:
 
 - CDU_SW_REQ_cookie_operator_terminal

@@ -145,7 +145,7 @@ def render_stakeholder_requirement_linkage_issues(
 
     if unfulfilled_needs:
         any_errors = True
-        render_function("StakeholderNeed without a fulfilling StakeholderRequirement:")
+        render_function("StakeholderNeed without a StakeholderRequirement:")
         for unfulfilled_need in sorted(unfulfilled_needs):
             render_function(f"\t{unfulfilled_need}")
 
