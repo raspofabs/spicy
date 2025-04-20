@@ -3,11 +3,15 @@
 import logging
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import click
 
 from .config import load_spicy_config
 from .gather import get_elements_from_files, render_issues_with_elements
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +53,9 @@ def run(
     elements = get_elements_from_files(project_prefix, filenames)
 
     logger.debug("Discovered %s elements.", len(elements))
-    if render_issues_with_elements(elements, print):
+
+    render_function: Callable[[str], None] = print
+
+    if render_issues_with_elements(elements, render_function):
         sys.exit(1)
-    logger.info("No issues found with spec")
+    render_function(f"No issues found with any of the {len(elements)} specs")
