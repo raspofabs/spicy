@@ -1,0 +1,4 @@
+#!/bin/bash
+
+OFFLINE="--offline"
+uvx ${OFFLINE} ruff rule $1 | pandoc | lynx -stdin

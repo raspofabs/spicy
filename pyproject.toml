@@ -21,6 +21,8 @@ dependencies = [
 [project.scripts]
 spicy = "spicy.check_spec:run"
 spicecheck = "spicy.check_use_cases:run"
+oldspice = "spicy.check_spec:run"
+newspice = "spicy.entry_point:run"
 
 [build-system]
 requires = ["hatchling"]
@@ -38,9 +40,7 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
-#select = ["E", "F", "UP", "B", "SIM", "I", "C", "D1", "D20", "D300", "D4"]
-ignore = ["D203", "D213", "FIX002", "TD003"]
-#ignore = ["D203", "ANN204"]
+ignore = ["D203", "D213", "FIX002", "TD003", "TD002"]
 
 # Interesting rules
 # RUF105
@@ -54,4 +54,15 @@ ignore = ["D203", "D213", "FIX002", "TD003"]
     # The below are debateable
     #"PLR2004", # Magic value used in comparison, ...
     #"S311", # Standard pseudo-random generators are not suitable for cryptographic purposes
+]
+
+[tool.mypy]
+ignore_missing_imports=true
+
+[tool.coverage.report]
+exclude_also = [
+    # Comments to turn coverage on and off:
+    'no cover: start(?s:.)*?no cover: stop',
+    # A pragma comment that excludes an entire file:
+    '\A(?s:.*# pragma: exclude file.*)\Z',
 ]

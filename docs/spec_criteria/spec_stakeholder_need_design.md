@@ -28,9 +28,8 @@ The **USER** needs the **TLA** to do a thing.
 
 Elicitation date: January 1970
 
-Safety related: yes
+Qualification relevant: yes
 
 Interpreted by:
 
 - TLA_STK_REQ_1_numbered_requirements
-

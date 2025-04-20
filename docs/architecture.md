@@ -24,7 +24,7 @@ syntax errors, and probably not solvable.
 
 1. Whenever a heading matches a spec pattern,
     - a spec is opened and the parsing class is detected from the spec pattern.
-    - the _heading level_ is stored to determine later actions. 
+    - the _heading level_ is stored to determine later actions.
 2. (redundant rule for clarification) If a new heading at the same or lower
    level matches a spec pattern, it is assumed that the current spec has ended.
    For example, if the current spec was originally seen at H2,

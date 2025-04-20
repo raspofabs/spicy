@@ -6,7 +6,7 @@
 
 The **TD** maintains a persistent data store for inventory levels and unfulfilled orders.
 
-Required by:
+Decomposes:
 
 - [TD_SYS_ELEMENT_cookie_storage](#TD_SYS_ARCH_cookie_storage)
 
@@ -17,7 +17,7 @@ The **TD** maintains a web-page where cookies can be ordered.
 The ordering page takes as input, the **KIDS** ID and the number of cookies.
 The output is a message as an ETA, or just a confirmation if cookies are immediately available.
 
-Required by:
+Decomposes:
 
 - [TD_SYS_ELEMENT_cookie_website](#TD_sys_arch_cookie_website)
 
@@ -25,7 +25,7 @@ Required by:
 
 The **TD** notifies the operators for new orders of cookies through an operator terminal.
 
-Required by:
+Decomposes:
 
 - [TD_SYS_ELEMENT_operations_terminal](#TD_SYS_ELEMENT_operations_terminal)
 
@@ -35,6 +35,6 @@ Required by:
 
 The **TD** delivers cookies in reasonable time, or begins baking and then notifies the **KIDS** about the ETA (eating time approximation)
 
-Required by:
+Decomposes:
 
 - [TD_SYS_ELEMENT_operations_terminal](#TD_sys_element_operations_terminal)

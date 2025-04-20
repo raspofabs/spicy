@@ -13,9 +13,8 @@ combination of requirements.
 
 **TLA** shall do a thing.
 
-Safety related: yes
+Qualification relevant: yes
 
 Implements:
 
 - [CDU_STK_NEED_get_a_cookie](#cdu_stk_need_get_a_cookie)
-

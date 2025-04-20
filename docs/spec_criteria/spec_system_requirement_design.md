@@ -132,7 +132,7 @@ Specification:
 - **Constraints:** resource limits; performance constraints; safety, security expectations; interface and API constraints
 - **Operational and environmental limits and capabilities:**
 - **Documentation:** where it is, what it is for.
-- **Safety related:** yes/no
+- **Qualification relevant:** yes/no
 - **Auditable:** yes/no
 ```
 
