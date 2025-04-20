@@ -3,7 +3,7 @@
 import pytest
 
 from spicy.md_read import parse_text_to_syntax_tree
-from spicy.parser.use_case_constants import _get_usage_subsection
+from spicy.parser.use_case_constants import _get_usage_subsection, tcl_map
 
 
 def test_spec_name_to_variant() -> None:
@@ -31,3 +31,27 @@ def test_spec_name_to_variant() -> None:
     assert _get_usage_subsection(bullet_list_node, "Why?") == ""
     with pytest.raises(TypeError, match="Node is wrong type: root"):
         assert _get_usage_subsection(tree, "Why?") == ""
+
+
+def test_tcl_mappings() -> None:
+    """Test the TCL mappings."""
+    assert tcl_map(None, None) is not None
+    assert tcl_map(None, None) == "<undefined>"
+    with pytest.raises(ValueError, match="Invalid impact.*carrot"):
+        tcl_map("carrot", None)
+    with pytest.raises(ValueError, match="Invalid impact.*prune"):
+        tcl_map("prune", "TD1")
+    with pytest.raises(ValueError, match="Invalid detectability.*melon"):
+        tcl_map(None, "melon")
+    with pytest.raises(ValueError, match="Invalid detectability.*apple"):
+        tcl_map("TI1", "apple")
+
+    # impact 1
+    assert tcl_map("TI1", "TD1") == "TCL1"
+    assert tcl_map("TI1", "TD2") == "TCL1"
+    assert tcl_map("TI1", "TD3") == "TCL1"
+
+    # impact 2
+    assert tcl_map("TI2", "TD1") == "TCL1"
+    assert tcl_map("TI2", "TD2") == "TCL2"
+    assert tcl_map("TI2", "TD3") == "TCL3"

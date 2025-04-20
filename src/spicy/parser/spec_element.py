@@ -3,10 +3,8 @@
 import logging
 from pathlib import Path
 
-from spicy.use_cases.mappings import tcl_map
-
 from .spec_utils import expected_links_for_variant, section_name_to_key
-from .use_case_constants import section_map, usage_section_map
+from .use_case_constants import section_map, tcl_map, usage_section_map
 
 logger = logging.getLogger(__name__)
 

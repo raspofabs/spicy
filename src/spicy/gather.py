@@ -127,7 +127,7 @@ def render_spec_simple_linkage_issues(
             logger.debug("Fulfilment: %s", ", ".join(fulfilment))
             if disconnected := fulfilment - target_spec_names:
                 any_errors = True
-                disconnected_list = ", ".join(disconnected)
+                disconnected_list = ", ".join(sorted(disconnected))
                 render_function(
                     f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected_list}",
                 )
