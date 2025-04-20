@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_SPEC=tests/test_data/cookie_spec
+TEST_SPEC=tests/test_data/simple_test_spec
 
 while true; do
     # rerun script whenever anything changes in the spicy or tests folders
