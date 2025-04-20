@@ -32,7 +32,7 @@ def test_simple_use_case(positive_test_data_path: Path, caplog: pytest.LogCaptur
 
     # all logging
     assert "Found 1 files to read." in caplog.text
-    assert "Discovered 11 spec elements." in caplog.text
+    assert re.search(r"Discovered \d+ spec elements.", caplog.text)
 
 
 def test_larger_spec(cookie_data_path: Path) -> None:

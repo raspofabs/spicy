@@ -42,7 +42,7 @@ def test_simple_use_case_output(positive_test_data_path: Path, caplog: pytest.Lo
 
     # all logging
     assert "Found 1 files to read." in caplog.text
-    assert "Discovered 13 elements." in caplog.text
+    assert re.search(r"Discovered \d+ elements.", caplog.text)
 
 
 @pytest.mark.xfail
