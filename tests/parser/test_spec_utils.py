@@ -6,6 +6,7 @@ from spicy.parser.spec_utils import (
     expected_links_for_variant,
     section_name_to_key,
     spec_is_defined,
+    spec_is_software,
     spec_name_to_variant,
 )
 
@@ -75,3 +76,11 @@ def test_spec_is_defined() -> None:
     assert spec_is_defined("SystemElement")
     assert not spec_is_defined("SoftwareElement")
     assert not spec_is_defined("")
+
+
+def test_spec_software_requirement_trait() -> None:
+    """Test the general spec trait of software relevance."""
+    assert spec_is_software("SoftwareRequirement")
+    assert spec_is_software("SoftwareQualification")
+    assert not spec_is_software("SystemRequirement")
+    assert not spec_is_software("SystemElement")

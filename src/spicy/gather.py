@@ -15,6 +15,7 @@ from .parser.spec_utils import (
     expected_variants,
     section_name_to_key,
     spec_is_defined,
+    spec_is_software,
 )
 
 logger = logging.getLogger(__name__)
@@ -99,6 +100,22 @@ def render_spec_linkage_issues(
         ", ".join(inspected_specs_names),
     )
 
+    any_errors |= render_spec_simple_linkage_issues(spec_variant_map, render_function, spec_type_to_inspect)
+    any_errors |= render_spec_back_linkage_issues(spec_variant_map, render_function, spec_type_to_inspect)
+
+    return any_errors
+
+
+def render_spec_simple_linkage_issues(
+    spec_variant_map: SpecVariantMap,
+    render_function: RenderFunction,
+    spec_type_to_inspect: str,
+) -> bool:
+    """Check all specs links are connected to real specs and any required backlinks are observed."""
+    any_errors = False
+
+    inspected_specs_map = spec_variant_map[spec_type_to_inspect]
+
     for link, target in expected_links_for_variant(spec_type_to_inspect):
         link_key = section_name_to_key(link) or link
         target_specs_map = spec_variant_map[target]
@@ -114,11 +131,26 @@ def render_spec_linkage_issues(
                 render_function(
                     f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected_list}",
                 )
+    return any_errors
+
+
+def render_spec_back_linkage_issues(
+    spec_variant_map: SpecVariantMap,
+    render_function: RenderFunction,
+    spec_type_to_inspect: str,
+) -> bool:
+    """Check all specs links are connected to real specs and any required backlinks are observed."""
+    any_errors = False
+
+    inspected_specs_map = spec_variant_map[spec_type_to_inspect]
 
     for source, link in expected_backlinks_for_variant(spec_type_to_inspect):
         # unused is per link
         logger.debug("Checking backlinks: %s %s %s", source, link, spec_type_to_inspect)
-        unused_target_specs = set(inspected_specs_names)
+        unused_target_specs = set(inspected_specs_map.keys())
+
+        if spec_is_software(source):
+            unused_target_specs = {name for name, spec in inspected_specs_map.items() if spec.is_software_element}
 
         link_key = section_name_to_key(link) or link
         source_specs_map = spec_variant_map[source]

@@ -27,6 +27,7 @@ class SingleSpecBuilder:
         self.usage_sections: dict[str, str] = {}
         self.links: defaultdict[str, list[str]] = defaultdict(list)
         self.qualification_related: bool | None = None
+        self.software_requirement: bool | None = None
 
         self.state = ""
         self.parsing_issues: list[str] = []
@@ -53,6 +54,8 @@ class SingleSpecBuilder:
         element.usage_sections = self.usage_sections
         if self.qualification_related is not None:
             element.qualification_related = self.qualification_related
+        if self.software_requirement is not None:
+            element.software_requirement = self.software_requirement
         return element
 
     @property

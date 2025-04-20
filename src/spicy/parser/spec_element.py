@@ -28,6 +28,7 @@ class SpecElement:
         self.file_path = file_path
 
         self.qualification_related: bool | None = None
+        self.software_requirement: bool | None = None
 
         self.title = ""
         self.content: dict[str, list[str]] = {}
@@ -69,6 +70,14 @@ class SpecElement:
         if self.qualification_related is not None:
             return self.qualification_related
         return False
+
+    @property
+    def is_software_element(self) -> bool:
+        """Return whether this element requires software traceability."""
+        # by default, we assume all requirements lead to software
+        if self.software_requirement is None:
+            return True
+        return self.software_requirement
 
     def verification_criteria(self) -> list[str]:
         """Return a list of qualification criteria."""

@@ -167,6 +167,8 @@ class SpecParser:
             logger.debug("Single line section: %s/%s -- %s", section_name, section_key, content)
             if section_key == "qualification_related" and self.builder is not None:
                 self.builder.qualification_related = parse_yes_no(content)
+            if section_key == "software_requirement" and self.builder is not None:
+                self.builder.software_requirement = parse_yes_no(content)
 
         if self._is_use_case(node):
             logger.debug("Handle use case %s", node.pretty())

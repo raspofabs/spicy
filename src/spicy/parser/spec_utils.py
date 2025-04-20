@@ -46,6 +46,18 @@ def spec_name_to_variant(name: str) -> str | None:
 
 MappingType = dict[str, list[tuple[str, str]]]
 
+_spec_is_software: set[str] = {
+    "SoftwareRequirement",
+    "SoftwareArchitecture",
+    "SoftwareComponent",
+    "SoftwareUnit",
+    "SoftwareUnitTest",
+    "SoftwareUnitIntegration",
+    "SoftwareComponentTest",
+    "SoftwareIntegration",
+    "SoftwareQualification",
+}
+
 _spec_link_mapping: MappingType = {
     "StakeholderRequirement": [("Implements", "StakeholderNeed")],
     "SystemRequirement": [("Derived from", "StakeholderRequirement")],
@@ -141,6 +153,8 @@ def _get_section_mapping() -> dict[str, str]:
         "Derived from": "derived_from",
         "Fulfils": "fulfils",
         "Fulfilled by": "fulfilled_by",
+        "Software element": "software_requirement",
+        "Implies software": "software_requirement",
         "Implements": "implements",
         "Implemented by": "implemented_by",
         "Realises": "realises",
@@ -168,3 +182,9 @@ def expected_variants() -> list[str]:
 def spec_is_defined(spec_type_name: str) -> bool:
     """Return whether a spec type is part of the defined set of spec types."""
     return spec_type_name in expected_variants()
+
+
+@lru_cache
+def spec_is_software(spec_type_name: str) -> bool:
+    """Return whether a spec type is part of a software solution."""
+    return spec_type_name in _spec_is_software

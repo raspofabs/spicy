@@ -20,18 +20,28 @@ def basic_spec_element() -> SpecElement:
 
 
 @pytest.fixture
-def spec_element_with_links(basic_spec_element: SpecElement) -> SpecElement:
+def spec_element_with_links() -> SpecElement:
     """Fixture for basic spec element with a link to another spec."""
-    basic_spec_element.content["verification_criteria"] = ["Can be used by someone who reads"]
-    basic_spec_element.content["fulfils"] = ["PRJ_SYS_REQ_installation_guidance"]
-    return basic_spec_element
+    spec = SpecElement(TEST_NAME, TEST_VARIANT, ARBITRARY_NTH, TEST_PATH)
+    spec.content["verification_criteria"] = ["Can be used by someone who reads"]
+    spec.content["fulfils"] = ["PRJ_SYS_REQ_installation_guidance"]
+    return spec
 
 
 @pytest.fixture
-def spec_element_for_qualification(basic_spec_element: SpecElement) -> SpecElement:
+def spec_element_for_qualification() -> SpecElement:
     """Fixture for basic spec element which is qualification relevant."""
-    basic_spec_element.qualification_related = True
-    return basic_spec_element
+    spec = SpecElement(TEST_NAME, TEST_VARIANT, ARBITRARY_NTH, TEST_PATH)
+    spec.qualification_related = True
+    return spec
+
+
+@pytest.fixture
+def spec_element_for_non_software() -> SpecElement:
+    """Fixture for basic spec element which is not software relevant."""
+    spec = SpecElement(TEST_NAME, TEST_VARIANT, ARBITRARY_NTH, TEST_PATH)
+    spec.software_requirement = False
+    return spec
 
 
 def test_spec_element_construction(basic_spec_element: SpecElement) -> None:
@@ -61,9 +71,22 @@ def test_spec_element_links(spec_element_with_links: SpecElement) -> None:
     assert spec_element_with_links.get_linked_by("fulfils")
 
 
-def test_spec_element_qualification(spec_element_for_qualification: SpecElement) -> None:
+def test_spec_element_qualification(
+    basic_spec_element: SpecElement,
+    spec_element_for_qualification: SpecElement,
+) -> None:
     """Test a qualification relevant spec."""
+    assert not basic_spec_element.is_qualification_related
     assert spec_element_for_qualification.is_qualification_related
+
+
+def test_spec_element_software_relevance(
+    basic_spec_element: SpecElement,
+    spec_element_for_non_software: SpecElement,
+) -> None:
+    """Test a qualification relevant spec."""
+    assert basic_spec_element.is_software_element
+    assert not spec_element_for_non_software.is_software_element
 
 
 def test_spec_element_as_use_case() -> None:
