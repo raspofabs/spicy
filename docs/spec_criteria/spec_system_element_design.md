@@ -11,6 +11,23 @@
     - how to verify the configuration, and
     - how to release the product.
 
+Outputs of this document:
+
+- A list of SystemElements
+- A list of interactions between these elements with verification criteria
+  (which drive the SystemIntegration test cases.)
+
+If it appears a SystemElement does not have an interaction with any other
+SystemElement, then something is wrong.
+Systems are connected and interacting.
+If they are not interacting, they are not systems.
+
+Either:
+
+1. There are interactions, and they must be documented.
+2. The element is not part of the system and must be removed from the spec.
+
+
 ### Interface requirements specification
 
 - Define relationships between products, processes or process tasks

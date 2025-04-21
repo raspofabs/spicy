@@ -49,6 +49,7 @@ of omission, so errors stating that things are wrong would be easily detected,
 but errors saying "nothing is wrong" when there were problems, those could
 easily be missed.
 
+
 # Reviewing documentation for the tool
 
     ID: FEAT_DOCUMENTATION_REVIEW

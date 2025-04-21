@@ -8,13 +8,23 @@ missing links, and missing fields in your documentation.
 
 # Installation
 
+```sh
 uv tool install . -e
+```
 
 # Operation
 
 Tool configuration is minimal.
 Either supply the project prefix on the command line or
 provide a `.spicy.yaml` config file.
+
+```sh
+# with prefix
+spicy --prefix PRJPREF docs/path
+
+# with a docs/path/.spicy.yaml
+spicy docs/path
+```
 
 The configuration is currently only the prefix.
 Examples can be found in the test data, but also in the Spicy

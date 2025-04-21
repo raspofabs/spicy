@@ -46,7 +46,7 @@ what the business is capable of.
 Think in terms of KPIs and goals.
 These needs are likely to be less strict, easily prioritised, even optional.
 
-## Organizatinoal requirements:
+## Organizational requirements:
 
 These can be things like the limit on the cost to deliver or the
 availability of the implmementors or verifiers.

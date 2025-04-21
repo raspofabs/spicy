@@ -1,10 +1,5 @@
 # Stakeholder needs
 
-The needs statement is formatted, "The <stakeholder(s)> needs the <entity> to ..."
-e.g. "The _Captain_ needs the _ship_ to reach at least 30 knots when on calm seas."
-These can be transformed into requirements statements, "The <entity> shall ..."
-e.g. "The _ship_ shall attain a nautical speed of at least 30 knots when operated at full power for one minute from a standstill in calm seas conditions."
-
 SPICY is the system for checking whether you have a complete set of consistent
 documents sufficient for your software tool.
 The sufficiency requirements are adapted from ASPICE 4.0.
@@ -48,7 +43,7 @@ documentation between elements requiring bi-directional traceability.
 
 Elicitation date: 2025-04-05
 
-TCL relevant: yes
+Qualification relevant: yes
 
 ## SPICY_STK_NEED_verify_correctness
 
@@ -57,7 +52,7 @@ omitting important details, or duplicating data.
 
 Elicitation date: 2025-04-05
 
-TCL relevant: yes
+Qualification relevant: yes
 
 ## SPICY_STK_NEED_verify_completeness
 
@@ -66,7 +61,7 @@ to other spec elements needed to fulfil their specification.
 
 Elicitation date: 2025-04-05
 
-TCL relevant: yes
+Qualification relevant: yes
 
 ## SPICY_STK_NEED_aspice_compatibility
 
@@ -77,7 +72,7 @@ Note: The version of ASPICE referenced should be at least ASPICE 4.0.
 
 Elicitation date: 2025-04-05
 
-TCL relevant: yes
+Qualification relevant: yes
 
 ## SPICY_STK_NEED_ISO_26262_tool_qualification
 
@@ -112,7 +107,7 @@ bootstrap the purpose of the tool.
 
 Elicitation date: 2025-04-05
 
-TCL relevant: yes
+Qualification relevant: yes
 
 ## SPICY_STK_NEED_document_rendering_support
 
@@ -126,7 +121,7 @@ case for ASPICE compliance against an ASPICE assessor.
 
 Elicitation date: 2025-04-05
 
-TCL relevant: no
+Qualification relevant: no
 
 ## SPICY_STK_NEED_architectural_decision_records
 
@@ -151,4 +146,4 @@ It helps identify overspecification.
 
 Elicitation date: 2025-04-13
 
-TCL relevant: no
+Qualification relevant: no
