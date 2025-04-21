@@ -1,6 +1,5 @@
 # task list
 
-- Rename TDP stuff (that's a work naming convention. ISO-26262 calls it the tool qualification plan)
 - Move to spicy config controlling more stuff
     - which specs exist
     - how they are linked
