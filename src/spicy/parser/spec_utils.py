@@ -1,6 +1,8 @@
 """Spec specific constants and utility functions."""
 
+from collections.abc import Callable, Iterator
 from functools import lru_cache
+from typing import Any
 
 
 def spec_name_to_variant(name: str) -> str | None:
@@ -44,7 +46,51 @@ def spec_name_to_variant(name: str) -> str | None:
     return None
 
 
-MappingType = dict[str, list[tuple[str, str]]]
+class Link:
+    """Represents a link between two specs."""
+
+    def __init__(
+        self,
+        description: str,
+        target: str,
+        constraint: Callable[[Any], bool] | None = None,
+    ) -> None:
+        """Construct the link.
+
+        With optional constraints function which filters out the targets that
+        do not need to be linked.
+        """
+        self.description = description
+        self.target = target
+        self.constraint = constraint
+
+    def __getitem__(self, index: int) -> str:
+        """Pretend to be a tuple for purposes of migration."""
+        match index:
+            case 0:
+                return self.description
+            case 1:
+                return self.target
+        msg = "Oops, wrong index for Link"
+        raise IndexError(msg)
+
+    def __iter__(self) -> Iterator[str]:
+        """Provide the tuple-like values."""
+        yield self.description
+        yield self.target
+
+    def __eq__(self, other: object) -> bool:
+        """Return true for same link or similar tuple."""
+        if isinstance(other, Link):
+            other = (other.description, other.target)
+        if not isinstance(other, tuple):
+            msg = "Wrong type in equality"
+            raise TypeError(msg)
+        return other == (self.description, self.target)
+
+
+LinkType = tuple[str, str] | Link
+MappingType = dict[str, list[LinkType]]
 
 _spec_is_software: set[str] = {
     "SoftwareRequirement",
@@ -59,7 +105,7 @@ _spec_is_software: set[str] = {
 }
 
 _spec_link_mapping: MappingType = {
-    "StakeholderRequirement": [("Implements", "StakeholderNeed")],
+    "StakeholderRequirement": [Link("Implements", "StakeholderNeed")],
     "SystemRequirement": [("Derived from", "StakeholderRequirement")],
     "SystemElement": [("Implements", "SystemRequirement")],
     "SystemIntegration": [("Integrates", "SystemElement")],
@@ -102,7 +148,7 @@ _spec_link_optional_mapping: MappingType = {
 
 
 @lru_cache
-def expected_links_for_variant(variant: str, *, include_optional: bool = False) -> list[tuple[str, str]]:
+def expected_links_for_variant(variant: str, *, include_optional: bool = False) -> list[LinkType]:
     """Return a list of (link-name, target-variant) tuples.
 
     These are the links that should be present in the spec.
@@ -111,7 +157,7 @@ def expected_links_for_variant(variant: str, *, include_optional: bool = False) 
     Lacking regular links implies the spec is in draft: unfinished and
     incomplete.
     """
-    extra: list[tuple[str, str]] = _spec_link_optional_mapping.get(variant, []) if include_optional else []
+    extra: list[LinkType] = _spec_link_optional_mapping.get(variant, []) if include_optional else []
     return _spec_link_mapping.get(variant, []) + extra
 
 
