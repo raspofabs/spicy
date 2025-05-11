@@ -16,6 +16,8 @@ Stakeholders include:
 
 Concepts:
 
+- Stakeholder: the list of entities which hold a stake in the development of
+  the solution.
 - Spec Element (or simply Element): a need, requirement, design or other
   linkable node in the documentation. These would normally be numbered in most
   documentation systems, but it's the (strong) opinion of this author that
@@ -27,14 +29,16 @@ Concepts:
   level 3b, level 5, level 8, level last, level 7."
 - Link: a link is a reference to another Spec Element for some purpose.
   Stakeholder Needs must be broken down or refined into Stakeholder Requirements.
-  For consistency, there must be links pointing from Stakeholder Needs to Stakeholder requirements.
+  For traceability and to verify consistency and completeness,
+  there must be links pointing from Stakeholder Needs to Stakeholder requirements.
   Links have consistency requirements too.
   Each Stakeholder Need must link to at least one Stakeholder Requirement as implemented by, and
   each Stakeholder Requirement must link to at least one Stakeholder Need as implements.
 - Cases: in test specs, there are test cases.
-  These are the ways to verify the requirement is fulfilled.
+  These are the cases considered when verifying the requirement is fulfilled.
 - Results: in test specs, each test case needs the test results.
   These are used to validate the implementation.
+  They should be present, but could be deferred to an external result source.
 
 ## SPICY_STK_NEED_verify_traceability
 
