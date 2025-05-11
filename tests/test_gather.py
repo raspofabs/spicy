@@ -74,6 +74,7 @@ LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
         ],
         ["Qualification relevant"],
     ),
+    ("need_without_use_case.md", ["TD_STK_NEED_relevant_use_case"], ["TD_STK_NEED_irrelevant_need"]),
 ]
 
 
