@@ -75,7 +75,8 @@ class SingleSpecBuilder:
         """Use the code block or paste it into content."""
         new_content = code_block_node.content.rstrip()
         logger.debug("Adding code-block: %s", new_content)
-        self.content[section_id].append(new_content)
+        for line in new_content.split("\n"):
+            self.content[section_id].append(line)
 
     def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
         """Consume the bullet list and store in content."""
