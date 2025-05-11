@@ -58,7 +58,8 @@ def test_render_issues_with_elements_expected_errors(
 
 
 LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
-    ("use_case_to_stakeholder_need.md", [], ["Fulfils unexpected StakeholderNeed"]),
+    ("use_case_to_stakeholder_need.md", [], ["Fulfils unexpected StakeholderNeed", "without a UseCase"]),
+    ("use_case_to_stakeholder_needs_plural.md", [], ["Fulfils unexpected StakeholderNeed", "without a UseCase"]),
     ("system_element_to_stakeholder_requirement.md", [], ["Implements unexpected StakeholderRequirement"]),
     ("software_component_to_software_requirement.md", [], ["Realises unexpected SoftwareArchitecture"]),
     ("system_requirement_to_system_element.md", [], ["SystemRequirement without a SystemElement"]),
