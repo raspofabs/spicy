@@ -74,8 +74,8 @@ def test_simple_use_case_carefully(positive_test_data_path: Path, caplog: pytest
     assert re.search(r"Discovered \d+ elements.", caplog.text)
 
 
-def test_hierarcical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
-    """Test the hierarcical_case positive use case."""
+def test_hierarchical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    """Test the hierarchical_case positive use case."""
     runner = CliRunner()
     with caplog.at_level(logging.DEBUG):
         result = runner.invoke(run, [str(test_data_path / "hierarchical_test_spec")])

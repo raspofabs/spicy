@@ -8,7 +8,7 @@ Cases:
 
 - HIER_UNIT_TEST_a_test
 
-Reults:
+Results:
 
 - HIER_UNIT_TEST_a_test: PASS
 
@@ -22,6 +22,6 @@ Cases:
 
 - HIER_UNIT_TEST_a_test
 
-Reults:
+Results:
 
 - HIER_UNIT_TEST_a_test: PASS
