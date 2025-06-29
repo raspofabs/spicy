@@ -16,9 +16,9 @@ Stakeholders include:
 
 Concepts:
 
-- Stakeholder: the list of entities which hold a stake in the development of
+- **Stakeholder:** the list of entities which hold a stake in the development of
   the solution.
-- Spec Element (or simply Element): a need, requirement, design or other
+- **Spec Element (or simply Element):** a need, requirement, design or other
   linkable node in the documentation. These would normally be numbered in most
   documentation systems, but it's the (strong) opinion of this author that
   numbers are a bit annoying and offer no real benefit.
@@ -27,16 +27,19 @@ Concepts:
   sufficient duration, you either renumber the levels multiple times, or you
   stop caring and end up with level numbers  like "level 2, level 3, level 1,
   level 3b, level 5, level 8, level last, level 7."
-- Link: a link is a reference to another Spec Element for some purpose.
+- **Link:** a link is a reference to another Spec Element for some purpose.
   Stakeholder Needs must be broken down or refined into Stakeholder Requirements.
   For traceability and to verify consistency and completeness,
   there must be links pointing from Stakeholder Needs to Stakeholder requirements.
   Links have consistency requirements too.
   Each Stakeholder Need must link to at least one Stakeholder Requirement as implemented by, and
   each Stakeholder Requirement must link to at least one Stakeholder Need as implements.
-- Cases: in test specs, there are test cases.
+- **Qualification relevance:** Each element can contribute toward the use-cases of the tool.
+  If they do, then they become qualification relevant, and
+  form the basis of the outcome for documentation validity checks.
+- **Cases:** in test specs, there are test cases.
   These are the cases considered when verifying the requirement is fulfilled.
-- Results: in test specs, each test case needs the test results.
+- **Results:** in test specs, each test case needs the test results.
   These are used to validate the implementation.
   They should be present, but could be deferred to an external result source.
 
@@ -96,15 +99,16 @@ means you only need low confidence. TCL3 means you need high confidence.
 Any tool with a medium (TCL2) or high (TCL3) needs some way to gain that
 required level of confidence.
 Methods to achieve that level include "confidence
-from use" which means that it's been used by so many for so long that the
-likelihood of unknown bugs or limitations is low enough you use the tool with
-high confidence or can plan around the known issues.
+from use" which means that a specific version has been used by so many for so long that the
+likelihood of unknown bugs or limitations is low enough for you to use the tool with
+high confidence or you can plan around the known issues.
 Examples of this can be using an old well-used tool like gcov, gtest, sed, awk,
 or grep, where the total number of hours of use by the tool is in the millions
 of hours across many architectures and use case patterns.
 Other ways to gain confidence include having a well defined and documented development process, and follow it.
 In this system, we follow a variant of ASPICE to provide a framework for structuring the work to be completed.
-Another way to gain confidence is through software inspection. This can include
+Another way to gain confidence is through software inspection.
+This can include
 tests, static analysis, review, linters, or any other software quality tools.
 For this project, the latter two are used because they provide a way to
 bootstrap the purpose of the tool.
@@ -122,6 +126,10 @@ The documents must be cross-linked between elements for bi-directional
 traceability, but having the links be hyperlinks you can click to take you to
 the other elements will help simplify the job of reviewing items and argue the
 case for ASPICE compliance against an ASPICE assessor.
+
+Because this is considered to be an easement of difficulty during assessment,
+it does not contribute to validation of the documents,
+nor does it contribute to how warnings are reported.
 
 Elicitation date: 2025-04-05
 

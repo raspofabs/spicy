@@ -35,3 +35,12 @@ syntax errors, and probably not solvable.
    of whether it matches the spec pattern or not, the spec is closed.
    This allows for mid-document note sections to use a higher level heading and
    not accidentally contribute to the previous spec.
+
+## Rejected options
+
+- Keeping track of a stack and popping the old element with the first new
+  heading higher than the current element's header.
+  This would mean keeping a stack of N elements and might be difficult to be
+  sure what the error was, so to simplify code and simplify the error
+  condition, there won't be support for "sub-elements" documented inside
+  each-other.
