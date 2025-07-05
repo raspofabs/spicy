@@ -6,7 +6,7 @@ from pathlib import Path
 
 from markdown_it.tree import SyntaxTreeNode
 
-from spicy.md_read import get_text_from_node, read_bullet_list
+from spicy.md_read import read_bullet_list, render_node
 
 from .spec_element import SpecElement
 from .use_case_constants import _get_usage_subsection, usage_section_map
@@ -79,8 +79,8 @@ class SingleSpecBuilder:
             self.content[section_id].append(line)
 
     def read_bullets_to_section(self, bullet_list: SyntaxTreeNode, section: str) -> None:
-        """Consume the bullet list and store in content."""
-        new_content = list(map(str.rstrip, map(get_text_from_node, read_bullet_list(bullet_list))))
+        """Consume the bullet list and store in content, preserving markdown links."""
+        new_content = list(map(str.rstrip, map(render_node, read_bullet_list(bullet_list))))
         logger.debug("Adding bullets: %s", new_content)
         self.content[section].extend(new_content)
 

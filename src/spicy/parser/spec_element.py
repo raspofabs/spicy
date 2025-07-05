@@ -35,6 +35,9 @@ class SpecElement:
         self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
 
+        # Expected_links is None until set by link-building logic
+        self.expected_links: dict[str, list[tuple[str, str]]] | None = None
+
     @property
     def all_content(self) -> str:
         """Get all the content, comma separated."""
