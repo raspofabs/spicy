@@ -2,6 +2,7 @@
 
 import logging
 import os
+import re
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -13,28 +14,24 @@ from .gather import get_elements_from_files, render_issues_with_elements
 from .parser.spec_utils import expected_links_for_variant, section_name_to_key
 
 
-def add_markdown_links_to_elements(elements: list) -> None:
-    """Update link fields in SpecElements to be proper markdown links with relative paths."""
-    # Build lookup: (variant, name) -> file_path
+def build_link_replacements(elements: list) -> dict[str, list[tuple[str, str]]]:
+    """Build a dictionary of file -> list of (before, after) link replacements."""
     lookup = {}
     for el in elements:
         lookup[(el.variant, el.name)] = el.file_path
 
-    import re
-
     def anchorify(text: str) -> str:
-        # Lowercase, replace spaces/underscores with dashes, remove non-alphanum/dash
         anchor = text.strip().lower().replace(" ", "-").replace("_", "-")
         anchor = re.sub(r"[^a-z0-9\-]", "", anchor)
         anchor = re.sub(r"-+", "-", anchor)
         return anchor.strip("-")
 
+    replacements: dict[str, list[tuple[str, str]]] = {}
     for el in elements:
         required_links = expected_links_for_variant(el.variant)
         for link, _ in required_links:
             link_key = section_name_to_key(link) or link
             if link_key in el.content:
-                new_links = []
                 for target in el.content[link_key]:
                     found = None
                     for (v, n), path in lookup.items():
@@ -46,10 +43,22 @@ def add_markdown_links_to_elements(elements: list) -> None:
                         rel_path = os.path.relpath(target_path, el.file_path.parent)
                         anchor = anchorify(target)
                         md_link = f"[{target}]({rel_path}#{anchor})"
-                        new_links.append(md_link)
-                    else:
-                        new_links.append(target)
-                el.content[link_key] = new_links
+                        before = f"- {target}"
+                        after = f"- {md_link}"
+                        file_path = str(el.file_path)
+                        replacements.setdefault(file_path, []).append((before, after))
+    return replacements
+
+
+def apply_replacements_to_files(replacements: dict[str, list[tuple[str, str]]]) -> None:
+    """Apply replacements in-place to files as specified by the replacements dict."""
+    for file_path, repls in replacements.items():
+        path = Path(file_path)
+        if path.is_file():
+            content = path.read_text(encoding="utf-8")
+            for before, after in repls:
+                content = content.replace(before, after)
+            path.write_text(content, encoding="utf-8")
 
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -70,10 +79,12 @@ def get_spec_files(root_path: Path | None = None) -> list[Path]:
 @click.argument("path-override", required=False, default=None, type=Path)
 @click.option("-p", "--project-prefix", default=None, type=str, help="Set the project prefix.")
 @click.option("-v", "--verbose", is_flag=True, default=False, help="Run in verbose mode.")
+@click.option("--fix-links", is_flag=True, default=False, help="Update markdown files to use proper links.")
 def run(
     path_override: Path | None,
     project_prefix: str | None,
     verbose: bool,  # noqa: FBT001
+    fix_links: bool,  # noqa: FBT001
 ) -> None:
     """Find paths to read, then print out the TCLs of all the use-cases."""
     spicy_config = load_spicy_config(path_override or Path(), prefix=project_prefix)
@@ -96,8 +107,9 @@ def run(
 
     logger.debug("Discovered %s elements.", len(elements))
 
-    # Add markdown links to elements
-    add_markdown_links_to_elements(elements)
+    if fix_links:
+        replacements = build_link_replacements(elements)
+        apply_replacements_to_files(replacements)
 
     render_function: Callable[[str], None] = print
 

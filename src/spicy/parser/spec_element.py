@@ -1,6 +1,7 @@
 """Construct SpecElements as they are read."""
 
 import logging
+import re
 from pathlib import Path
 
 from .spec_utils import expected_links_for_variant, section_name_to_key
@@ -50,8 +51,6 @@ class SpecElement:
 
     def get_linked_by(self, linkage_term: str) -> list[str]:
         """Return a list of all spec names linked by this term (extract from markdown links if present)."""
-        import re
-
         link_content = self.content.get(linkage_term)
         if isinstance(link_content, list):
             result = []
