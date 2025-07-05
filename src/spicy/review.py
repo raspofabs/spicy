@@ -21,7 +21,7 @@ SpecVariantMap = defaultdict[str, dict[str, SpecElement]]
 
 
 def render_spec_link_markdown_reference_issues(
-    spec_elements: list,
+    spec_elements: list[SpecElement],
     render_function: Callable[[str], None],
 ) -> bool:
     """Check all expected links are correct.
@@ -31,7 +31,7 @@ def render_spec_link_markdown_reference_issues(
     """
     any_errors = False
     for el in spec_elements:
-        if not hasattr(el, "expected_links"):
+        if el.expected_links is None:
             continue
         # TODO: fix this copilot stuff so it uses the actual links not pre-rendered out text.
         # Flatten all content lines for searching
@@ -64,7 +64,7 @@ def render_spec_link_markdown_reference_issues(
 
 
 def render_issues_with_elements(
-    spec_elements: list,
+    spec_elements: list[SpecElement],
     render_function: Callable[[str], None] | None = None,
     *,
     check_markdown_link_refs: bool = False,

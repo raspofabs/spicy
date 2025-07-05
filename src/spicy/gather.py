@@ -3,7 +3,6 @@
 import logging
 import os
 import re
-from collections import defaultdict
 from collections.abc import Callable
 from pathlib import Path
 
@@ -43,7 +42,7 @@ def get_elements_from_files(project_prefix: str, file_paths: list[Path]) -> list
     return specs
 
 
-def build_expected_links(elements: list) -> None:
+def build_expected_links(elements: list[SpecElement]) -> None:
     """Populate each SpecElement with an expected_links dict for each link field."""
     lookup = {}
     for el in elements:
@@ -76,4 +75,3 @@ def build_expected_links(elements: list) -> None:
                         md_link = f"[{target}]({rel_path}#{anchor})"
                         expected_links[link_key].append((target, md_link))
         el.expected_links = expected_links
-
