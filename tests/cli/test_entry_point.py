@@ -3,6 +3,7 @@
 import logging
 import re
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from click.testing import CliRunner
@@ -143,3 +144,46 @@ def test_missing_config(test_data_path: Path, caplog: pytest.LogCaptureFixture) 
     result = runner.invoke(run, [str(test_data_path)])
     assert result.exit_code == 1, result.stdout
     assert "Unable to scan without a known prefix" in caplog.text
+
+
+def test_entry_point_fix_reference_links(tmp_path: Path) -> None:
+    """Test the entry_point fix-refs option.
+
+    This tests when running with --fix-refs and verifies links are fixed in-place.
+    """
+    # Create a markdown file with a broken link
+    md_file = tmp_path / "test.md"
+    md_file.write_text("- target1\n", encoding="utf-8")
+
+    # Create a dummy SpecElement-like object for fix_reference_links
+    class DummyElement:
+        file_path: Path
+        expected_links: dict[str, list[tuple[str, str]]]
+        name: str
+        variant: str
+
+        def __init__(self, file_path: Path, expected_links: dict[str, list[tuple[str, str]]]) -> None:
+            self.file_path = file_path
+            self.expected_links = expected_links
+            self.name = "DUMMY_ELEMENT"
+            self.variant = "Dummy"
+
+        def get_issues(self) -> list[str]:
+            return []
+
+    # The expected_links structure for the dummy element
+    elements = [
+        DummyElement(
+            file_path=md_file,
+            expected_links={"section1": [("target1", "[target1](#target1)")]},
+        ),
+    ]
+
+    # Patch get_elements_from_files to return our dummy element using unittest.mock.patch
+    runner = CliRunner()
+    with patch("spicy.entry_point.get_elements_from_files", return_value=elements):
+        result = runner.invoke(run, [str(md_file), "--project-prefix", "DUMMY", "--fix-refs"])
+
+    assert result.exit_code == 0, result.stdout
+    # The file should now have the fixed link
+    assert md_file.read_text(encoding="utf-8") == "- [target1](#target1)\n"
