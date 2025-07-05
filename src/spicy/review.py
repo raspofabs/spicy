@@ -33,6 +33,7 @@ def render_spec_link_markdown_reference_issues(
     for el in spec_elements:
         if not hasattr(el, "expected_links"):
             continue
+        # TODO: fix this copilot stuff so it uses the actual links not pre-rendered out text.
         # Flatten all content lines for searching
         all_lines = []
         for section_lines in el.content.values():
