@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import click
 
 from .config import load_spicy_config
+from .fixes import fix_reference_links
 from .gather import get_elements_from_files
 from .review import render_issues_with_elements
 
@@ -75,8 +76,6 @@ def run(
     logger.debug("Discovered %s elements.", len(elements))
 
     if fix_refs:
-        from spicy.fixes import fix_reference_links
-
         fix_reference_links(elements)
 
     render_function: Callable[[str], None] = print
