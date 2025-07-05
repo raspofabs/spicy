@@ -16,6 +16,7 @@ from spicy.md_read import (
     read_titled_bullet_list,
     render_node,
     split_list_item,
+    strip_link,
 )
 
 
@@ -245,3 +246,19 @@ def test_read_titled_bullet_list() -> None:
 
     titled_bullet_list_items = read_titled_bullet_list(titled_bullet_list_node)
     assert "Regular2:" not in titled_bullet_list_items
+
+
+def test_strip_link() -> None:
+    """Test that strip_link removes markdown link formatting and returns the link text only."""
+    # Basic markdown link
+    assert strip_link("[foo](bar)") == "foo"
+    # Markdown link with complex URL
+    assert strip_link("[baz](http://example.com/path)") == "baz"
+    # No markdown link, just text
+    assert strip_link("plain text") == "plain text"
+    # Edge case: empty string
+    assert strip_link("") == ""
+    # Edge case: malformed markdown (no closing parenthesis)
+    assert strip_link("[foo](bar") == "[foo](bar"
+    # Edge case: markdown with extra text after link (should not strip)
+    assert strip_link("[foo](bar) extra") == "foo extra"

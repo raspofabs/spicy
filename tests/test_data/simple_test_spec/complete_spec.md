@@ -25,7 +25,7 @@ Qualification relevant: yes
 
 Implements:
 
-- POS_STK_NEED_have_a_stakeholder_need
+- [POS_STK_NEED_have_a_stakeholder_need](complete_spec.md#pos_stk_req_have_a_stakeholder_requirement)
 
 Qualification relevant: no
 
@@ -35,7 +35,7 @@ Qualification relevant: no
 
 Implements:
 
-- POS_STK_NEED_have_a_safety_need
+- [POS_STK_NEED_have_a_safety_need](complete_spec.md#pos-stk-need-have-a-safety-need)
 
 Qualification relevant: yes
 
@@ -51,8 +51,8 @@ Verification criteria:
 
 Derived from:
 
-- POS_STK_REQ_have_a_stakeholder_requirement
-- POS_STK_REQ_safe_stakeholder_requirement
+- [POS_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#pos-stk-req-have-a-stakeholder-requirement)
+- [POS_STK_REQ_safe_stakeholder_requirement](complete_spec.md#pos-stk-req-safe-stakeholder-requirement)
 
 ### Specification
 
@@ -72,7 +72,7 @@ Software element: no
 
 Implements:
 
-- POS_SYS_REQ_have_a_sys_req
+- [POS_SYS_REQ_have_a_sys_req](complete_spec.md#pos-sys-req-have-a-sys-req)
 
 ## POS_SYS_ELEMENT_the_software
 
@@ -82,7 +82,7 @@ Software element: yes
 
 Implements:
 
-- POS_SYS_REQ_have_a_sys_req
+- [POS_SYS_REQ_have_a_sys_req](complete_spec.md#pos-sys-req-have-a-sys-req)
 
 ## POS_SYS_INT_integrate_to_a_complete_spec
 
@@ -90,8 +90,8 @@ It's very easy to integrate a two element system.
 
 Integrates:
 
-- POS_SYS_ELEMENT_the_spec
-- POS_SYS_ELEMENT_the_software
+- [POS_SYS_ELEMENT_the_spec](complete_spec.md#pos-sys-element-the-spec)
+- [POS_SYS_ELEMENT_the_software](complete_spec.md#pos-sys-element-the-software)
 
 Cases:
 
@@ -109,7 +109,7 @@ Qualification relevant: yes
 
 Tests:
 
-- POS_SYS_REQ_have_a_sys_req
+- [POS_SYS_REQ_have_a_sys_req](complete_spec.md#pos-sys-req-have-a-sys-req)
 
 Cases:
 
@@ -127,8 +127,8 @@ This test verifies the document is provisioned with the spicy toolkit.
 
 Tests:
 
-- POS_STK_REQ_have_a_stakeholder_requirement
-- POS_STK_REQ_safe_stakeholder_requirement
+- [POS_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#pos-stk-req-have-a-stakeholder-requirement)
+- [POS_STK_REQ_safe_stakeholder_requirement](complete_spec.md#pos-stk-req-safe-stakeholder-requirement)
 
 Cases:
 
@@ -160,51 +160,51 @@ component integration spec.
 
 Fulfils:
 
-- POS_SW_REQ_have_some_software
+- [POS_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
 
 ## POS_SW_COMP_primary_component
 
 Implements:
 
-- POS_SW_ARCH_use_two_components
+- [POS_SW_ARCH_use_two_components](complete_spec.md#pos-sw-arch-use-two-components)
 
 Fulfils:
 
-- POS_SW_REQ_have_some_software
+- [POS_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
 
 ## POS_SW_COMP_secondary_component
 
 Implements:
 
-- POS_SW_ARCH_use_two_components
+- [POS_SW_ARCH_use_two_components](complete_spec.md#pos-sw-arch-use-two-components)
 
 Fulfils:
 
-- POS_SW_REQ_have_some_software
+- [POS_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
 
 ## POS_SW_UNIT_primary_interface
 
 Implements:
 
-- POS_SW_COMP_primary_component
+- [POS_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
 
 ## POS_SW_UNIT_primary_logic
 
 Implements:
 
-- POS_SW_COMP_primary_component
+- [POS_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
 
 ## POS_SW_UNIT_secondary_interface
 
 Implements:
 
-- POS_SW_COMP_secondary_component
+- [POS_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
 
 ## POS_SW_UNIT_secondary_logic
 
 Implements:
 
-- POS_SW_COMP_secondary_component
+- [POS_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
 
 ## Unit tests
 
@@ -212,7 +212,7 @@ Implements:
 
 Tests:
 
-- POS_SW_UNIT_primary_interface
+- [POS_SW_UNIT_primary_interface](complete_spec.md#pos-sw-unit-primary-interface)
 
 Cases:
 
@@ -226,7 +226,7 @@ Reults:
 
 Tests:
 
-- POS_SW_UNIT_primary_logic
+- [POS_SW_UNIT_primary_logic](complete_spec.md#pos-sw-unit-primary-logic)
 
 Cases:
 
@@ -240,7 +240,7 @@ Reults:
 
 Tests:
 
-- POS_SW_UNIT_secondary_interface
+- [POS_SW_UNIT_secondary_interface](complete_spec.md#pos-sw-unit-secondary-interface)
 
 Cases:
 
@@ -254,7 +254,7 @@ Reults:
 
 Tests:
 
-- POS_SW_UNIT_secondary_logic
+- [POS_SW_UNIT_secondary_logic](complete_spec.md#pos-sw-unit-secondary-logic)
 
 Cases:
 
@@ -270,15 +270,15 @@ Reults:
 
 Integrates:
 
-- POS_SW_UNIT_primary_interface
-- POS_SW_UNIT_primary_logic
+- [POS_SW_UNIT_primary_interface](complete_spec.md#pos-sw-unit-primary-interface)
+- [POS_SW_UNIT_primary_logic](complete_spec.md#pos-sw-unit-primary-logic)
 
 ### POS_SW_UNIT_INT_integrate_secondary
 
 Integrates:
 
-- POS_SW_UNIT_secondary_interface
-- POS_SW_UNIT_secondary_logic
+- [POS_SW_UNIT_secondary_interface](complete_spec.md#pos-sw-unit-secondary-interface)
+- [POS_SW_UNIT_secondary_logic](complete_spec.md#pos-sw-unit-secondary-logic)
 
 ## Component tests
 
@@ -286,7 +286,7 @@ Integrates:
 
 Tests:
 
-- POS_SW_COMP_primary_component
+- [POS_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
 
 Cases:
 
@@ -300,7 +300,7 @@ Results:
 
 Tests:
 
-- POS_SW_COMP_secondary_component
+- [POS_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
 
 Cases:
 
@@ -314,15 +314,15 @@ Results:
 
 Integrates:
 
-- POS_SW_COMP_primary_component
-- POS_SW_COMP_secondary_component
+- [POS_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
+- [POS_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
 
 
 ## POS_SW_QUAL_test_the_software
 
 Tests:
 
-- POS_SW_REQ_have_some_software
+- [POS_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
 
 Cases:
 
@@ -342,7 +342,7 @@ A developer wants to see a complete positive example.
 
 Fulfils:
 
-    POS_STK_NEED_have_a_stakeholder_need
+- [POS_STK_NEED_have_a_stakeholder_need](complete_spec.md#pos-stk-need-have-a-stakeholder-need)
 
 ### Features, functions, and technical properties
 
@@ -381,7 +381,7 @@ A developer wants to see how safety works.
 
 Fulfils:
 
-    POS_STK_NEED_have_a_safety_need
+- [POS_STK_NEED_have_a_safety_need](complete_spec.md#pos-stk-need-have-a-safety-need)
 
 ### Features, functions, and technical properties
 

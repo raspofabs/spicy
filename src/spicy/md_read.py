@@ -1,6 +1,7 @@
 """Support reading markdown files into usable syntax trees."""
 
 import logging
+import re
 from pathlib import Path
 
 from markdown_it import MarkdownIt
@@ -117,3 +118,11 @@ def read_titled_bullet_list(node: SyntaxTreeNode) -> dict[str, str]:
         raise TypeError(msg)
     items = (split_list_item(item) for item in node.children)
     return dict(filter(lambda x: x[0], items))
+
+
+def strip_link(content: str) -> str:
+    """Remove all markdown link formatting from a string.
+
+    Replace [text](url) with text everywhere.
+    """
+    return re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", content)
