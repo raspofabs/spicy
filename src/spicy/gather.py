@@ -164,7 +164,7 @@ def render_spec_back_linkage_issues(
 
         if unused_target_specs:
             any_errors = True
-            render_function(f"{spec_type_to_inspect} without a {source}:")
+            render_function(f"{spec_type_to_inspect} without a {source} [{link_key}]:")
             for unused_target in sorted(unused_target_specs):
                 render_function(f"\t{unused_target}")
 
