@@ -25,7 +25,7 @@ Qualification relevant: yes
 
 Implements:
 
-- POS_STK_NEED_have_a_stakeholder_need
+- [POS_STK_NEED_have_a_stakeholder_need](complete_spec.md#pos_stk_req_have_a_stakeholder_requirement)
 
 Qualification relevant: no
 
