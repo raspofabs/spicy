@@ -74,7 +74,6 @@ def test_simple_use_case_carefully(positive_test_data_path: Path, caplog: pytest
     assert re.search(r"Discovered \d+ elements.", caplog.text)
 
 
-@pytest.mark.xfail
 def test_bad_link_case(bad_link_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test the simple bad-link spec."""
     runner = CliRunner()
@@ -89,7 +88,9 @@ def test_bad_link_case(bad_link_data_path: Path, caplog: pytest.LogCaptureFixtur
         result = runner.invoke(run, [str(bad_link_data_path), "--check-refs"])
     assert result.exit_code != 0, result.stdout
 
-    assert "[LINK ISSUE] Bad link in complete_spec.md" in caplog.text
+    assert "Link issue in complete_spec.md" in result.stdout
+    assert "BDLNK_STK_NEED_have_a_stakeholder_need" in result.stdout
+    assert "BDLNK_STK_NEED_have_a_safety_need" in result.stdout
 
 
 def test_hierarcical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
