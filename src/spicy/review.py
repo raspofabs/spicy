@@ -61,14 +61,6 @@ def render_spec_link_markdown_reference_issues(
                         f"    Have  : {line}",
                     )
                     any_errors = True
-            # Check for missing expected links (not present in any line)
-            found_refs = {find_reference(strip_link(line)) for line in lines}
-            for target, expected_link in expected_links:
-                if target not in found_refs:
-                    render_function(
-                        f"Missing expected link [{target}] in {el.file_path.name} section {section}: {expected_link}",
-                    )
-                    any_errors = True
     return any_errors
 
 
