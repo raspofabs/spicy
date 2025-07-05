@@ -1,8 +1,9 @@
 """Construct SpecElements as they are read."""
 
 import logging
-import re
 from pathlib import Path
+
+from spicy.md_read import strip_link
 
 from .spec_utils import expected_links_for_variant, section_name_to_key
 from .use_case_constants import section_map, tcl_map, usage_section_map
@@ -56,16 +57,7 @@ class SpecElement:
         """Return a list of all spec names linked by this term (extract from markdown links if present)."""
         link_content = self.content.get(linkage_term)
         if isinstance(link_content, list):
-            result = []
-            for item in link_content:
-                # If item is a markdown link, extract the text
-                if isinstance(item, str):
-                    md_match = re.match(r"\[(.+?)\]\([^)]+\)", item)
-                    if md_match:
-                        result.append(md_match.group(1))
-                    else:
-                        result.append(item)
-            return result
+            return [strip_link(item) for item in link_content if isinstance(item, str)]
         if link_content is not None:
             logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
         return []
