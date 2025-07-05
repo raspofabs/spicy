@@ -5,6 +5,7 @@ import re
 from collections import Counter, defaultdict
 from collections.abc import Callable
 
+from .md_read import strip_link
 from .parser.spec_element import SpecElement
 from .parser.spec_utils import (
     expected_backlinks_for_variant,
@@ -20,6 +21,15 @@ logger = logging.getLogger(__name__)
 SpecVariantMap = defaultdict[str, dict[str, SpecElement]]
 
 
+def find_reference(content: str) -> str:
+    """Find and return the reference in the content.
+
+    This is defined as the first word that is not just a leader hyphen.
+    """
+    match = re.search(r"(?:-\s)?(\w+)", content)
+    return match.group(0) if match else ""
+
+
 def render_spec_link_markdown_reference_issues(
     spec_elements: list[SpecElement],
     render_function: Callable[[str], None],
@@ -33,33 +43,25 @@ def render_spec_link_markdown_reference_issues(
     for el in spec_elements:
         if el.expected_links is None:
             continue
-        # TODO: fix this copilot stuff so it uses the actual links not pre-rendered out text.
-        # Flatten all content lines for searching
-        all_lines = []
-        for section_lines in el.content.values():
-            all_lines.extend(section_lines)
-        content = "\n".join(all_lines)
-        for link_key, links in el.expected_links.items():
-            for target, md_link in links:
-                # Check if the correct link is present
-                if md_link not in content:
-                    render_function(
-                        f"Link issue in {el.file_path.name}: "
-                        f"expected '{md_link}' for '{target}' "
-                        f"in section '{link_key}'",
-                    )
-                    any_errors = True
-                # Check for bad links: if a markdown link with the same text but wrong href exists
-                pattern = re.compile(rf"\[{re.escape(target)}\]\(([^)]*)\)")
-                for match in pattern.finditer(content):
-                    found_link = match.group(0)
-                    if found_link != md_link:
-                        render_function(
-                            f"Bad link in {el.file_path.name}: "
-                            f"found '{found_link}' but expected '{md_link}' "
-                            f"for '{target}' in section '{link_key}'",
-                        )
-                        any_errors = True
+        for section, lines in el.content.items():
+            expected_links = el.expected_links.get(section)
+            if expected_links is None:
+                continue
+            link_map = dict(expected_links)
+            for line in lines:
+                text = find_reference(strip_link(line))
+            expected_link = link_map.get(text)
+            if expected_link is None:
+                render_function(
+                    f"No expected link for [{text}] in {el.file_path.name} section {section}, but had {line}",
+                )
+                any_errors = True
+            elif expected_link != line:
+                render_function(
+                    f"Link mismatch in {el.file_path.name} section {section}\n\t{text}: "
+                    f"\n\tExpected '{expected_link}'\n\tFound '{line}'",
+                )
+                any_errors = True
     return any_errors
 
 

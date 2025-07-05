@@ -51,8 +51,8 @@ Verification criteria:
 
 Derived from:
 
-- [BDLNK_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#pos-stk-req-have-a-stakeholder-requirement)
-- [BDLNK_STK_REQ_safe_stakeholder_requirement](complete_spec.md#pos-stk-req-safe-stakeholder-requirement)
+- [BDLNK_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#bdlnk-stk-req-have-a-stakeholder-requirement)
+- [BDLNK_STK_REQ_safe_stakeholder_requirement](complete_spec.md#bdlnk-stk-req-safe-stakeholder-requirement)
 
 ### Specification
 
@@ -72,7 +72,7 @@ Software element: no
 
 Implements:
 
-- [BDLNK_SYS_REQ_have_a_sys_req](complete_spec.md#pos-sys-req-have-a-sys-req)
+- [BDLNK_SYS_REQ_have_a_sys_req](complete_spec.md#bdlnk-sys-req-have-a-sys-req)
 
 ## BDLNK_SYS_ELEMENT_the_software
 
@@ -82,7 +82,7 @@ Software element: yes
 
 Implements:
 
-- [BDLNK_SYS_REQ_have_a_sys_req](complete_spec.md#pos-sys-req-have-a-sys-req)
+- [BDLNK_SYS_REQ_have_a_sys_req](complete_spec.md#bdlnk-sys-req-have-a-sys-req)
 
 ## BDLNK_SYS_INT_integrate_to_a_complete_spec
 
@@ -90,8 +90,8 @@ It's very easy to integrate a two element system.
 
 Integrates:
 
-- [BDLNK_SYS_ELEMENT_the_spec](complete_spec.md#pos-sys-element-the-spec)
-- [BDLNK_SYS_ELEMENT_the_software](complete_spec.md#pos-sys-element-the-software)
+- [BDLNK_SYS_ELEMENT_the_spec](complete_spec.md#bdlnk-sys-element-the-spec)
+- [BDLNK_SYS_ELEMENT_the_software](complete_spec.md#bdlnk-sys-element-the-software)
 
 Cases:
 
@@ -109,7 +109,7 @@ Qualification relevant: yes
 
 Tests:
 
-- [BDLNK_SYS_REQ_have_a_sys_req](complete_spec.md#pos-sys-req-have-a-sys-req)
+- [BDLNK_SYS_REQ_have_a_sys_req](complete_spec.md#bdlnk-sys-req-have-a-sys-req)
 
 Cases:
 
@@ -127,8 +127,8 @@ This test verifies the document is provisioned with the spicy toolkit.
 
 Tests:
 
-- [BDLNK_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#pos-stk-req-have-a-stakeholder-requirement)
-- [BDLNK_STK_REQ_safe_stakeholder_requirement](complete_spec.md#pos-stk-req-safe-stakeholder-requirement)
+- [BDLNK_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#bdlnk-stk-req-have-a-stakeholder-requirement)
+- [BDLNK_STK_REQ_safe_stakeholder_requirement](complete_spec.md#bdlnk-stk-req-safe-stakeholder-requirement)
 
 Cases:
 
@@ -147,11 +147,11 @@ The **POS** has a software element
 
 Decomposes:
 
-- [BDLNK_SYS_ELEMENT_the_software](#BDLNK_sys_element_the_software)
+- [BDLNK_SYS_ELEMENT_the_software](complete_spec.md#bdlnk_sys_element_the_software)
 
 Realises:
 
-- [BDLNK_SYS_REQ_have_a_sys_req](#BDLNK_sys_req_have_a_sys_req)
+- [BDLNK_SYS_REQ_have_a_sys_req](complete_spec.md#bdlnk-sys-req-have-a-sys-req)
 
 ## BDLNK_SW_ARCH_use_two_components
 
@@ -160,51 +160,51 @@ component integration spec.
 
 Fulfils:
 
-- [BDLNK_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
+- [BDLNK_SW_REQ_have_some_software](complete_spec.md#bdlnk-sw-req-have-some-software)
 
 ## BDLNK_SW_COMP_primary_component
 
 Implements:
 
-- [BDLNK_SW_ARCH_use_two_components](complete_spec.md#pos-sw-arch-use-two-components)
+- [BDLNK_SW_ARCH_use_two_components](complete_spec.md#bdlnk-sw-arch-use-two-components)
 
 Fulfils:
 
-- [BDLNK_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
+- [BDLNK_SW_REQ_have_some_software](complete_spec.md#bdlnk-sw-req-have-some-software)
 
 ## BDLNK_SW_COMP_secondary_component
 
 Implements:
 
-- [BDLNK_SW_ARCH_use_two_components](complete_spec.md#pos-sw-arch-use-two-components)
+- [BDLNK_SW_ARCH_use_two_components](complete_spec.md#bdlnk-sw-arch-use-two-components)
 
 Fulfils:
 
-- [BDLNK_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
+- [BDLNK_SW_REQ_have_some_software](complete_spec.md#bdlnk-sw-req-have-some-software)
 
 ## BDLNK_SW_UNIT_primary_interface
 
 Implements:
 
-- [BDLNK_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
+- [BDLNK_SW_COMP_primary_component](complete_spec.md#bdlnk-sw-comp-primary-component)
 
 ## BDLNK_SW_UNIT_primary_logic
 
 Implements:
 
-- [BDLNK_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
+- [BDLNK_SW_COMP_primary_component](complete_spec.md#bdlnk-sw-comp-primary-component)
 
 ## BDLNK_SW_UNIT_secondary_interface
 
 Implements:
 
-- [BDLNK_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
+- [BDLNK_SW_COMP_secondary_component](complete_spec.md#bdlnk-sw-comp-secondary-component)
 
 ## BDLNK_SW_UNIT_secondary_logic
 
 Implements:
 
-- [BDLNK_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
+- [BDLNK_SW_COMP_secondary_component](complete_spec.md#bdlnk-sw-comp-secondary-component)
 
 ## Unit tests
 
@@ -212,7 +212,7 @@ Implements:
 
 Tests:
 
-- [BDLNK_SW_UNIT_primary_interface](complete_spec.md#pos-sw-unit-primary-interface)
+- [BDLNK_SW_UNIT_primary_interface](complete_spec.md#bdlnk-sw-unit-primary-interface)
 
 Cases:
 
@@ -226,7 +226,7 @@ Reults:
 
 Tests:
 
-- [BDLNK_SW_UNIT_primary_logic](complete_spec.md#pos-sw-unit-primary-logic)
+- [BDLNK_SW_UNIT_primary_logic](complete_spec.md#bdlnk-sw-unit-primary-logic)
 
 Cases:
 
@@ -240,7 +240,7 @@ Reults:
 
 Tests:
 
-- [BDLNK_SW_UNIT_secondary_interface](complete_spec.md#pos-sw-unit-secondary-interface)
+- [BDLNK_SW_UNIT_secondary_interface](complete_spec.md#bdlnk-sw-unit-secondary-interface)
 
 Cases:
 
@@ -254,7 +254,7 @@ Reults:
 
 Tests:
 
-- [BDLNK_SW_UNIT_secondary_logic](complete_spec.md#pos-sw-unit-secondary-logic)
+- [BDLNK_SW_UNIT_secondary_logic](complete_spec.md#bdlnk-sw-unit-secondary-logic)
 
 Cases:
 
@@ -270,15 +270,15 @@ Reults:
 
 Integrates:
 
-- [BDLNK_SW_UNIT_primary_interface](complete_spec.md#pos-sw-unit-primary-interface)
-- [BDLNK_SW_UNIT_primary_logic](complete_spec.md#pos-sw-unit-primary-logic)
+- [BDLNK_SW_UNIT_primary_interface](complete_spec.md#bdlnk-sw-unit-primary-interface)
+- [BDLNK_SW_UNIT_primary_logic](complete_spec.md#bdlnk-sw-unit-primary-logic)
 
 ### BDLNK_SW_UNIT_INT_integrate_secondary
 
 Integrates:
 
-- [BDLNK_SW_UNIT_secondary_interface](complete_spec.md#pos-sw-unit-secondary-interface)
-- [BDLNK_SW_UNIT_secondary_logic](complete_spec.md#pos-sw-unit-secondary-logic)
+- [BDLNK_SW_UNIT_secondary_interface](complete_spec.md#bdlnk-sw-unit-secondary-interface)
+- [BDLNK_SW_UNIT_secondary_logic](complete_spec.md#bdlnk-sw-unit-secondary-logic)
 
 ## Component tests
 
@@ -286,7 +286,7 @@ Integrates:
 
 Tests:
 
-- [BDLNK_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
+- [BDLNK_SW_COMP_primary_component](complete_spec.md#bdlnk-sw-comp-primary-component)
 
 Cases:
 
@@ -300,7 +300,7 @@ Results:
 
 Tests:
 
-- [BDLNK_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
+- [BDLNK_SW_COMP_secondary_component](complete_spec.md#bdlnk-sw-comp-secondary-component)
 
 Cases:
 
@@ -314,15 +314,15 @@ Results:
 
 Integrates:
 
-- [BDLNK_SW_COMP_primary_component](complete_spec.md#pos-sw-comp-primary-component)
-- [BDLNK_SW_COMP_secondary_component](complete_spec.md#pos-sw-comp-secondary-component)
+- [BDLNK_SW_COMP_primary_component](complete_spec.md#bdlnk-sw-comp-primary-component)
+- [BDLNK_SW_COMP_secondary_component](complete_spec.md#bdlnk-sw-comp-secondary-component)
 
 
 ## BDLNK_SW_QUAL_test_the_software
 
 Tests:
 
-- [BDLNK_SW_REQ_have_some_software](complete_spec.md#pos-sw-req-have-some-software)
+- [BDLNK_SW_REQ_have_some_software](complete_spec.md#bdlnk-sw-req-have-some-software)
 
 Cases:
 
@@ -381,7 +381,7 @@ A developer wants to see how safety works.
 
 Fulfils:
 
-    BDLNK_STK_NEED_have_a_safety_need
+    [BDLNK_STK_NEED_have_a_safety_need](complete_spec.md#bdlnk-stk-need-have-a-safety-need)
 
 ### Features, functions, and technical properties
 
