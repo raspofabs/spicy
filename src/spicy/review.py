@@ -50,18 +50,20 @@ def render_spec_link_markdown_reference_issues(
             link_map = dict(expected_links)
             for line in lines:
                 text = find_reference(strip_link(line))
-            expected_link = link_map.get(text)
-            if expected_link is None:
-                render_function(
-                    f"No expected link for [{text}] in {el.file_path.name} section {section}, but had {line}",
-                )
-                any_errors = True
-            elif expected_link != line:
-                render_function(
-                    f"Link mismatch in {el.file_path.name} section {section}\n\t{text}: "
-                    f"\n\tExpected '{expected_link}'\n\tFound '{line}'",
-                )
-                any_errors = True
+                expected_link = link_map.get(text)
+                if expected_link is None:
+                    render_function(
+                        f"No expected link for [{text}] in {el.file_path.name} section {section}, but had {line}",
+                    )
+                    any_errors = True
+                elif expected_link != line:
+                    render_function(
+                        f"Link mismatch in {el.file_path.name}, {el.name}\n"
+                        f"  In section {section} @ {text}\n"
+                        f"    Expect: {expected_link}\n"
+                        f"    Have  : {line}",
+                    )
+                    any_errors = True
     return any_errors
 
 

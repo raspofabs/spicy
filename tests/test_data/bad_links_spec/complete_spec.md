@@ -147,7 +147,7 @@ The **POS** has a software element
 
 Decomposes:
 
-- [BDLNK_SYS_ELEMENT_the_software](complete_spec.md#bdlnk_sys_element_the_software)
+- [BDLNK_SYS_ELEMENT_the_software](complete_spec.md#bdlnk-sys-element-the-software)
 
 Realises:
 
@@ -342,7 +342,7 @@ A developer wants to see a complete positive example.
 
 Fulfils:
 
-    BDLNK_STK_NEED_have_a_stakeholder_need
+- [BDLNK_STK_NEED_have_a_stakeholder_need](complete_spec.md#bdlnk-stk-need-have-a-stakeholder-need)
 
 ### Features, functions, and technical properties
 
@@ -381,7 +381,7 @@ A developer wants to see how safety works.
 
 Fulfils:
 
-    [BDLNK_STK_NEED_have_a_safety_need](complete_spec.md#bdlnk-stk-need-have-a-safety-need)
+    BDLNK_STK_NEED_have_a_safety_need
 
 ### Features, functions, and technical properties
 

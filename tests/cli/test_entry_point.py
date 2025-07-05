@@ -88,10 +88,22 @@ def test_bad_link_case(bad_link_data_path: Path, caplog: pytest.LogCaptureFixtur
         result = runner.invoke(run, [str(bad_link_data_path), "--check-refs"])
     assert result.exit_code != 0, result.stdout
 
+    expected_faulty_specs = [
+        "BDLNK_STK_REQ_have_a_stakeholder_requirement",
+        "BDLNK_STK_REQ_safe_stakeholder_requirement",
+        "FEAT_SAFE_SPEC",
+    ]
+    assert result.stdout.count("Link mismatch in complete_spec.md") == len(expected_faulty_specs)
+    faulty_specs = [
+        line.split(", ")[1] for line in result.stdout.split("\n") if "Link mismatch in complete_spec.md" in line
+    ]
+    assert all(el in expected_faulty_specs for el in faulty_specs)
+    assert all(el in faulty_specs for el in expected_faulty_specs), (expected_faulty_specs, faulty_specs)
     assert "Link mismatch in complete_spec.md" in result.stdout
     assert "BDLNK_STK_NEED_have_a_stakeholder_need" in result.stdout
     assert "BDLNK_STK_NEED_have_a_safety_need" in result.stdout
     assert "bad_link.md#weird-fragment" in result.stdout
+    assert "FEAT_PRESENT_A_SPEC" not in result.stdout
 
 
 def test_hierarcical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
