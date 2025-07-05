@@ -91,8 +91,7 @@ def render_issues_with_elements(
         spec_variant_map[spec.variant][spec.name] = spec
 
     for variant in expected_variants():
-        any_errors |= render_spec_simple_linkage_issues(spec_variant_map, render_function, variant)
-        any_errors |= render_spec_back_linkage_issues(spec_variant_map, render_function, variant)
+        any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, variant)
 
     # Add markdown link reference issues if enabled
     if check_markdown_link_refs:
@@ -187,7 +186,7 @@ def render_spec_back_linkage_issues(
 
         if unused_target_specs:
             any_errors = True
-            render_function(f"{spec_type_to_inspect} without a {source}:")
+            render_function(f"{spec_type_to_inspect} without a {source} [{link_key}]:")
             for unused_target in sorted(unused_target_specs):
                 render_function(f"\t{unused_target}")
 
