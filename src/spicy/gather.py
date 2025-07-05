@@ -6,7 +6,7 @@ import re
 from collections.abc import Callable
 from pathlib import Path
 
-from spicy.md_read import load_syntax_tree
+from spicy.md_read import load_syntax_tree, strip_link
 
 from .parser import parse_syntax_tree_to_spec_elements
 from .parser.spec_element import SpecElement
@@ -63,15 +63,16 @@ def build_expected_links(elements: list[SpecElement]) -> None:
             expected_links[link_key] = []
             if link_key in el.content:
                 for target in el.content[link_key]:
+                    target_text = strip_link(target)
                     found = None
                     for (v, n), path in lookup.items():
-                        if n == target:
+                        if n == target_text:
                             found = (v, n, path)
                             break
                     if found:
                         _, _, target_path = found
                         rel_path = os.path.relpath(target_path, el.file_path.parent)
-                        anchor = anchorify(target)
-                        md_link = f"[{target}]({rel_path}#{anchor})"
-                        expected_links[link_key].append((target, md_link))
+                        anchor = anchorify(target_text)
+                        md_link = f"[{target_text}]({rel_path}#{anchor})"
+                        expected_links[link_key].append((target_text, md_link))
         el.expected_links = expected_links
