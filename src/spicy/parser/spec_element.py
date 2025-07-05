@@ -35,8 +35,8 @@ class SpecElement:
         self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
 
-        # Expected_links is None until set by link-building logic
-        self.expected_links: dict[str, list[tuple[str, str]]] | None = None
+        # expected_links is filled out link-building logic
+        self.expected_links: dict[str, list[tuple[str, str]]] = {}
 
     @property
     def all_content(self) -> str:

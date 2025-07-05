@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from spicy.gather import gather_all_elements
-from spicy.review import render_issues_with_elements
+from spicy.review import render_issues_with_elements, render_spec_link_markdown_reference_issues
 
 
 def test_render_issues_with_elements(test_data_path: Path) -> None:
@@ -89,3 +89,97 @@ def test_linkage(
         assert any(re.search(expected_output, line) for line in lines), lines
     for unexpected_output in unexpected_outputs:
         assert not any(re.search(unexpected_output, line) for line in lines), lines
+
+
+def test_render_spec_link_markdown_reference_issues_missing_and_bad_links(tmp_path: Path) -> None:
+    """Test render_spec_link_markdown_reference_issues for missing and bad links."""
+
+    # TODO: there are two of these. Could we make them a mocking fixture?
+    class DummyElement:
+        file_path: Path
+        expected_links: dict[str, list[tuple[str, str]]]
+        content: dict[str, list[str]]
+        name: str
+        variant: str
+
+        def __init__(
+            self,
+            file_path: Path,
+            expected_links: dict[str, list[tuple[str, str]]],
+            content: dict[str, list[str]],
+        ) -> None:
+            self.file_path = file_path
+            self.expected_links = expected_links
+            self.content = content
+            self.name = "DUMMY_ELEMENT"
+            self.variant = "Dummy"
+
+        def get_issues(self) -> list[str]:
+            return []
+
+    file_path = tmp_path / "dummy.md"
+    el_missing = DummyElement(
+        file_path=file_path,
+        expected_links={"section1": [("target1", "[target1](#target1)")]},
+        content={"section1": ["- somethingelse"]},
+    )
+    el_bad = DummyElement(
+        file_path=file_path,
+        expected_links={"section1": [("target2", "[target2](#target2)")]},
+        content={"section1": ["- [target2](#wrong-link)"]},
+    )
+    lines: list[str] = []
+    render_spec_link_markdown_reference_issues(
+        [el_missing, el_bad],  # type: ignore[list-item]
+        lambda x: lines.append(x),
+    )
+    assert any("No expected link for [- somethingelse]" in line for line in lines)
+    assert any(
+        "No expected link for [- target2]" in line or "No expected link for [- [target2]" in line for line in lines
+    ), lines
+    assert any("but had - [target2](#wrong-link)" in line for line in lines)
+
+
+def test_render_spec_link_markdown_reference_issues_link_mismatch(tmp_path: Path) -> None:
+    """Test render_spec_link_markdown_reference_issues for a link mismatch (expected vs actual).
+
+    Covers lines 55-58 in review.py.
+    """
+
+    class DummyElement:
+        file_path: Path
+        expected_links: dict[str, list[tuple[str, str]]]
+        content: dict[str, list[str]]
+        name: str
+        variant: str
+
+        def __init__(
+            self,
+            file_path: Path,
+            expected_links: dict[str, list[tuple[str, str]]],
+            content: dict[str, list[str]],
+        ) -> None:
+            self.file_path = file_path
+            self.expected_links = expected_links
+            self.content = content
+            self.name = "DUMMY_ELEMENT"
+            self.variant = "Dummy"
+
+        def get_issues(self) -> list[str]:
+            return []
+
+    file_path = tmp_path / "dummy.md"
+    el = DummyElement(
+        file_path=file_path,
+        expected_links={"section1": [("target1", "[target1](#target1)")]},
+        content={"section1": ["- [target1](#not-the-right-link)"]},
+    )
+    lines: list[str] = []
+    render_spec_link_markdown_reference_issues(
+        [el],  # type: ignore[list-item]
+        lambda x: lines.append(x),
+    )
+    assert any(
+        "No expected link for [- target1]" in line or "No expected link for [- [target1]" in line for line in lines
+    )
+    assert any("but had - [target1](#not-the-right-link)" in line for line in lines)

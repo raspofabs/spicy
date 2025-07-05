@@ -41,13 +41,10 @@ def render_spec_link_markdown_reference_issues(
     """
     any_errors = False
     for el in spec_elements:
-        if el.expected_links is None:
-            continue
-        for section, lines in el.content.items():
-            expected_links = el.expected_links.get(section)
-            if expected_links is None:
-                continue
+        for section, expected_links in el.expected_links.items():
+            lines = el.content.get(section, [])
             link_map = dict(expected_links)
+            # Check for unexpected or mismatched links in content
             for line in lines:
                 text = find_reference(strip_link(line))
                 expected_link = link_map.get(text)
@@ -62,6 +59,14 @@ def render_spec_link_markdown_reference_issues(
                         f"  In section {section} @ {text}\n"
                         f"    Expect: {expected_link}\n"
                         f"    Have  : {line}",
+                    )
+                    any_errors = True
+            # Check for missing expected links (not present in any line)
+            found_refs = {find_reference(strip_link(line)) for line in lines}
+            for target, expected_link in expected_links:
+                if target not in found_refs:
+                    render_function(
+                        f"Missing expected link [{target}] in {el.file_path.name} section {section}: {expected_link}",
                     )
                     any_errors = True
     return any_errors

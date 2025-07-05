@@ -15,8 +15,6 @@ def build_link_replacements(elements: list[SpecElement]) -> dict[Path, list[tupl
     """Build a dictionary of file -> list of (before, after) link replacements using expected_links."""
     replacements: dict[Path, list[tuple[str, str]]] = {}
     for el in elements:
-        if el.expected_links is None:
-            continue
         for links in el.expected_links.values():
             for target, md_link in links:
                 before = f"- {target}"

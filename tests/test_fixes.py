@@ -11,7 +11,7 @@ class DummyElement:
     def __init__(self, file_path: Path, expected_links: dict[str, list[tuple[str, str]]] | None = None) -> None:
         """Initialise the data for testing."""
         self.file_path = file_path
-        self.expected_links: dict[str, list[tuple[str, str]]] | None = expected_links
+        self.expected_links: dict[str, list[tuple[str, str]]] = expected_links if expected_links is not None else {}
 
 
 def test_build_link_replacements() -> None:
@@ -35,7 +35,7 @@ def test_build_link_replacements() -> None:
                 "section3": [("target3", "[target3](#target3)")],
             },
         ),
-        DummyElement(file_path=Path("file3.md"), expected_links=None),
+        DummyElement(file_path=Path("file3.md")),
     ]
     expected: dict[Path, list[tuple[str, str]]] = {
         Path("file1.md"): [
