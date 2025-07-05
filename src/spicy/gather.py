@@ -56,7 +56,6 @@ def build_expected_links(elements: list[SpecElement]) -> None:
 
     for el in elements:
         expected_links: dict[str, list[tuple[str, str]]] = {}
-        # TODO: what about backlinks?
         required_links = expected_links_for_variant(el.variant)
         for link, _ in required_links:
             link_key = section_name_to_key(link) or link
