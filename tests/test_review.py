@@ -7,7 +7,32 @@ from pathlib import Path
 import pytest
 
 from spicy.gather import gather_all_elements
+from spicy.parser.spec_element import SpecElement
 from spicy.review import render_issues_with_elements, render_spec_link_markdown_reference_issues
+
+
+class DummyElement(SpecElement):
+    """Testing support class for SpecElement."""
+
+    def __init__(
+        self,
+        file_path: Path,
+        expected_links: dict[str, list[tuple[str, str]]],
+        content: dict[str, list[str]],
+    ) -> None:
+        """Initialize DummyElement with required attributes."""
+        super().__init__(
+            name="DUMMY_ELEMENT",
+            variant="Dummy",
+            ordering_id=0,
+            file_path=file_path,
+        )
+        self.expected_links = expected_links
+        self.content = content
+
+    def get_issues(self) -> list[str]:
+        """Return an empty list of issues for DummyElement."""
+        return []
 
 
 def test_render_issues_with_elements(test_data_path: Path) -> None:
@@ -93,30 +118,6 @@ def test_linkage(
 
 def test_render_spec_link_markdown_reference_issues_missing_and_bad_links(tmp_path: Path) -> None:
     """Test render_spec_link_markdown_reference_issues for missing and bad links."""
-
-    # TODO: there are two of these. Could we make them a mocking fixture?
-    class DummyElement:
-        file_path: Path
-        expected_links: dict[str, list[tuple[str, str]]]
-        content: dict[str, list[str]]
-        name: str
-        variant: str
-
-        def __init__(
-            self,
-            file_path: Path,
-            expected_links: dict[str, list[tuple[str, str]]],
-            content: dict[str, list[str]],
-        ) -> None:
-            self.file_path = file_path
-            self.expected_links = expected_links
-            self.content = content
-            self.name = "DUMMY_ELEMENT"
-            self.variant = "Dummy"
-
-        def get_issues(self) -> list[str]:
-            return []
-
     file_path = tmp_path / "dummy.md"
     el_missing = DummyElement(
         file_path=file_path,
@@ -130,13 +131,13 @@ def test_render_spec_link_markdown_reference_issues_missing_and_bad_links(tmp_pa
     )
     lines: list[str] = []
     render_spec_link_markdown_reference_issues(
-        [el_missing, el_bad],  # type: ignore[list-item]
+        [el_missing, el_bad],
         lambda x: lines.append(x),
     )
     assert any("No expected link for [- somethingelse]" in line for line in lines)
     assert any(
         "No expected link for [- target2]" in line or "No expected link for [- [target2]" in line for line in lines
-    ), lines
+    ), f"Expected missing link for target2 in lines: {lines}"
     assert any("but had - [target2](#wrong-link)" in line for line in lines)
 
 
@@ -145,29 +146,6 @@ def test_render_spec_link_markdown_reference_issues_link_mismatch(tmp_path: Path
 
     Covers lines 55-58 in review.py.
     """
-
-    class DummyElement:
-        file_path: Path
-        expected_links: dict[str, list[tuple[str, str]]]
-        content: dict[str, list[str]]
-        name: str
-        variant: str
-
-        def __init__(
-            self,
-            file_path: Path,
-            expected_links: dict[str, list[tuple[str, str]]],
-            content: dict[str, list[str]],
-        ) -> None:
-            self.file_path = file_path
-            self.expected_links = expected_links
-            self.content = content
-            self.name = "DUMMY_ELEMENT"
-            self.variant = "Dummy"
-
-        def get_issues(self) -> list[str]:
-            return []
-
     file_path = tmp_path / "dummy.md"
     el = DummyElement(
         file_path=file_path,
@@ -176,10 +154,10 @@ def test_render_spec_link_markdown_reference_issues_link_mismatch(tmp_path: Path
     )
     lines: list[str] = []
     render_spec_link_markdown_reference_issues(
-        [el],  # type: ignore[list-item]
+        [el],
         lambda x: lines.append(x),
     )
     assert any(
         "No expected link for [- target1]" in line or "No expected link for [- [target1]" in line for line in lines
-    )
+    ), f"Expected missing link for target1 in lines: {lines}"
     assert any("but had - [target1](#not-the-right-link)" in line for line in lines)
