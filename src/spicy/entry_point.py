@@ -1,6 +1,7 @@
 """Spicy is like needs, but for mdbook."""
 
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -9,6 +10,47 @@ import click
 
 from .config import load_spicy_config
 from .gather import get_elements_from_files, render_issues_with_elements
+from .parser.spec_utils import expected_links_for_variant, section_name_to_key
+
+
+def add_markdown_links_to_elements(elements: list) -> None:
+    """Update link fields in SpecElements to be proper markdown links with relative paths."""
+    # Build lookup: (variant, name) -> file_path
+    lookup = {}
+    for el in elements:
+        lookup[(el.variant, el.name)] = el.file_path
+
+    import re
+
+    def anchorify(text: str) -> str:
+        # Lowercase, replace spaces/underscores with dashes, remove non-alphanum/dash
+        anchor = text.strip().lower().replace(" ", "-").replace("_", "-")
+        anchor = re.sub(r"[^a-z0-9\-]", "", anchor)
+        anchor = re.sub(r"-+", "-", anchor)
+        return anchor.strip("-")
+
+    for el in elements:
+        required_links = expected_links_for_variant(el.variant)
+        for link, _ in required_links:
+            link_key = section_name_to_key(link) or link
+            if link_key in el.content:
+                new_links = []
+                for target in el.content[link_key]:
+                    found = None
+                    for (v, n), path in lookup.items():
+                        if n == target:
+                            found = (v, n, path)
+                            break
+                    if found:
+                        _, _, target_path = found
+                        rel_path = os.path.relpath(target_path, el.file_path.parent)
+                        anchor = anchorify(target)
+                        md_link = f"[{target}]({rel_path}#{anchor})"
+                        new_links.append(md_link)
+                    else:
+                        new_links.append(target)
+                el.content[link_key] = new_links
+
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Callable
@@ -53,6 +95,9 @@ def run(
     elements = get_elements_from_files(project_prefix, filenames)
 
     logger.debug("Discovered %s elements.", len(elements))
+
+    # Add markdown links to elements
+    add_markdown_links_to_elements(elements)
 
     render_function: Callable[[str], None] = print
 

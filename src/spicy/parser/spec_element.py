@@ -49,10 +49,21 @@ class SpecElement:
         )
 
     def get_linked_by(self, linkage_term: str) -> list[str]:
-        """Return a list of all specs linked by this term."""
+        """Return a list of all spec names linked by this term (extract from markdown links if present)."""
+        import re
+
         link_content = self.content.get(linkage_term)
         if isinstance(link_content, list):
-            return link_content
+            result = []
+            for item in link_content:
+                # If item is a markdown link, extract the text
+                if isinstance(item, str):
+                    md_match = re.match(r"\[(.+?)\]\([^)]+\)", item)
+                    if md_match:
+                        result.append(md_match.group(1))
+                    else:
+                        result.append(item)
+            return result
         if link_content is not None:
             logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
         return []
