@@ -27,11 +27,14 @@ the tool (PASS/FAIL)
 
 ## Description of usage
 
-- **Purpose:**
-- **Inputs:**
-- **Outputs:**
-- **Usage procedure:**
+- **Purpose:** To guide the technical writers in finding gaps in the documentation or incorrectly formatted elements.
+- **Inputs:** The project configuration parameters and the documentation files.
+- **Outputs:** A report indicating any missing or misconfigured items.
+- **Usage procedure:** Run the spicy tool, providing the configuration parameters and path to the documentation files.
 - **Environmental constraints:**
+  The tool must run standalone and not need the documentation to be pre-parsed into a different format.
+  The tool should work as a headless command line tool so it can run in CI.
+  The tool should run on Linux (Ubuntu will be a validated test environment)
 
 ## Impact analysis of feature
 
@@ -70,11 +73,14 @@ assessor.
 
 ## Description of usage
 
-- **Purpose:**
-- **Inputs:**
-- **Outputs:**
-- **Usage procedure:**
+- **Purpose:** To support developers defending an ASPICE audit.
+- **Inputs:** The project configuration parameters and the documentation files.
+- **Outputs:** Runtime errors and an interactive document realised through direct GUI or restful web-page server.
+- **Usage procedure:** Run the spicy audit tool, providing the configuration parameters and path to the documentation files.
 - **Environmental constraints:**
+  The tool must run standalone and not need the documentation to be pre-parsed into a different format.
+  The tool should work either as a GUI application, or as a headless server so a developer can browse from another machine.
+  The tool should run on Linux (Ubuntu will be a validated test environment)
 
 ## Impact analysis of feature
 

@@ -8,7 +8,9 @@ from typing import TYPE_CHECKING
 import click
 
 from .config import load_spicy_config
-from .gather import get_elements_from_files, render_issues_with_elements
+from .fixes import fix_reference_links
+from .gather import get_elements_from_files
+from .review import render_issues_with_elements
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Callable
@@ -28,12 +30,31 @@ def get_spec_files(root_path: Path | None = None) -> list[Path]:
 @click.argument("path-override", required=False, default=None, type=Path)
 @click.option("-p", "--project-prefix", default=None, type=str, help="Set the project prefix.")
 @click.option("-v", "--verbose", is_flag=True, default=False, help="Run in verbose mode.")
+@click.option(
+    "--fix-refs",
+    is_flag=True,
+    default=False,
+    help="Fix markdown reference links in-place after parsing (overwrites files).",
+)
+@click.option(
+    "--check-refs",
+    is_flag=True,
+    default=False,
+    help="Check for correct markdown reference links in content and report issues.",
+)
 def run(
     path_override: Path | None,
     project_prefix: str | None,
     verbose: bool,  # noqa: FBT001
+    fix_refs: bool,  # noqa: FBT001
+    check_refs: bool,  # noqa: FBT001
 ) -> None:
-    """Find paths to read, then print out the TCLs of all the use-cases."""
+    """Parse and analyze markdown spec files, optionally checking and/or fixing reference links.
+
+    By default, runs in analysis mode only.
+    Use --check-refs to check for broken or incorrect markdown reference links,
+    and --fix-refs to update files in-place with correct links.
+    """
     spicy_config = load_spicy_config(path_override or Path(), prefix=project_prefix)
 
     if verbose:
@@ -54,8 +75,11 @@ def run(
 
     logger.debug("Discovered %s elements.", len(elements))
 
+    if fix_refs:
+        fix_reference_links(elements)
+
     render_function: Callable[[str], None] = print
 
-    if render_issues_with_elements(elements, render_function):
+    if render_issues_with_elements(elements, render_function, check_markdown_link_refs=check_refs):
         sys.exit(1)
     render_function(f"No issues found with any of the {len(elements)} specs")

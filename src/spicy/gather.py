@@ -1,22 +1,16 @@
 """Collecting spec data from a file or directory."""
 
 import logging
-from collections import Counter, defaultdict
+import os
+import re
 from collections.abc import Callable
 from pathlib import Path
 
-from spicy.md_read import load_syntax_tree
+from spicy.md_read import load_syntax_tree, strip_link
 
 from .parser import parse_syntax_tree_to_spec_elements
 from .parser.spec_element import SpecElement
-from .parser.spec_utils import (
-    expected_backlinks_for_variant,
-    expected_links_for_variant,
-    expected_variants,
-    section_name_to_key,
-    spec_is_defined,
-    spec_is_software,
-)
+from .parser.spec_utils import expected_links_for_variant, section_name_to_key
 
 logger = logging.getLogger(__name__)
 
@@ -41,131 +35,43 @@ def get_elements_from_files(project_prefix: str, file_paths: list[Path]) -> list
 
     for filename in file_paths:
         specs.extend(gather_all_elements(project_prefix, filename))
+
+    # Always build expected_links for all elements
+    build_expected_links(specs)
+
     return specs
 
 
-SpecVariantMap = defaultdict[str, dict[str, SpecElement]]
+def build_expected_links(elements: list[SpecElement]) -> None:
+    """Populate each SpecElement with an expected_links dict for each link field."""
+    lookup = {}
+    for el in elements:
+        lookup[(el.variant, el.name)] = el.file_path
 
+    def anchorify(text: str) -> str:
+        anchor = text.strip().lower().replace(" ", "-").replace("_", "-")
+        anchor = re.sub(r"[^a-z0-9\-]", "", anchor)
+        anchor = re.sub(r"-+", "-", anchor)
+        return anchor.strip("-")
 
-def render_issues_with_elements(
-    spec_elements: list[SpecElement],
-    render_function: RenderFunction | None = None,
-) -> bool:
-    """Render unresolved issues for each Spec Element."""
-    render_function = render_function or print
-    if not spec_elements:
-        render_function("No elements.")
-        return True
-    any_errors = False
-    # check for non-unique specs
-    for spec_name, count in Counter(x.name for x in spec_elements).items():
-        if count > 1:
-            render_function(f"Non unique name {spec_name} has {count} instances")
-    # check each spec for any issues
-    for spec in spec_elements:
-        for issue in spec.get_issues():
-            render_function(issue)
-            any_errors = True
-
-    # prerequisite for this map is that all specs have unique names
-    spec_variant_map: SpecVariantMap = defaultdict(dict)
-    for spec in spec_elements:
-        spec_variant_map[spec.variant][spec.name] = spec
-
-    for variant in expected_variants():
-        any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, variant)
-
-    return any_errors
-
-
-def render_spec_linkage_issues(
-    spec_variant_map: SpecVariantMap,
-    render_function: RenderFunction,
-    spec_type_to_inspect: str,
-) -> bool:
-    """Check all specs links are connected to real specs and any required backlinks are observed."""
-    any_errors = False
-    if not spec_is_defined(spec_type_to_inspect):  # pragma: no cover (only for code regression)
-        msg = f"Spec type [{spec_type_to_inspect}] is not defined."
-        raise AssertionError(msg)
-
-    inspected_specs_map = spec_variant_map[spec_type_to_inspect]
-    inspected_specs_names = set(inspected_specs_map.keys())
-    if not inspected_specs_names:
-        return False
-    logger.debug(
-        "Have %s spec of type %s (%s)",
-        len(inspected_specs_map),
-        spec_type_to_inspect,
-        ", ".join(inspected_specs_names),
-    )
-
-    any_errors |= render_spec_simple_linkage_issues(spec_variant_map, render_function, spec_type_to_inspect)
-    any_errors |= render_spec_back_linkage_issues(spec_variant_map, render_function, spec_type_to_inspect)
-
-    return any_errors
-
-
-def render_spec_simple_linkage_issues(
-    spec_variant_map: SpecVariantMap,
-    render_function: RenderFunction,
-    spec_type_to_inspect: str,
-) -> bool:
-    """Check all specs links are connected to real specs and any required backlinks are observed."""
-    any_errors = False
-
-    inspected_specs_map = spec_variant_map[spec_type_to_inspect]
-
-    for link, target in expected_links_for_variant(spec_type_to_inspect):
-        link_key = section_name_to_key(link) or link
-        target_specs_map = spec_variant_map[target]
-        target_spec_names = set(target_specs_map.keys())
-        logger.debug("Target spec names: %s", ", ".join(target_spec_names))
-
-        for inspected_spec in inspected_specs_map.values():
-            fulfilment = set(inspected_spec.get_linked_by(link_key))
-            logger.debug("Fulfilment: %s", ", ".join(fulfilment))
-            if disconnected := fulfilment - target_spec_names:
-                any_errors = True
-                disconnected_list = ", ".join(sorted(disconnected))
-                render_function(
-                    f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected_list}",
-                )
-    return any_errors
-
-
-def render_spec_back_linkage_issues(
-    spec_variant_map: SpecVariantMap,
-    render_function: RenderFunction,
-    spec_type_to_inspect: str,
-) -> bool:
-    """Check all specs links are connected to real specs and any required backlinks are observed."""
-    any_errors = False
-
-    inspected_specs_map = spec_variant_map[spec_type_to_inspect]
-
-    for source, link in expected_backlinks_for_variant(spec_type_to_inspect):
-        # unused is per link
-        logger.debug("Checking backlinks: %s %s %s", source, link, spec_type_to_inspect)
-        unused_target_specs = set(inspected_specs_map.keys())
-
-        if spec_is_software(source):
-            unused_target_specs = {name for name, spec in inspected_specs_map.items() if spec.is_software_element}
-
-        link_key = section_name_to_key(link) or link
-        source_specs_map = spec_variant_map[source]
-        source_spec_names = set(source_specs_map.keys())
-        logger.debug("Source spec names: %s", ", ".join(source_spec_names))
-
-        for source_spec in source_specs_map.values():
-            fulfilment = set(source_spec.get_linked_by(link_key))
-            logger.debug("Source link: %s", ", ".join(fulfilment))
-            unused_target_specs = unused_target_specs - fulfilment
-
-        if unused_target_specs:
-            any_errors = True
-            render_function(f"{spec_type_to_inspect} without a {source}:")
-            for unused_target in sorted(unused_target_specs):
-                render_function(f"\t{unused_target}")
-
-    return any_errors
+    for el in elements:
+        expected_links: dict[str, list[tuple[str, str]]] = {}
+        required_links = expected_links_for_variant(el.variant)
+        for link, _ in required_links:
+            link_key = section_name_to_key(link) or link
+            expected_links[link_key] = []
+            if link_key in el.content:
+                for target in el.content[link_key]:
+                    target_text = strip_link(target)
+                    found = None
+                    for (v, n), path in lookup.items():
+                        if n == target_text:
+                            found = (v, n, path)
+                            break
+                    if found:
+                        _, _, target_path = found
+                        rel_path = os.path.relpath(target_path, el.file_path.parent)
+                        anchor = anchorify(target_text)
+                        md_link = f"[{target_text}]({rel_path}#{anchor})"
+                        expected_links[link_key].append((target_text, md_link))
+        el.expected_links = expected_links

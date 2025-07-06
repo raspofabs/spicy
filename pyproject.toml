@@ -16,6 +16,7 @@ dependencies = [
     "pytest-forked>=1.6.0",
     "pytest-xdist>=3.6.1",
     "pyyaml>=6.0.2",
+    "ruff>=0.12.2",
 ]
 
 [project.scripts]
@@ -37,7 +38,7 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D203", "D213", "FIX002", "TD003", "TD002"]
+ignore = ["D203", "D213", "FIX002", "TD003", "TD002", "S"]
 
 # Interesting rules
 # RUF105

@@ -3,6 +3,8 @@
 import logging
 from pathlib import Path
 
+from spicy.md_read import strip_link
+
 from .spec_utils import expected_links_for_variant, section_name_to_key
 from .use_case_constants import section_map, tcl_map, usage_section_map
 
@@ -34,6 +36,9 @@ class SpecElement:
         self.detectability: str | None = None
         self.usage_sections: dict[str, str] = {}
 
+        # expected_links is filled out link-building logic
+        self.expected_links: dict[str, list[tuple[str, str]]] = {}
+
     @property
     def all_content(self) -> str:
         """Get all the content, comma separated."""
@@ -49,10 +54,10 @@ class SpecElement:
         )
 
     def get_linked_by(self, linkage_term: str) -> list[str]:
-        """Return a list of all specs linked by this term."""
+        """Return a list of all spec names linked by this term (extract from markdown links if present)."""
         link_content = self.content.get(linkage_term)
         if isinstance(link_content, list):
-            return link_content
+            return [strip_link(item) for item in link_content if isinstance(item, str)]
         if link_content is not None:
             logger.warning("No list content for %s - got [%s] instead", linkage_term, link_content)
         return []
