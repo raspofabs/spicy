@@ -107,8 +107,8 @@ def test_bad_link_case(bad_link_data_path: Path, caplog: pytest.LogCaptureFixtur
     assert "FEAT_PRESENT_A_SPEC" not in result.stdout
 
 
-def test_hierarcical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
-    """Test the hierarcical_case positive use case."""
+def test_hierarchical_case(test_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    """Test the hierarchical_case positive use case."""
     runner = CliRunner()
     with caplog.at_level(logging.DEBUG):
         result = runner.invoke(run, [str(test_data_path / "hierarchical_test_spec")])
