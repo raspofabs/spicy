@@ -56,7 +56,7 @@ def build_expected_links(elements: list[SpecElement]) -> None:
 
     for el in elements:
         expected_links: dict[str, list[tuple[str, str, str]]] = {}
-        required_links = expected_links_for_variant(el.variant)
+        required_links = expected_links_for_variant(el.variant, include_optional=True)
         for link, _ in required_links:
             link_key = section_name_to_key(link) or link
             expected_links[link_key] = []

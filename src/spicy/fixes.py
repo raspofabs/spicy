@@ -1,5 +1,6 @@
 """Functions to automatically fix issues with a spec."""
 
+import re
 from pathlib import Path
 
 from spicy.parser.spec_element import SpecElement
@@ -30,5 +31,7 @@ def apply_replacements_to_files(replacements: dict[Path, list[tuple[str, str]]])
         if file_path.is_file():
             content = file_path.read_text(encoding="utf-8")
             for before, after in repls:
-                content = content.replace(before, after)
+                # make sure we don't accidentally substitute sub-strings.
+                # Leading edge is handled by the "-" prefix for list-items.
+                content = re.sub(re.escape(before) + r"\b", after, content)
             file_path.write_text(content, encoding="utf-8")
