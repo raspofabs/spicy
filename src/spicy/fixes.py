@@ -16,8 +16,8 @@ def build_link_replacements(elements: list[SpecElement]) -> dict[Path, list[tupl
     replacements: dict[Path, list[tuple[str, str]]] = {}
     for el in elements:
         for links in el.expected_links.values():
-            for target, md_link in links:
-                before = f"- {target}"
+            for _, target_content, md_link in links:
+                before = f"- {target_content}"
                 after = f"- {md_link}"
                 file_path = el.file_path
                 replacements.setdefault(file_path, []).append((before, after))

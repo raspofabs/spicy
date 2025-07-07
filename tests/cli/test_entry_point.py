@@ -158,11 +158,11 @@ def test_entry_point_fix_reference_links(tmp_path: Path) -> None:
     # Create a dummy SpecElement-like object for fix_reference_links
     class DummyElement:
         file_path: Path
-        expected_links: dict[str, list[tuple[str, str]]]
+        expected_links: dict[str, list[tuple[str, str, str]]]
         name: str
         variant: str
 
-        def __init__(self, file_path: Path, expected_links: dict[str, list[tuple[str, str]]]) -> None:
+        def __init__(self, file_path: Path, expected_links: dict[str, list[tuple[str, str, str]]]) -> None:
             self.file_path = file_path
             self.expected_links = expected_links
             self.name = "DUMMY_ELEMENT"
@@ -175,7 +175,7 @@ def test_entry_point_fix_reference_links(tmp_path: Path) -> None:
     elements = [
         DummyElement(
             file_path=md_file,
-            expected_links={"section1": [("target1", "[target1](#target1)")]},
+            expected_links={"section1": [("target1", "target1", "[target1](#target1)")]},
         ),
     ]
 

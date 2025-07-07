@@ -43,7 +43,7 @@ def render_spec_link_markdown_reference_issues(
     for el in spec_elements:
         for section, expected_links in el.expected_links.items():
             lines = el.content.get(section, [])
-            link_map = dict(expected_links)
+            link_map = {name: link for name, _, link in expected_links}
             # Check for unexpected or mismatched links in content
             for line in lines:
                 text = find_reference(strip_link(line))

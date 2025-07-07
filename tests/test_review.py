@@ -17,7 +17,7 @@ class DummyElement(SpecElement):
     def __init__(
         self,
         file_path: Path,
-        expected_links: dict[str, list[tuple[str, str]]],
+        expected_links: dict[str, list[tuple[str, str, str]]],
         content: dict[str, list[str]],
     ) -> None:
         """Initialize DummyElement with required attributes."""
@@ -121,12 +121,12 @@ def test_render_spec_link_markdown_reference_issues_missing_and_bad_links(tmp_pa
     file_path = tmp_path / "dummy.md"
     el_missing = DummyElement(
         file_path=file_path,
-        expected_links={"section1": [("target1", "[target1](#target1)")]},
+        expected_links={"section1": [("target1", "target1", "[target1](#target1)")]},
         content={"section1": ["- somethingelse"]},
     )
     el_bad = DummyElement(
         file_path=file_path,
-        expected_links={"section1": [("target2", "[target2](#target2)")]},
+        expected_links={"section1": [("target2", "target2", "[target2](#target2)")]},
         content={"section1": ["- [target2](#wrong-link)"]},
     )
     lines: list[str] = []
@@ -149,7 +149,7 @@ def test_render_spec_link_markdown_reference_issues_link_mismatch(tmp_path: Path
     file_path = tmp_path / "dummy.md"
     el = DummyElement(
         file_path=file_path,
-        expected_links={"section1": [("target1", "[target1](#target1)")]},
+        expected_links={"section1": [("target1", "target1", "[target1](#target1)")]},
         content={"section1": ["- [target1](#not-the-right-link)"]},
     )
     lines: list[str] = []

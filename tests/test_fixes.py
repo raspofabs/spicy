@@ -8,10 +8,12 @@ from spicy.fixes import apply_replacements_to_files, build_link_replacements, fi
 class DummyElement:
     """Stand-in for SpecElement for testing."""
 
-    def __init__(self, file_path: Path, expected_links: dict[str, list[tuple[str, str]]] | None = None) -> None:
+    def __init__(self, file_path: Path, expected_links: dict[str, list[tuple[str, str, str]]] | None = None) -> None:
         """Initialise the data for testing."""
         self.file_path = file_path
-        self.expected_links: dict[str, list[tuple[str, str]]] = expected_links if expected_links is not None else {}
+        self.expected_links: dict[str, list[tuple[str, str, str]]] = (
+            expected_links if expected_links is not None else {}
+        )
 
 
 def test_build_link_replacements() -> None:
@@ -25,14 +27,14 @@ def test_build_link_replacements() -> None:
         DummyElement(
             file_path=Path("file1.md"),
             expected_links={
-                "section1": [("target1", "[target1](#target1)")],
-                "section2": [("target2", "[target2](#target2)")],
+                "section1": [("target1", "target1", "[target1](#target1)")],
+                "section2": [("target2", "target2", "[target2](#target2)")],
             },
         ),
         DummyElement(
             file_path=Path("file2.md"),
             expected_links={
-                "section3": [("target3", "[target3](#target3)")],
+                "section3": [("target3", "target3", "[target3](#target3)")],
             },
         ),
         DummyElement(file_path=Path("file3.md")),
@@ -76,7 +78,7 @@ def test_fix_reference_links_integration(tmp_path: Path) -> None:
     elements: list[DummyElement] = [
         DummyElement(
             file_path=file1,
-            expected_links={"section1": [("target1", "[target1](#target1)")]},
+            expected_links={"section1": [("target1", "target1", "[target1](#target1)")]},
         ),
     ]
     fix_reference_links(elements)  # type: ignore[arg-type]

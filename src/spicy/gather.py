@@ -49,13 +49,13 @@ def build_expected_links(elements: list[SpecElement]) -> None:
         lookup[(el.variant, el.name)] = el.file_path
 
     def anchorify(text: str) -> str:
-        anchor = text.strip().lower().replace(" ", "-").replace("_", "-")
-        anchor = re.sub(r"[^a-z0-9\-]", "", anchor)
+        anchor = text.strip().lower().replace(" ", "-")
+        anchor = re.sub(r"[^a-z0-9_-]", "", anchor)
         anchor = re.sub(r"-+", "-", anchor)
         return anchor.strip("-")
 
     for el in elements:
-        expected_links: dict[str, list[tuple[str, str]]] = {}
+        expected_links: dict[str, list[tuple[str, str, str]]] = {}
         required_links = expected_links_for_variant(el.variant)
         for link, _ in required_links:
             link_key = section_name_to_key(link) or link
@@ -73,5 +73,5 @@ def build_expected_links(elements: list[SpecElement]) -> None:
                         rel_path = os.path.relpath(target_path, el.file_path.parent)
                         anchor = anchorify(target_text)
                         md_link = f"[{target_text}]({rel_path}#{anchor})"
-                        expected_links[link_key].append((target_text, md_link))
+                        expected_links[link_key].append((target_text, target, md_link))
         el.expected_links = expected_links
