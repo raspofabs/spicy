@@ -26,7 +26,7 @@ def main() -> None:
                     "-d",
                     "bash",
                     "-c",
-                    f"clear && uv run spicy {test_spec}",
+                    f"clear && uv run spicy --check-refs {test_spec}",
                 ],
                 input="\n".join(files),
                 text=True,
