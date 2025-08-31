@@ -218,7 +218,7 @@ Cases:
 
 - POS_UNIT_TEST_a_test
 
-Reults:
+Results:
 
 - POS_UNIT_TEST_a_test: PASS
 
@@ -232,7 +232,7 @@ Cases:
 
 - POS_UNIT_TEST_a_test
 
-Reults:
+Results:
 
 - POS_UNIT_TEST_a_test: PASS
 
@@ -246,7 +246,7 @@ Cases:
 
 - POS_UNIT_TEST_a_test
 
-Reults:
+Results:
 
 - POS_UNIT_TEST_a_test: PASS
 
@@ -260,7 +260,7 @@ Cases:
 
 - POS_UNIT_TEST_a_test
 
-Reults:
+Results:
 
 - POS_UNIT_TEST_a_test: PASS
 
