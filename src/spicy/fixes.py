@@ -12,13 +12,21 @@ def fix_reference_links(elements: list[SpecElement]) -> None:
     apply_replacements_to_files(replacements)
 
 
+def make_before_matcher(target: str) -> str:
+    """Create a regular expression that should match any reference whether raw or already an mdlink."""
+    # Leading edge is handled by the "-" prefix for list-items.
+    # make sure we don't accidentally substitute sub-strings, so add a '\b' to the raw one
+    # Allow for existing links.
+    return rf"- ({target}\b|\[{target}\]\(.+?\))"
+
+
 def build_link_replacements(elements: list[SpecElement]) -> dict[Path, list[tuple[str, str]]]:
     """Build a dictionary of file -> list of (before, after) link replacements using expected_links."""
     replacements: dict[Path, list[tuple[str, str]]] = {}
     for el in elements:
         for links in el.expected_links.values():
             for _, target_content, md_link in links:
-                before = f"- {target_content}"
+                before = make_before_matcher(target_content)
                 after = f"- {md_link}"
                 file_path = el.file_path
                 replacements.setdefault(file_path, []).append((before, after))
@@ -31,7 +39,5 @@ def apply_replacements_to_files(replacements: dict[Path, list[tuple[str, str]]])
         if file_path.is_file():
             content = file_path.read_text(encoding="utf-8")
             for before, after in repls:
-                # make sure we don't accidentally substitute sub-strings.
-                # Leading edge is handled by the "-" prefix for list-items.
-                content = re.sub(re.escape(before) + r"\b", after, content)
+                content = re.sub(before, after, content)
             file_path.write_text(content, encoding="utf-8")

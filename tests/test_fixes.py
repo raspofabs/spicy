@@ -1,8 +1,9 @@
 """Test the fixes.py module."""
 
+import re
 from pathlib import Path
 
-from spicy.fixes import apply_replacements_to_files, build_link_replacements, fix_reference_links
+from spicy.fixes import apply_replacements_to_files, build_link_replacements, fix_reference_links, make_before_matcher
 
 
 class DummyElement:
@@ -14,6 +15,28 @@ class DummyElement:
         self.expected_links: dict[str, list[tuple[str, str, str]]] = (
             expected_links if expected_links is not None else {}
         )
+
+
+def test_make_before_matcher() -> None:
+    """Test the make_before_matcher result."""
+    # create an 'aaa' matcher
+    aaa = make_before_matcher("aaa")
+
+    # don't match simple text
+    assert re.sub(aaa, "Matched", "aaa") != "Matched"
+
+    # match a simple line
+    assert re.sub(aaa, "Matched", "- aaa") == "Matched"
+
+    # don't match substrings
+    assert re.sub(aaa, "Matched", "- aaaa") != "Matched"
+
+    # match if there is a link
+    assert re.sub(aaa, "Matched", "- [aaa](#aaa)") == "Matched"
+    assert re.sub(aaa, "Matched", "- [aaa](#anything)") == "Matched"
+
+    # but not if the target is wrong
+    assert re.sub(aaa, "Matched", "- bbb") != "Matched"
 
 
 def test_build_link_replacements() -> None:
@@ -41,11 +64,11 @@ def test_build_link_replacements() -> None:
     ]
     expected: dict[Path, list[tuple[str, str]]] = {
         Path("file1.md"): [
-            ("- target1", "- [target1](#target1)"),
-            ("- target2", "- [target2](#target2)"),
+            (r"- (target1\b|\[target1\]\(.+?\))", "- [target1](#target1)"),
+            (r"- (target2\b|\[target2\]\(.+?\))", "- [target2](#target2)"),
         ],
         Path("file2.md"): [
-            ("- target3", "- [target3](#target3)"),
+            (r"- (target3\b|\[target3\]\(.+?\))", "- [target3](#target3)"),
         ],
     }
     result = build_link_replacements(elements)  # type: ignore[arg-type]
@@ -56,11 +79,14 @@ def test_apply_replacements_to_files(tmp_path: Path) -> None:
     """Test apply_replacements_to_files correctly applies the provided patches."""
     file1 = Path(tmp_path / "file1.md")
     file2 = Path(tmp_path / "file2.md")
-    file1.write_text("- target1\n- target2\n", encoding="utf-8")
-    file2.write_text("- target3\n", encoding="utf-8")
+    file1.write_text("- target1\n- [target2](#wrong_target)\n", encoding="utf-8")
+    file2.write_text("- [target3](#TARGET3)\n", encoding="utf-8")
     replacements: dict[Path, list[tuple[str, str]]] = {
-        file1: [("- target1", "- [target1](#target1)"), ("- target2", "- [target2](#target2)")],
-        file2: [("- target3", "- [target3](#target3)")],
+        file1: [
+            (make_before_matcher("target1"), "- [target1](#target1)"),
+            (make_before_matcher("target2"), "- [target2](#target2)"),
+        ],
+        file2: [(make_before_matcher("target3"), "- [target3](#target3)")],
     }
     apply_replacements_to_files(replacements)
     assert file1.read_text(encoding="utf-8") == "- [target1](#target1)\n- [target2](#target2)\n"
