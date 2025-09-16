@@ -11,7 +11,7 @@ def spec_name_to_variant(name: str) -> str | None:
     minimum_parts = 3
     if len(parts) < minimum_parts:
         return None
-    project_prefix, *variant_parts = parts
+    _project_prefix, *variant_parts = parts
     comparison_string = "_".join(variant_parts)
 
     guesses = []
@@ -87,6 +87,10 @@ class Link:
             msg = "Wrong type in equality"
             raise TypeError(msg)
         return other == (self.description, self.target)
+
+    def __hash__(self) -> int:
+        """Return the hash of the link, ignoring the constraint callback."""
+        return hash((self.description, self.target))
 
 
 LinkType = tuple[str, str] | Link

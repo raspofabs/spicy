@@ -1,8 +1,13 @@
 """Test the use-cases parser."""
 
+import logging
+import re
 from pathlib import Path
 
+import pytest
+
 from spicy.gather import gather_all_elements, get_elements_from_files
+from spicy.review import render_issues_with_elements
 
 
 def test_gather_all_elements(test_data_path: Path) -> None:
@@ -19,6 +24,7 @@ def test_gather_on_directory(test_data_path: Path) -> None:
 
     assert isinstance(spec_element_list, list)
     assert len(spec_element_list) > 1
+
 
 LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
     ("use_case_to_stakeholder_need.md", [], ["Fulfils unexpected StakeholderNeed", "without a UseCase"]),

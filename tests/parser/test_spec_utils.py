@@ -1,6 +1,5 @@
 """Test the use-cases parser."""
 
-
 from spicy.parser.spec_utils import (
     expected_backlinks_for_variant,
     expected_links_for_variant,
