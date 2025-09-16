@@ -9,7 +9,7 @@ def spec_name_to_variant(name: str) -> str | None:
     minimum_parts = 3
     if len(parts) < minimum_parts:
         return None
-    project_prefix, *variant_parts = parts
+    _project_prefix, *variant_parts = parts
     comparison_string = "_".join(variant_parts)
 
     guesses = []

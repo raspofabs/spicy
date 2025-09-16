@@ -60,7 +60,7 @@ class SpecParser:
             self.current_spec_level = level
             self.used_current_spec_level = True
 
-            prefix, *postfix = name.split(self.project_prefix)
+            prefix, *_postfix = name.split(self.project_prefix)
             # don't add to list if it's a rejected spec
             if prefix != "REJECTED_":
                 self.spec_builders.append(self.builder)

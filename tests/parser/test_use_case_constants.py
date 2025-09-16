@@ -37,13 +37,13 @@ def test_tcl_mappings() -> None:
     """Test the TCL mappings."""
     assert tcl_map(None, None) is not None
     assert tcl_map(None, None) == "<undefined>"
-    with pytest.raises(ValueError, match="Invalid impact.*carrot"):
+    with pytest.raises(ValueError, match=r"Invalid impact.*carrot"):
         tcl_map("carrot", None)
-    with pytest.raises(ValueError, match="Invalid impact.*prune"):
+    with pytest.raises(ValueError, match=r"Invalid impact.*prune"):
         tcl_map("prune", "TD1")
-    with pytest.raises(ValueError, match="Invalid detectability.*melon"):
+    with pytest.raises(ValueError, match=r"Invalid detectability.*melon"):
         tcl_map(None, "melon")
-    with pytest.raises(ValueError, match="Invalid detectability.*apple"):
+    with pytest.raises(ValueError, match=r"Invalid detectability.*apple"):
         tcl_map("TI1", "apple")
 
     # impact 1
