@@ -3,6 +3,7 @@
 import logging
 import re
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -168,7 +169,7 @@ def test_entry_point_fix_reference_links(tmp_path: Path) -> None:
             self.name = "DUMMY_ELEMENT"
             self.variant = "Dummy"
 
-        def get_issues(self) -> list[str]:
+        def get_issues(self, config: dict[str, Any]) -> list[str]:
             return []
 
     # The expected_links structure for the dummy element

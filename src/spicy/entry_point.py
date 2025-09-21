@@ -80,6 +80,11 @@ def run(
 
     render_function: Callable[[str], None] = print
 
-    if render_issues_with_elements(elements, render_function, check_markdown_link_refs=check_refs):
+    if render_issues_with_elements(
+        elements,
+        config=spicy_config,
+        render_function=render_function,
+        check_markdown_link_refs=check_refs,
+    ):
         sys.exit(1)
     render_function(f"No issues found with any of the {len(elements)} specs")

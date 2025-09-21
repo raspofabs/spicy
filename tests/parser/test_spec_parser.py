@@ -41,7 +41,7 @@ def test_parse_use_case(test_data_path: Path) -> None:
     assert use_case.detectability == "TD1"
     assert use_case.tcl == "TCL1"
 
-    issues = use_case.get_issues()
+    issues = use_case.get_issues({})
     assert not issues
 
 
@@ -151,7 +151,7 @@ def test_parse_sys_req_from_text(test_data_path: Path, caplog: pytest.LogCapture
     assert spec.verification_criteria(), str(spec)
     assert spec.get_linked_by("derived_from"), str(spec)
 
-    issues = spec.get_issues()
+    issues = spec.get_issues({})
     assert not issues
 
 
@@ -182,7 +182,7 @@ def test_parse_sys_req(test_data_path: Path) -> None:
     assert spec.verification_criteria(), str(spec)
     assert spec.get_linked_by("derived_from"), str(spec)
 
-    issues = spec.get_issues()
+    issues = spec.get_issues({})
     assert not issues
 
 
@@ -211,7 +211,7 @@ def test_valid_use_case(test_data_path: Path) -> None:
     assert use_case.detectability == "TD1"
     assert use_case.tcl == "TCL1"
 
-    issues = use_case.get_issues()
+    issues = use_case.get_issues({})
     assert not issues
 
 
@@ -241,7 +241,7 @@ def test_valid_sys_req(test_data_path: Path, caplog: pytest.LogCaptureFixture) -
     assert notes is not None
     assert "This is just a little note." in notes
 
-    issues = spec.get_issues()
+    issues = spec.get_issues({})
     assert not issues
 
 

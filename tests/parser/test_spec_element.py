@@ -109,7 +109,7 @@ def test_spec_element_as_use_case() -> None:
 def test_spec_element_use_case_issues() -> None:
     """Test the issue detection code for a simple UseCase SpecElement."""
     use_case = SpecElement("use_case_1", "UseCase", 0, Path())
-    issues = use_case.get_issues()
+    issues = use_case.get_issues({})
     assert issues
     assert "no impact" in issues
     assert "no detectability" in issues
@@ -120,7 +120,7 @@ def test_spec_element_use_case_issues() -> None:
     use_case.impact = "TI1"
     use_case.detectability = "TD1"
 
-    issues = use_case.get_issues()
+    issues = use_case.get_issues({})
     assert issues
     assert "no impact" not in issues
     assert "no detectability" not in issues
@@ -131,5 +131,5 @@ def test_spec_element_use_case_issues() -> None:
 
 def test_spec_element_issues(basic_spec_element: SpecElement) -> None:
     """Test the issue detection code for a simple SpecElement."""
-    issues = basic_spec_element.get_issues()
+    issues = basic_spec_element.get_issues({})
     assert not issues

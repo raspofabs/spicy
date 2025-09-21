@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+from typing import Any
 
 from spicy.md_read import strip_link
 
@@ -110,18 +111,21 @@ class SpecElement:
         """Return a list of lines describing the error detectability of the use-case."""
         return self.content.get("detectability", [])
 
-    def get_issues(self) -> list[str]:
+    def get_issues(self, config: dict[str, Any]) -> list[str]:
         """Get issues with this spec."""
         if self.variant == "UseCase":
             return self.get_use_case_issues()
-        return self.get_spec_issues()
+        return self.get_spec_issues(config)
 
-    def get_spec_issues(self) -> list[str]:
+    def get_spec_issues(self, config: dict[str, Any]) -> list[str]:
         """Return a list of problems with this spec."""
         # check we have the minimum linkage
         issues = []
+        ignored_links = dict(line.lower().split(" ") for line in config.get("ignored_links", {}).get(self.variant, []))
         required_links = expected_links_for_variant(self.variant)
         for link, target in required_links:
+            if ignored_links.get(link.lower()) == target.lower():
+                continue
             link_key = section_name_to_key(link) or link
             if not self.get_linked_by(link_key):
                 issues.append(f"Missing links for [{link} {target}]")

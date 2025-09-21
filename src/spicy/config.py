@@ -9,7 +9,7 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
-def load_spicy_config(config_directory: Path, **kwargs: str | None) -> dict[str, str]:
+def load_spicy_config(config_directory: Path, **kwargs: str | None) -> dict[str, Any]:
     """Load the spicy.yaml file from the config path provided, or default to an empty dictionary."""
     config: dict[str, str] = {}
     if not config_directory.is_dir():
@@ -23,7 +23,7 @@ def load_spicy_config(config_directory: Path, **kwargs: str | None) -> dict[str,
         logger.warning("No config found at %s", config_file_path)
 
     if loaded_config is not None:
-        config = {key: value for key, value in loaded_config.items() if isinstance(key, str) and isinstance(value, str)}
+        config = {key: value for key, value in loaded_config.items() if isinstance(key, str)}
 
     for keyword, value in kwargs.items():
         if isinstance(value, str):

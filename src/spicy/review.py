@@ -4,6 +4,7 @@ import logging
 import re
 from collections import Counter, defaultdict
 from collections.abc import Callable
+from typing import Any
 
 from .md_read import strip_link
 from .parser.spec_element import SpecElement
@@ -66,11 +67,13 @@ def render_spec_link_markdown_reference_issues(
 
 def render_issues_with_elements(
     spec_elements: list[SpecElement],
-    render_function: Callable[[str], None] | None = None,
     *,
+    config: dict[str, Any] | None = None,
+    render_function: Callable[[str], None] | None = None,
     check_markdown_link_refs: bool = False,
 ) -> bool:
     """Render unresolved issues for each Spec Element."""
+    config = config or {}
     render_function = render_function or print
     if not spec_elements:
         render_function("No elements.")
@@ -82,7 +85,7 @@ def render_issues_with_elements(
             render_function(f"Non unique name {spec_name} has {count} instances")
     # check each spec for any issues
     for spec in spec_elements:
-        for issue in spec.get_issues():
+        for issue in spec.get_issues(config=config):
             render_function(issue)
             any_errors = True
 
@@ -92,7 +95,7 @@ def render_issues_with_elements(
         spec_variant_map[spec.variant][spec.name] = spec
 
     for variant in expected_variants():
-        any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, variant)
+        any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, variant, config)
 
     # Add markdown link reference issues if enabled
     if check_markdown_link_refs:
@@ -105,6 +108,7 @@ def render_spec_linkage_issues(
     spec_variant_map: SpecVariantMap,
     render_function: Callable[[str], None],
     spec_type_to_inspect: str,
+    config: dict[str, Any],
 ) -> bool:
     """Check all specs links are connected to real specs and any required backlinks are observed."""
     any_errors = False
@@ -124,7 +128,7 @@ def render_spec_linkage_issues(
     )
 
     any_errors |= render_spec_simple_linkage_issues(spec_variant_map, render_function, spec_type_to_inspect)
-    any_errors |= render_spec_back_linkage_issues(spec_variant_map, render_function, spec_type_to_inspect)
+    any_errors |= render_spec_back_linkage_issues(spec_variant_map, render_function, spec_type_to_inspect, config)
 
     return any_errors
 
@@ -161,6 +165,7 @@ def render_spec_back_linkage_issues(
     spec_variant_map: SpecVariantMap,
     render_function: Callable[[str], None],
     spec_type_to_inspect: str,
+    config: dict[str, Any],
 ) -> bool:
     """Check all specs links are connected to real specs and any required backlinks are observed."""
     any_errors = False
@@ -185,7 +190,10 @@ def render_spec_back_linkage_issues(
             logger.debug("Source link: %s", ", ".join(fulfilment))
             unused_target_specs = unused_target_specs - fulfilment
 
-        if unused_target_specs:
+        ignored_dependencies = dict(
+            line.lower().split(" ") for line in config.get("ignored_dependencies", {}).get(spec_type_to_inspect, [])
+        )
+        if unused_target_specs and ignored_dependencies.get(source.lower()) != link_key.lower():
             any_errors = True
             render_function(f"{spec_type_to_inspect} without a {source} [{link_key}]:")
             for unused_target in sorted(unused_target_specs):

@@ -3,6 +3,7 @@
 import logging
 import re
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -30,7 +31,7 @@ class DummyElement(SpecElement):
         self.expected_links = expected_links
         self.content = content
 
-    def get_issues(self) -> list[str]:
+    def get_issues(self, config: dict[str, Any]) -> list[str]:
         """Return an empty list of issues for DummyElement."""
         return []
 
@@ -41,7 +42,7 @@ def test_render_issues_with_elements(test_data_path: Path) -> None:
 
     lines = []
 
-    render_issues_with_elements(spec_elements, lambda x: lines.append(x))
+    render_issues_with_elements(spec_elements, config={}, render_function=lambda x: lines.append(x))
     assert not any(re.search(r"Non unique name TD_STK_REQ.*", line) for line in lines)
     assert any(re.search(r"Non unique name TD_SYS_REQ_dupe.*", line) for line in lines)
 
@@ -69,7 +70,7 @@ def test_render_issues_with_elements_expected_errors(
     spec_elements = gather_all_elements("TD", test_data_path / specific_file)
     lines = []
     with caplog.at_level(logging.DEBUG):
-        render_issues_with_elements(spec_elements, lambda x: lines.append(x))
+        render_issues_with_elements(spec_elements, config={}, render_function=lambda x: lines.append(x))
     assert lines
     for expected_error in expected_errors:
         assert any(re.search(expected_error, line) for line in lines), lines
@@ -108,7 +109,7 @@ def test_linkage(
         spec_elements = gather_all_elements("TD", test_data_path / "linkage" / test_filename)
     lines = []
     with caplog.at_level(logging.DEBUG):
-        render_issues_with_elements(spec_elements, lambda x: lines.append(x))
+        render_issues_with_elements(spec_elements, config={}, render_function=lambda x: lines.append(x))
 
     for expected_output in expected_outputs:
         assert any(re.search(expected_output, line) for line in lines), lines
