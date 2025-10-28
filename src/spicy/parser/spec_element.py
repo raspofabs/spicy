@@ -121,6 +121,7 @@ class SpecElement:
         """Return a list of problems with this spec."""
         # check we have the minimum linkage
         issues = []
+        # TODO: make this use a helper.
         ignored_links = dict(line.lower().split(" ") for line in config.get("ignored_links", {}).get(self.variant, []))
         required_links = expected_links_for_variant(self.variant)
         for link, target in required_links:

@@ -9,7 +9,7 @@ import pytest
 
 from spicy.gather import gather_all_elements
 from spicy.parser.spec_element import SpecElement
-from spicy.review import render_issues_with_elements, render_spec_link_markdown_reference_issues
+from spicy.review import render_issues_with_elements
 
 
 class DummyElement(SpecElement):
@@ -115,50 +115,3 @@ def test_linkage(
         assert any(re.search(expected_output, line) for line in lines), lines
     for unexpected_output in unexpected_outputs:
         assert not any(re.search(unexpected_output, line) for line in lines), lines
-
-
-def test_render_spec_link_markdown_reference_issues_missing_and_bad_links(tmp_path: Path) -> None:
-    """Test render_spec_link_markdown_reference_issues for missing and bad links."""
-    file_path = tmp_path / "dummy.md"
-    el_missing = DummyElement(
-        file_path=file_path,
-        expected_links={"section1": [("target1", "target1", "[target1](#target1)")]},
-        content={"section1": ["- somethingelse"]},
-    )
-    el_bad = DummyElement(
-        file_path=file_path,
-        expected_links={"section1": [("target2", "target2", "[target2](#target2)")]},
-        content={"section1": ["- [target2](#wrong-link)"]},
-    )
-    lines: list[str] = []
-    render_spec_link_markdown_reference_issues(
-        [el_missing, el_bad],
-        lambda x: lines.append(x),
-    )
-    assert any("No expected link for [- somethingelse]" in line for line in lines)
-    assert any(
-        "No expected link for [- target2]" in line or "No expected link for [- [target2]" in line for line in lines
-    ), f"Expected missing link for target2 in lines: {lines}"
-    assert any("but had - [target2](#wrong-link)" in line for line in lines)
-
-
-def test_render_spec_link_markdown_reference_issues_link_mismatch(tmp_path: Path) -> None:
-    """Test render_spec_link_markdown_reference_issues for a link mismatch (expected vs actual).
-
-    Covers lines 55-58 in review.py.
-    """
-    file_path = tmp_path / "dummy.md"
-    el = DummyElement(
-        file_path=file_path,
-        expected_links={"section1": [("target1", "target1", "[target1](#target1)")]},
-        content={"section1": ["- [target1](#not-the-right-link)"]},
-    )
-    lines: list[str] = []
-    render_spec_link_markdown_reference_issues(
-        [el],
-        lambda x: lines.append(x),
-    )
-    assert any(
-        "No expected link for [- target1]" in line or "No expected link for [- [target1]" in line for line in lines
-    ), f"Expected missing link for target1 in lines: {lines}"
-    assert any("but had - [target1](#not-the-right-link)" in line for line in lines)

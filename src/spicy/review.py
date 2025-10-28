@@ -1,12 +1,10 @@
 """Functions to runs checks and review the spec elements."""
 
 import logging
-import re
 from collections import Counter, defaultdict
 from collections.abc import Callable
 from typing import Any
 
-from .md_read import strip_link
 from .parser.spec_element import SpecElement
 from .parser.spec_utils import (
     expected_backlinks_for_variant,
@@ -22,55 +20,11 @@ logger = logging.getLogger(__name__)
 SpecVariantMap = defaultdict[str, dict[str, SpecElement]]
 
 
-def find_reference(content: str) -> str:
-    """Find and return the reference in the content.
-
-    This is defined as the first word that is not just a leader hyphen.
-    """
-    match = re.search(r"(?:-\s)?(\w+)", content)
-    return match.group(0) if match else ""
-
-
-def render_spec_link_markdown_reference_issues(
-    spec_elements: list[SpecElement],
-    render_function: Callable[[str], None],
-) -> bool:
-    """Check all expected links are correct.
-
-    Verify they are present and correct in the markdown content using
-    expected_links and content.
-    """
-    any_errors = False
-    for el in spec_elements:
-        for section, expected_links in el.expected_links.items():
-            lines = el.content.get(section, [])
-            link_map = {name: link for name, _, link in expected_links}
-            # Check for unexpected or mismatched links in content
-            for line in lines:
-                text = find_reference(strip_link(line))
-                expected_link = link_map.get(text)
-                if expected_link is None:
-                    render_function(
-                        f"No expected link for [{text}] in {el.file_path.name} section {section}, but had {line}",
-                    )
-                    any_errors = True
-                elif expected_link != line:
-                    render_function(
-                        f"Link mismatch in {el.file_path.name}, {el.name}\n"
-                        f"  In section {section} @ {text}\n"
-                        f"    Expect: {expected_link}\n"
-                        f"    Have  : {line}",
-                    )
-                    any_errors = True
-    return any_errors
-
-
 def render_issues_with_elements(
     spec_elements: list[SpecElement],
     *,
     config: dict[str, Any] | None = None,
     render_function: Callable[[str], None] | None = None,
-    check_markdown_link_refs: bool = False,
 ) -> bool:
     """Render unresolved issues for each Spec Element."""
     config = config or {}
@@ -96,10 +50,6 @@ def render_issues_with_elements(
 
     for variant in expected_variants():
         any_errors |= render_spec_linkage_issues(spec_variant_map, render_function, variant, config)
-
-    # Add markdown link reference issues if enabled
-    if check_markdown_link_refs:
-        any_errors |= render_spec_link_markdown_reference_issues(spec_elements, render_function)
 
     return any_errors
 
