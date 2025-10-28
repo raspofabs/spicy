@@ -1,5 +1,11 @@
 # task list
 
+- Better link fixing:
+    - In a single md file, just use "#anchor" links.
+    - Work with every potential link (even in body text)
+    - Detect invalid potential links (PROJ_ABC_123 is invalid here -> )
+    - If the link is valid, but suboptimal, keep it. (example: uses absolute, but could be shorter if relative)
+        - maybe only do this if the relative is in a subdirectory.
 - Move to spicy config controlling more stuff
     - which specs exist
     - how they are linked
