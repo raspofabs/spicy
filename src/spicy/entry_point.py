@@ -9,6 +9,7 @@ import click
 
 from .config import load_spicy_config
 from .gather import get_elements_from_files
+from .link_fixes import check_markdown_refs
 from .review import render_issues_with_elements
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -31,14 +32,12 @@ def get_spec_files(root_path: Path | None = None) -> list[Path]:
 @click.option("-v", "--verbose", is_flag=True, default=False, help="Run in verbose mode.")
 @click.option(
     "--fix-refs",
-    "_fix_refs",
     is_flag=True,
     default=False,
     help="Fix markdown reference links in-place after parsing (overwrites files).",
 )
 @click.option(
     "--check-refs",
-    "_check_refs",
     is_flag=True,
     default=False,
     help="Check for correct markdown reference links in content and report issues.",
@@ -47,8 +46,8 @@ def run(
     path_override: Path | None,
     project_prefix: str | None,
     verbose: bool,  # noqa: FBT001
-    _fix_refs: bool,  # noqa: FBT001
-    _check_refs: bool,  # noqa: FBT001
+    fix_refs: bool,  # noqa: FBT001
+    check_refs: bool,  # noqa: FBT001
 ) -> None:
     """Parse and analyze markdown spec files, optionally checking and/or fixing reference links.
 
@@ -72,6 +71,12 @@ def run(
     filenames = get_spec_files(path_override)
 
     logger.debug("Found %s files to read.", len(filenames))
+
+    if fix_refs or check_refs:
+        result = check_markdown_refs(filenames, prefix=project_prefix, fix_refs=fix_refs)
+        if result:
+            sys.exit(result)
+
     elements = get_elements_from_files(project_prefix, filenames)
 
     logger.debug("Discovered %s elements.", len(elements))
