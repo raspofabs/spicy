@@ -1,9 +1,9 @@
-"""Test the link_fixes.py module."""
+"""Test the md_link_check.py module."""
 
 import re
 from pathlib import Path
 
-from spicy.link_fixes import get_section_pattern_from_prefix, get_targets_from_md
+from spicy.md_link_check import get_section_pattern_from_prefix, get_targets_from_md
 
 
 def test_get_section_pattern_from_prefix() -> None:

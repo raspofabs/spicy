@@ -9,7 +9,7 @@ import click
 
 from .config import load_spicy_config
 from .gather import get_elements_from_files
-from .link_fixes import check_markdown_refs
+from .md_link_check import check_markdown_refs
 from .review import render_issues_with_elements
 
 if TYPE_CHECKING:  # pragma: no cover
