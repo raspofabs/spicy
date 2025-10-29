@@ -55,7 +55,8 @@ def run(
     Use --check-refs to check for broken or incorrect markdown reference links,
     and --fix-refs to update files in-place with correct links.
     """
-    spicy_config = load_spicy_config(path_override or Path(), prefix=project_prefix)
+    base_path = path_override or Path()
+    spicy_config = load_spicy_config(base_path, prefix=project_prefix)
 
     if verbose:
         logger.setLevel(logging.DEBUG)
@@ -73,9 +74,12 @@ def run(
     logger.debug("Found %s files to read.", len(filenames))
 
     if fix_refs or check_refs:
-        result = check_markdown_refs(filenames, prefix=project_prefix, fix_refs=fix_refs)
+        result = check_markdown_refs(filenames, base_path=base_path, prefix=project_prefix, fix_refs=fix_refs)
         if result:
-            sys.exit(result)
+            click.echo("Found issues during markdown link checking.")
+            for issue in result:
+                click.echo(issue)
+            sys.exit(1)
 
     elements = get_elements_from_files(project_prefix, filenames)
 

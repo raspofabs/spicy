@@ -1,9 +1,15 @@
 """Test the md_link_check.py module."""
 
 import re
+import shutil
 from pathlib import Path
 
-from spicy.md_link_check import get_section_pattern_from_prefix, get_targets_from_md
+from spicy.md_link_check import (
+    check_markdown_refs,
+    get_link_pattern_from_reference,
+    get_matches_from_md,
+    get_section_pattern_from_prefix,
+)
 
 
 def test_get_section_pattern_from_prefix() -> None:
@@ -15,11 +21,15 @@ def test_get_section_pattern_from_prefix() -> None:
     assert len(m.groups()) > 0
     assert m.group(1) == "ABC_123"
 
+    ref_expression = get_link_pattern_from_reference("ABC_123")
+    ref_expression = re.compile(r"(\[ABC_123\]\([\w\./#]+\))")
+    assert ref_expression.search("Some text [ABC_123](path.md#anchor) and more.")
 
-def test_get_targets_from_md(test_data_path: Path) -> None:
-    """Test the get_targets_from_md function can get all valid refs."""
+
+def test_get_matches_from_md(test_data_path: Path) -> None:
+    """Test the get_matches_from_md function can get all valid refs."""
     content = test_data_path / "md_links" / "simple.md"
-    found = get_targets_from_md(content.read_text(), get_section_pattern_from_prefix("PRE"))
+    found = get_matches_from_md(content.read_text(), get_section_pattern_from_prefix("PRE"))
     expected = [
         "PRE_first_heading",
         "PRE_second_heading",
@@ -28,3 +38,37 @@ def test_get_targets_from_md(test_data_path: Path) -> None:
     assert sorted(expected) == sorted(found)
     # check the line numbers are at least in the right order
     assert found["PRE_first_heading"] < found["PRE_second_heading"]
+
+
+def test_check_markdown_refs(test_data_path: Path, tmpdir: Path) -> None:
+    """Test the markdown link checker can find issues."""
+    work_dir = Path(tmpdir / "mutable_md")
+    shutil.copytree(test_data_path / "md_links", work_dir, dirs_exist_ok=True)
+
+    def check_a_file(file_names: list[str], fix_refs: bool = False) -> list[str]:
+        paths = [work_dir / file_name for file_name in file_names]
+        return check_markdown_refs(paths, base_path=work_dir, prefix="PRE", fix_refs=fix_refs)
+
+    # no links, no issues
+    issues = check_a_file(["simple.md"])
+    assert not issues
+
+    # correct links, no issues
+    issues = check_a_file(["simple.md", "correct.md"])
+    assert not issues
+
+    # invalid links, copmlain about them
+    issues = check_a_file(["simple.md", "invalid.md"])
+    assert issues
+    assert len(issues) == 1
+    assert "Reference has bad link" in issues[0]
+
+    # but not if we fix them
+    issues = check_a_file(["simple.md", "invalid.md"], fix_refs=True)
+    assert not issues
+
+    # unlinked refs, complain about them
+    issues = check_a_file(["simple.md", "unlinked.md"])
+    assert issues
+    assert "Reference without a link" in issues[0]
+    assert len(issues) > 1
