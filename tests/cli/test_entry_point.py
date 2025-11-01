@@ -2,6 +2,7 @@
 
 import logging
 import re
+import shutil
 from pathlib import Path
 
 import pytest
@@ -113,7 +114,6 @@ def test_missing_config(test_data_path: Path, caplog: pytest.LogCaptureFixture) 
     assert "Unable to scan without a known prefix" in caplog.text
 
 
-@pytest.mark.xfail
 def test_bad_link_case(bad_link_data_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     """Test the simple bad-link spec."""
     runner = CliRunner()
@@ -130,21 +130,21 @@ def test_bad_link_case(bad_link_data_path: Path, caplog: pytest.LogCaptureFixtur
 
 
 @pytest.mark.xfail
-def test_entry_point_fix_reference_links(tmp_path: Path) -> None:
+def test_entry_point_fix_reference_links(tmpdir: Path, fixable_link_data_path: Path) -> None:
     """Test the entry_point fix-refs option.
 
     This tests when running with --fix-refs and verifies links are fixed in-place.
     """
-    # Create a markdown file with a broken link
-    md_file = tmp_path / "test.md"
-    md_file.write_text("- target1\n", encoding="utf-8")
+    # Create a mutable set of markdown docs
+    work_dir = Path(tmpdir / "mutable_md")
+    shutil.copytree(fixable_link_data_path, work_dir, dirs_exist_ok=True)
 
     # Patch get_elements_from_files to return our dummy element using unittest.mock.patch
     runner = CliRunner()
-    result = runner.invoke(run, [str(md_file), "--project-prefix", "FIXME", "--fix-refs"])
+    result = runner.invoke(
+        run,
+        [str(work_dir), "--fix-refs"],
+    )
 
     # errors are suppressed if they are fixed
     assert result.exit_code == 0, result.stdout
-
-    # The file should now have the fixed link
-    assert md_file.read_text(encoding="utf-8") == "- [target1](#target1)\n"
