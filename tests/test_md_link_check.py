@@ -59,7 +59,13 @@ def test_check_markdown_refs(test_data_path: Path, tmpdir: Path) -> None:
 
     def check_a_file(file_names: list[str], fix_refs: bool = False) -> list[str]:
         paths = [work_dir / file_name for file_name in file_names]
-        return check_markdown_refs(paths, base_path=work_dir, prefix="PRE", fix_refs=fix_refs)
+        return check_markdown_refs(
+            paths,
+            base_path=work_dir,
+            prefix="PRE",
+            fix_refs=fix_refs,
+            ignored_refs=[],
+        )
 
     # no links, no issues
     issues = check_a_file(["simple.md"])
@@ -91,4 +97,10 @@ def test_fixing_markdown_refs_real_data(fixable_link_data_path: Path, tmpdir: Pa
     work_dir = Path(tmpdir / "mutable_md")
     shutil.copytree(fixable_link_data_path, work_dir, dirs_exist_ok=True)
 
-    check_markdown_refs([work_dir / "complete_spec.md"], base_path=work_dir, prefix="FIXME", fix_refs=True)
+    check_markdown_refs(
+        [work_dir / "complete_spec.md"],
+        base_path=work_dir,
+        prefix="FIXME",
+        fix_refs=True,
+        ignored_refs=[],
+    )

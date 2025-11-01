@@ -9,9 +9,16 @@ TARGETS_DICT = dict[str, tuple[Path, int]]
 REFS_DICT = defaultdict[str, list[tuple[Path, int]]]
 
 
-def check_markdown_refs(file_list: list[Path], *, base_path: Path, prefix: str, fix_refs: bool = False) -> list[str]:
+def check_markdown_refs(
+    file_list: list[Path],
+    *,
+    base_path: Path,
+    prefix: str,
+    fix_refs: bool,
+    ignored_refs: list[str],
+) -> list[str]:
     """Check matching refs are correctly linked, optionally fixing them."""
-    targets, references = gather_markdown_sections_and_refs(file_list, prefix)
+    targets, references = gather_markdown_sections_and_refs(file_list, prefix, ignored_refs)
 
     expected_targets = {
         target: f"[{target}]({path.relative_to(base_path)}#{target.lower()})" for target, (path, _) in targets.items()
@@ -63,20 +70,29 @@ def closest_string(needle: str, haystack: list[str]) -> str:
     return best_guess
 
 
-def gather_markdown_sections_and_refs(file_list: list[Path], prefix: str) -> tuple[TARGETS_DICT, REFS_DICT]:
+def gather_markdown_sections_and_refs(
+    file_list: list[Path],
+    prefix: str,
+    ignored_refs: list[str],
+) -> tuple[TARGETS_DICT, REFS_DICT]:
     """Gather the sections and all possible references."""
     targets: dict[str, tuple[Path, int]] = {}
     references: defaultdict[str, list[tuple[Path, int]]] = defaultdict(list)
     re_section = get_section_pattern_from_prefix(prefix)
     re_reference = get_section_reference_pattern_from_prefix(prefix)
+    ignored = [re.compile(ref) for ref in ignored_refs]
 
     for path in file_list:
         content = path.read_text()
         for target, line in get_matches_from_md(content, re_section).items():
+            if any(ig.match(target) for ig in ignored):
+                continue
             targets[target] = (path, line)
         for reference, line in get_matches_from_md(content, re_reference).items():
             # skip any that are actually sections
             if (path, line) in targets.values():
+                continue
+            if any(ig.match(reference) for ig in ignored):
                 continue
             references[reference].append((path, line))
 

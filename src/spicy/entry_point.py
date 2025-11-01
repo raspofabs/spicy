@@ -74,7 +74,13 @@ def run(
     logger.debug("Found %s files to read.", len(filenames))
 
     if fix_refs or check_refs:
-        result = check_markdown_refs(filenames, base_path=base_path, prefix=project_prefix, fix_refs=fix_refs)
+        result = check_markdown_refs(
+            filenames,
+            base_path=base_path,
+            prefix=project_prefix,
+            fix_refs=fix_refs,
+            ignored_refs=spicy_config.get("ignored_refs", []),
+        )
         if result:
             click.echo("Found issues during markdown link checking.")
             for issue in result:
