@@ -129,7 +129,6 @@ def test_bad_link_case(bad_link_data_path: Path, caplog: pytest.LogCaptureFixtur
     assert result.exit_code != 0, result.stdout
 
 
-@pytest.mark.xfail
 def test_entry_point_fix_reference_links(tmpdir: Path, fixable_link_data_path: Path) -> None:
     """Test the entry_point fix-refs option.
 

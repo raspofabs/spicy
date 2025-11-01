@@ -26,6 +26,18 @@ def test_get_section_pattern_from_prefix() -> None:
     assert ref_expression.search("Some text [ABC_123](path.md#anchor) and more.")
 
 
+def test_get_patterns_match_sections(bad_link_data_path: Path) -> None:
+    """Test the section matching pattern matches sections."""
+    section_expression = get_section_pattern_from_prefix("BDLNK")
+
+    section_text = "## BDLNK_STK_NEED_have_a_safety_need"
+    assert get_matches_from_md(section_text, section_expression)
+
+    content = (bad_link_data_path / "complete_spec.md").read_text()
+    all_sections = get_matches_from_md(content, section_expression)
+    assert any(section == "BDLNK_STK_NEED_have_a_safety_need" for section in all_sections), all_sections
+
+
 def test_get_matches_from_md(test_data_path: Path) -> None:
     """Test the get_matches_from_md function can get all valid refs."""
     content = test_data_path / "md_links" / "simple.md"
@@ -72,3 +84,11 @@ def test_check_markdown_refs(test_data_path: Path, tmpdir: Path) -> None:
     assert issues
     assert "Reference without a link" in issues[0]
     assert len(issues) > 1
+
+
+def test_fixing_markdown_refs_real_data(fixable_link_data_path: Path, tmpdir: Path) -> None:
+    """Test the markdown link checker can fix real data."""
+    work_dir = Path(tmpdir / "mutable_md")
+    shutil.copytree(fixable_link_data_path, work_dir, dirs_exist_ok=True)
+
+    check_markdown_refs([work_dir / "complete_spec.md"], base_path=work_dir, prefix="FIXME", fix_refs=True)
