@@ -24,6 +24,12 @@ def bad_link_data_path(test_data_path: Path) -> Path:
 
 
 @pytest.fixture
+def fixable_link_data_path(test_data_path: Path) -> Path:
+    """Return the path to the test data directory."""
+    return test_data_path / "fixable_links_spec"
+
+
+@pytest.fixture
 def cookie_data_path(test_data_path: Path) -> Path:
     """Return the path to the test data directory."""
     return test_data_path / "cookie_spec"

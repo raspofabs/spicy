@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 import click
 
 from .config import load_spicy_config
-from .fixes import fix_reference_links
 from .gather import get_elements_from_files
+from .md_link_check import check_markdown_refs
 from .review import render_issues_with_elements
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -55,7 +55,8 @@ def run(
     Use --check-refs to check for broken or incorrect markdown reference links,
     and --fix-refs to update files in-place with correct links.
     """
-    spicy_config = load_spicy_config(path_override or Path(), prefix=project_prefix)
+    base_path = path_override or Path()
+    spicy_config = load_spicy_config(base_path, prefix=project_prefix)
 
     if verbose:
         logger.setLevel(logging.DEBUG)
@@ -71,12 +72,24 @@ def run(
     filenames = get_spec_files(path_override)
 
     logger.debug("Found %s files to read.", len(filenames))
+
+    if fix_refs or check_refs:
+        result = check_markdown_refs(
+            filenames,
+            base_path=base_path,
+            prefix=project_prefix,
+            fix_refs=fix_refs,
+            ignored_refs=spicy_config.get("ignored_refs", []),
+        )
+        if result:
+            click.echo("Found issues during markdown link checking.")
+            for issue in result:
+                click.echo(issue)
+            sys.exit(1)
+
     elements = get_elements_from_files(project_prefix, filenames)
 
     logger.debug("Discovered %s elements.", len(elements))
-
-    if fix_refs:
-        fix_reference_links(elements)
 
     render_function: Callable[[str], None] = print
 
@@ -84,7 +97,6 @@ def run(
         elements,
         config=spicy_config,
         render_function=render_function,
-        check_markdown_link_refs=check_refs,
     ):
         sys.exit(1)
     render_function(f"No issues found with any of the {len(elements)} specs")
