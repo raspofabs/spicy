@@ -107,7 +107,7 @@ def update_line_in_file(
 ) -> None:
     """Update a line in a file using a replace."""
     lines = file_path.read_text().split("\n")
-    lines[line_number].replace(replace_what, replace_with)
+    lines[line_number] = lines[line_number].replace(replace_what, replace_with)
     file_path.write_text("\n".join(lines))
 
 

@@ -116,7 +116,7 @@ def test_fixing_markdown_refs_real_data_bad(bad_link_data_path: Path, tmpdir: Pa
     )
 
 
-def test_fixing_markdown_refs_real_data_fixable(fixable_link_data_path: Path, tmpdir: Path) -> None:
+def test_fixing_markdown_refs_fixes_real_data(fixable_link_data_path: Path, tmpdir: Path) -> None:
     """Test the markdown link checker can fix real data."""
     work_dir = Path(tmpdir / "mutable_md")
     shutil.copytree(fixable_link_data_path, work_dir, dirs_exist_ok=True)
@@ -126,5 +126,13 @@ def test_fixing_markdown_refs_real_data_fixable(fixable_link_data_path: Path, tm
         base_path=work_dir,
         prefix="FIXME",
         fix_refs=True,
+        ignored_refs=[],
+    )
+
+    assert not check_markdown_refs(
+        [work_dir / "complete_spec.md"],
+        base_path=work_dir,
+        prefix="FIXME",
+        fix_refs=False,
         ignored_refs=[],
     )
