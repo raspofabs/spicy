@@ -133,3 +133,26 @@ def test_spec_element_issues(basic_spec_element: SpecElement) -> None:
     """Test the issue detection code for a simple SpecElement."""
     issues = basic_spec_element.get_issues({})
     assert not issues
+
+    # detect missing links
+    spec_with_missing_links = SpecElement(
+        "PRJ_SW_UNIT_simple_unit",
+        "SoftwareUnit",  # SoftwareUnit requires "Implements: SoftwareComponent"
+        5,
+        Path("path/to/file"),
+    )
+
+    issues = spec_with_missing_links.get_issues({})
+    assert issues
+    assert "Missing links for [Implements SoftwareComponent]" in issues
+
+    # allow ignoring missing links
+    ignored_config = {
+        "ignored_links": {
+            "SoftwareUnit": [
+                "Implements SoftwareComponent",
+            ],
+        },
+    }
+    issues = spec_with_missing_links.get_issues(ignored_config)
+    assert not issues
