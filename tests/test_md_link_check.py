@@ -120,7 +120,7 @@ def test_fixing_markdown_refs_fixes_real_data(fixable_link_data_path: Path, tmpd
     """Test the markdown link checker can fix real data."""
     work_dir = Path(tmpdir / "mutable_md")
     shutil.copytree(fixable_link_data_path, work_dir, dirs_exist_ok=True)
-    all_files = list(work_dir.glob("*.md"))
+    all_files = list(work_dir.glob("**/*.md"))
 
     assert not check_markdown_refs(
         all_files,  # [work_dir / "complete_spec.md"],
