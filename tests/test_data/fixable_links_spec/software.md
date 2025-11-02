@@ -1,119 +1,3 @@
-# Stakeholder needs
-
-This is an extremely simple spec that fulfils all requirements.
-POS is the Simple positive test data
-
-## FIXME_STK_NEED_have_a_stakeholder_need
-
-The **STAKEHOLDER** needs **POS** to have a spec.
-
-Elicitation date: March 2020
-
-Qualification relevant: no
-
-## FIXME_STK_NEED_have_a_safety_need
-
-The **STAKEHOLDER** needs **POS** to have safety as a concern.
-
-Elicitation date: April 2020
-
-Qualification relevant: yes
-
-## FIXME_STK_REQ_have_a_stakeholder_requirement
-
-**POS** must have stakeholder needs refined into stakeholder requirements.
-
-Implements:
-
-- FIXME_STK_NEED_have_a_stakeholder_need
-
-Qualification relevant: no
-
-## FIXME_STK_REQ_safe_stakeholder_requirement
-
-**POS** must be safe.
-
-Implements:
-
-- [FIXME_STK_NEED_have_a_safety_need](bad_link.md#weird-fragment)
-
-Qualification relevant: yes
-
-# System level requirements
-
-## FIXME_SYS_REQ_have_a_sys_req
-
-**POS** must support system requirements.
-
-Verification criteria:
-
-- This document should exist.
-
-Derived from:
-
-- [FIXME_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#fixme_stk_req_have_a_stakeholder_requirement)
-- [FIXME_STK_REQ_safe_stakeholder_requirement](complete_spec.md#fixme_stk_req_safe_stakeholder_requirement)
-
-### Specification
-
-- **Requirement type:** Qualification.
-- **Interaction:** No interactions.
-- **Constraints:** None
-- **Operational and environmental limits and capabilities:** None.
-- **Documentation:** Just this document.
-- **Qualification relevant:** Yes.
-- **Auditable:** No.
-
-## FIXME_SYS_ELEMENT_the_spec
-
-This document is the realisation of this spec.
-
-Software element: no
-
-Implements:
-
-- [FIXME_SYS_REQ_have_a_sys_req](complete_spec.md#fixme_sys_req_have_a_sys_req)
-
-## FIXME_SYS_ELEMENT_the_software
-
-There is no real software.
-
-Software element: yes
-
-Implements:
-
-- [FIXME_SYS_REQ_have_a_sys_req](complete_spec.md#fixme_sys_req_have_a_sys_req)
-
-## FIXME_SYS_INT_integrate_to_a_complete_spec
-
-It's very easy to integrate a two element system.
-
-Integrates:
-
-- [FIXME_SYS_ELEMENT_the_spec](complete_spec.md#fixme_sys_element_the_spec)
-- [FIXME_SYS_ELEMENT_the_software](complete_spec.md#fixme_sys_element_the_software)
-
-## FIXME_SYS_QUAL_has_a_qualification_test
-
-Test that this spec exists.
-
-Qualification relevant: yes
-
-Tests:
-
-- [FIXME_SYS_REQ_have_a_sys_req](complete_spec.md#fixme_sys_req_have_a_sys_req)
-
-# Validation - new to ASPICE 4.0
-
-## FIXME_VAL_document_is_provided
-
-This test verifies the document is provisioned with the spicy toolkit.
-
-Tests:
-
-- [FIXME_STK_REQ_have_a_stakeholder_requirement](complete_spec.md#fixme_stk_req_have_a_stakeholder_requirement)
-- [FIXME_STK_REQ_safe_stakeholder_requirement](complete_spec.md#fixme_stk_req_safe_stakeholder_requirement)
-
 # Software section
 
 ## FIXME_SW_REQ_have_some_software
@@ -122,11 +6,11 @@ The **POS** has a software element
 
 Decomposes:
 
-- [FIXME_SYS_ELEMENT_the_software](complete_spec.md#fixme_sys_element_the_software)
+- FIXME_SYS_ELEMENT_the_software
 
 Realises:
 
-- [FIXME_SYS_REQ_have_a_sys_req](complete_spec.md#fixme_sys_req_have_a_sys_req)
+- FIXME_SYS_REQ_have_a_sys_req
 
 ## FIXME_SW_ARCH_use_two_components
 
@@ -135,17 +19,17 @@ component integration spec.
 
 Fulfils:
 
-- [FIXME_SW_REQ_have_some_software](complete_spec.md#fixme_sw_req_have_some_software)
+- FIXME_SW_REQ_have_some_software
 
 ## FIXME_SW_COMP_primary_component
 
 Implements:
 
-- [FIXME_SW_ARCH_use_two_components](complete_spec.md#fixme_sw_arch_use_two_components)
+- FIXME_SW_ARCH_use_two_components
 
 Fulfils:
 
-- [FIXME_SW_REQ_have_some_software](complete_spec.md#fixme_sw_req_have_some_software)
+- FIXME_SW_REQ_have_some_software
 
 ## FIXME_SW_COMP_secondary_component
 

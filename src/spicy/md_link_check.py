@@ -123,7 +123,7 @@ def get_section_reference_pattern_from_prefix(prefix: str) -> re.Pattern[str]:
 
 def get_link_pattern_from_reference(reference: str) -> re.Pattern[str]:
     """Return a regular expression for use when capturing section references."""
-    return re.compile(rf"(\[{reference}\]\([\w\./#]+\))")
+    return re.compile(rf"(\[{reference}\]\([\w\-\./#]+\))")
 
 
 def get_matches_from_md(md_content: str, section_matcher: re.Pattern[str]) -> dict[str, int]:

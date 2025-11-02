@@ -138,7 +138,15 @@ def test_entry_point_fix_reference_links(tmpdir: Path, fixable_link_data_path: P
     work_dir = Path(tmpdir / "mutable_md")
     shutil.copytree(fixable_link_data_path, work_dir, dirs_exist_ok=True)
 
-    # Patch get_elements_from_files to return our dummy element using unittest.mock.patch
+    # things are fine if we ignore refs
+    runner = CliRunner()
+    result = runner.invoke(
+        run,
+        [str(work_dir)],
+    )
+    assert result.exit_code == 0, result.stdout
+
+    # fixing refs should fix things
     runner = CliRunner()
     result = runner.invoke(
         run,
