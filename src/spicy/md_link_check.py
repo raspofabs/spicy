@@ -2,11 +2,21 @@
 
 import re
 from collections import defaultdict
+from dataclasses import dataclass
 from difflib import SequenceMatcher
 from pathlib import Path
 
 TARGETS_DICT = dict[str, tuple[Path, int]]
 REFS_DICT = defaultdict[str, list[tuple[Path, int]]]
+
+
+@dataclass
+class Edit:
+    """Represent an edit to a file."""
+
+    line: int
+    actual: str
+    replacement: str
 
 
 def check_markdown_refs(
@@ -26,6 +36,9 @@ def check_markdown_refs(
     valid_targets = list(targets)
 
     issue_list = []
+
+    edits: dict[Path, list[Edit]] = defaultdict(list)
+
     # check for completely invalid references
     for ref, list_of_locations in references.items():
         for path, line in list_of_locations:
@@ -41,7 +54,7 @@ def check_markdown_refs(
                 # check that all references have links
                 if not m:
                     if fix_refs:
-                        update_line_in_file(path, line, ref, expected)
+                        edits[path].append(Edit(line, ref, expected))
                     else:
                         issue_list.append(f"Reference without a link: {ref} in {path}({line + 1})")
                     continue
@@ -50,11 +63,15 @@ def check_markdown_refs(
                 if expected != actual:
                     # or update if fix_refs is True
                     if fix_refs:
-                        update_line_in_file(path, line, actual, expected)
+                        edits[path].append(Edit(line, actual, expected))
                     else:
                         issue_list.append(
                             f"Reference has bad link: {ref} in {path}({line + 1}) is {actual} but should be {expected}",
                         )
+
+    for path, edit_list in edits.items():
+        update_file(path, edit_list)
+
     return issue_list
 
 
@@ -99,15 +116,14 @@ def gather_markdown_sections_and_refs(
     return targets, references
 
 
-def update_line_in_file(
+def update_file(
     file_path: Path,
-    line_number: int,
-    replace_what: str,
-    replace_with: str,
+    edit_list: list[Edit],
 ) -> None:
     """Update a line in a file using a replace."""
     lines = file_path.read_text().split("\n")
-    lines[line_number] = lines[line_number].replace(replace_what, replace_with)
+    for edit in edit_list:
+        lines[edit.line] = lines[edit.line].replace(edit.actual, edit.replacement)
     file_path.write_text("\n".join(lines))
 
 

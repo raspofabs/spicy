@@ -12,11 +12,11 @@ Fulfils:
 
 Implements:
 
-- [FIXME_SW_ARCH_use_two_components](complete_spec.md#fixme_sw_arch_use_two_components)
+- FIXME_SW_ARCH_use_two_components
 
 Fulfils:
 
-- [FIXME_SW_REQ_have_some_software](complete_spec.md#fixme_sw_req_have_some_software)
+- FIXME_SW_REQ_have_some_software
 
 ## Component tests
 
@@ -24,10 +24,10 @@ Fulfils:
 
 Tests:
 
-- [FIXME_SW_COMP_primary_component](complete_spec.md#fixme_sw_comp_primary_component)
+- FIXME_SW_COMP_primary_component
 
 ### FIXME_SW_COMP_TEST_secondary_test
 
 Tests:
 
-- [FIXME_SW_COMP_secondary_component](complete_spec.md#fixme_sw_comp_secondary_component)
+- FIXME_SW_COMP_secondary_component

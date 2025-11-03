@@ -7,6 +7,7 @@ The **POS** has a software element
 Decomposes:
 
 - FIXME_SYS_ELEMENT_the_software
+- FIXME_SYS_ELEMENT_the_optional_software
 
 Realises:
 
@@ -25,12 +26,12 @@ Fulfils:
 
 Integrates:
 
-- [FIXME_SW_COMP_primary_component](complete_spec.md#fixme_sw_comp_primary_component)
-- [FIXME_SW_COMP_secondary_component](complete_spec.md#fixme_sw_comp_secondary_component)
+- FIXME_SW_COMP_primary_component
+- FIXME_SW_COMP_secondary_component
 
 
 ## FIXME_SW_QUAL_test_the_software
 
 Tests:
 
-- [FIXME_SW_REQ_have_some_software](complete_spec.md#fixme_sw_req_have_some_software)
+- FIXME_SW_REQ_have_some_software

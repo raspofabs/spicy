@@ -8,7 +8,7 @@ A developer wants to see a complete positive example.
 
 Fulfils:
 
-- [FIXME_STK_NEED_have_a_stakeholder_need](complete_spec.md#fixme_stk_need_have_a_stakeholder_need)
+- FIXME_STK_NEED_have_a_stakeholder_need
 
 ### Features, functions, and technical properties
 

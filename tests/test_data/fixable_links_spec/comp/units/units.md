@@ -2,25 +2,25 @@
 
 Implements:
 
-- [FIXME_SW_COMP_primary_component](complete_spec.md#fixme_sw_comp_primary_component)
+- FIXME_SW_COMP_primary_component
 
 ## FIXME_SW_UNIT_primary_logic
 
 Implements:
 
-- [FIXME_SW_COMP_primary_component](complete_spec.md#fixme_sw_comp_primary_component)
+- FIXME_SW_COMP_primary_component
 
 ## FIXME_SW_UNIT_secondary_interface
 
 Implements:
 
-- [FIXME_SW_COMP_secondary_component](complete_spec.md#fixme_sw_comp_secondary_component)
+- FIXME_SW_COMP_secondary_component
 
 ## FIXME_SW_UNIT_secondary_logic
 
 Implements:
 
-- [FIXME_SW_COMP_secondary_component](complete_spec.md#fixme_sw_comp_secondary_component)
+- FIXME_SW_COMP_secondary_component
 
 ## Unit tests
 
@@ -28,25 +28,25 @@ Implements:
 
 Tests:
 
-- [FIXME_SW_UNIT_primary_interface](complete_spec.md#fixme_sw_unit_primary_interface)
+- FIXME_SW_UNIT_primary_interface
 
 ### FIXME_SW_UNIT_TEST_primary_logic
 
 Tests:
 
-- [FIXME_SW_UNIT_primary_logic](complete_spec.md#fixme_sw_unit_primary_logic)
+- FIXME_SW_UNIT_primary_logic
 
 ### FIXME_SW_UNIT_TEST_secondary_interface
 
 Tests:
 
-- [FIXME_SW_UNIT_secondary_interface](complete_spec.md#fixme_sw_unit_secondary_interface)
+- FIXME_SW_UNIT_secondary_interface
 
 ### FIXME_SW_UNIT_TEST_secondary_logic
 
 Tests:
 
-- [FIXME_SW_UNIT_secondary_logic](complete_spec.md#fixme_sw_unit_secondary_logic)
+- FIXME_SW_UNIT_secondary_logic
 
 ## Unit integration
 
@@ -54,12 +54,12 @@ Tests:
 
 Integrates:
 
-- [FIXME_SW_UNIT_primary_interface](complete_spec.md#fixme_sw_unit_primary_interface)
-- [FIXME_SW_UNIT_primary_logic](complete_spec.md#fixme_sw_unit_primary_logic)
+- FIXME_SW_UNIT_primary_interface
+- FIXME_SW_UNIT_primary_logic
 
 ### FIXME_SW_UNIT_INT_integrate_secondary
 
 Integrates:
 
-- [FIXME_SW_UNIT_secondary_interface](complete_spec.md#fixme_sw_unit_secondary_interface)
-- [FIXME_SW_UNIT_secondary_logic](complete_spec.md#fixme_sw_unit_secondary_logic)
+- FIXME_SW_UNIT_secondary_interface
+- FIXME_SW_UNIT_secondary_logic
