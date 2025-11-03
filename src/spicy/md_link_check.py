@@ -101,17 +101,20 @@ def gather_markdown_sections_and_refs(
 
     for path in file_list:
         content = path.read_text()
-        for target, line in get_matches_from_md(content, re_section).items():
-            if any(ig.match(target) for ig in ignored):
+        for target, lines in get_matches_from_md(content, re_section).items():
+            # Ignore any duplicate sections. Take the first one as valid.
+            line, *_ = lines
+            if any(ig.fullmatch(target) for ig in ignored):
                 continue
             targets[target] = (path, line)
-        for reference, line in get_matches_from_md(content, re_reference).items():
-            # skip any that are actually sections
-            if (path, line) in targets.values():
-                continue
-            if any(ig.match(reference) for ig in ignored):
-                continue
-            references[reference].append((path, line))
+        for reference, lines in get_matches_from_md(content, re_reference).items():
+            for line in lines:
+                # skip any that are actually sections
+                if (path, line) in targets.values():
+                    continue
+                if any(ig.fullmatch(reference) for ig in ignored):
+                    continue
+                references[reference].append((path, line))
 
     return targets, references
 
@@ -142,10 +145,10 @@ def get_link_pattern_from_reference(reference: str) -> re.Pattern[str]:
     return re.compile(rf"(\[{reference}\]\([\w\-\./#]+\))")
 
 
-def get_matches_from_md(md_content: str, section_matcher: re.Pattern[str]) -> dict[str, int]:
+def get_matches_from_md(md_content: str, section_matcher: re.Pattern[str]) -> dict[str, list[int]]:
     """Get a dictionary of targets to line numbers from a file."""
-    targets: dict[str, int] = {}
+    targets: dict[str, list[int]] = defaultdict(list)
     for line_number, text in enumerate(md_content.split("\n")):
         for m in section_matcher.finditer(text):
-            targets[m.group(1)] = line_number
+            targets[m.group(1)].append(line_number)
     return targets
