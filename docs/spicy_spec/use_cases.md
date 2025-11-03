@@ -13,11 +13,11 @@ A **TQM** will use the spicy tool to produce a compliance check result.
 
 Fulfils:
 
-    SPICY_STK_NEED_verify_traceability
-    SPICY_STK_NEED_verify_correctness
-    SPICY_STK_NEED_verify_completeness
-    SPICY_STK_NEED_ISO_26262_tool_qualification
-    SPICY_STK_NEED_aspice_compatibility
+- [SPICY_STK_NEED_verify_traceability](/spicy_spec/stakeholder_needs.md#spicy_stk_need_verify_traceability)
+- [SPICY_STK_NEED_verify_correctness](/spicy_spec/stakeholder_needs.md#spicy_stk_need_verify_correctness)
+- [SPICY_STK_NEED_verify_completeness](/spicy_spec/stakeholder_needs.md#spicy_stk_need_verify_completeness)
+- [SPICY_STK_NEED_ISO_26262_tool_qualification](/spicy_spec/stakeholder_needs.md#spicy_stk_need_iso_26262_tool_qualification)
+- [SPICY_STK_NEED_aspice_compatibility](/spicy_spec/stakeholder_needs.md#spicy_stk_need_aspice_compatibility)
 
 ## Features, functions, and technical properties
 
@@ -63,7 +63,7 @@ against an ASPICE assessor.
 
 Fulfils:
 
-    SPICY_STK_NEED_document_rendering_support
+- [SPICY_STK_NEED_document_rendering_support](/spicy_spec/stakeholder_needs.md#spicy_stk_need_document_rendering_support)
 
 ## Features, functions, and technical properties
 

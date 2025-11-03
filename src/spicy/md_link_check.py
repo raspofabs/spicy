@@ -20,8 +20,8 @@ def check_markdown_refs(
     """Check matching refs are correctly linked, optionally fixing them."""
     targets, references = gather_markdown_sections_and_refs(file_list, prefix, ignored_refs)
 
-    expected_targets = {
-        target: f"[{target}]({path.relative_to(base_path)}#{target.lower()})" for target, (path, _) in targets.items()
+    absolute_links = {
+        target: f"[{target}](/{path.relative_to(base_path)}#{target.lower()})" for target, (path, _) in targets.items()
     }
     valid_targets = list(targets)
 
@@ -34,7 +34,7 @@ def check_markdown_refs(
                 issue = f"Bad reference found: {ref} in {path}({line + 1}) has no matching section."
                 issue_list.append(f"{issue} {best_alternative}")
             else:
-                expected = expected_targets[ref]
+                expected = f"[{ref}](#{ref.lower()})" if path == targets[ref][0] else absolute_links[ref]
                 line_content = path.read_text().split("\n")[line]
                 re_link = get_link_pattern_from_reference(ref)
                 m = re_link.search(line_content)

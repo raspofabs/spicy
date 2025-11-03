@@ -17,4 +17,4 @@ Qualification relevant: yes
 
 Implements:
 
-- [CDU_STK_NEED_get_a_cookie](#cdu_stk_need_get_a_cookie)
+- [TLA_STK_NEED_get_a_cookie](#tla_stk_need_get_a_cookie)

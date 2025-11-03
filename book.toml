@@ -1,0 +1,11 @@
+[book]
+authors = ["Richard Fabian"]
+language = "en"
+multilingual = false
+src = "docs"
+title = "spicy-docs"
+
+[output.html]
+smart-punctuation = true
+
+[output.wordcount]
