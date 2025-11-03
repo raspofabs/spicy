@@ -58,6 +58,7 @@ def run(
     base_path = path_override or Path()
     spicy_config = load_spicy_config(base_path, prefix=project_prefix)
 
+    logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
     if verbose:
         logger.setLevel(logging.DEBUG)
 
@@ -66,8 +67,6 @@ def run(
     if project_prefix is None:
         logger.error("Unable to scan without a known prefix")
         sys.exit(1)
-
-    logging.basicConfig(level=logging.INFO)
 
     filenames = get_spec_files(path_override)
 
