@@ -47,7 +47,17 @@ def check_markdown_refs(
                 issue = f"Bad reference found: {ref} in {path}({line + 1}) has no matching section."
                 issue_list.append(f"{issue} {best_alternative}")
             else:
-                expected = f"[{ref}](#{ref.lower()})" if path == targets[ref][0] else absolute_links[ref]
+                # all supported link possibilties
+                target_path, _ = targets[ref]
+                local_link = f"[{ref}](#{ref.lower()})"
+                absolute_link = absolute_links[ref]
+                if path.parent in target_path.parents:
+                    relative_link = f"[{ref}]({target_path.relative_to(path.parent)}#{ref.lower()})"
+                else:
+                    relative_link = absolute_link
+
+                expected = local_link if path == targets[ref][0] else relative_link
+
                 line_content = path.read_text().split("\n")[line]
                 re_link = get_link_pattern_from_reference(ref)
                 m = re_link.search(line_content)
@@ -59,8 +69,8 @@ def check_markdown_refs(
                         issue_list.append(f"Reference without a link: {ref} in {path}({line + 1})")
                     continue
                 actual = m.group(1)
-                # check that all links are correct
-                if expected != actual:
+                # check that all links are valid
+                if actual not in [relative_link, local_link, absolute_link]:
                     # or update if fix_refs is True
                     if fix_refs:
                         edits[path].append(Edit(line, actual, expected))
