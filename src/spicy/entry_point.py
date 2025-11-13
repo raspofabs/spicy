@@ -68,7 +68,7 @@ def run(
         logger.error("Unable to scan without a known prefix")
         sys.exit(1)
 
-    filenames = get_spec_files(path_override)
+    filenames = get_spec_files(base_path)
 
     logger.debug("Found %s files to read.", len(filenames))
 
