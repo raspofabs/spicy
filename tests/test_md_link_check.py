@@ -31,17 +31,17 @@ def test_get_patterns_match_sections(bad_link_data_path: Path) -> None:
     section_expression = get_section_pattern_from_prefix("BDLNK")
 
     section_text = "## BDLNK_STK_NEED_have_a_safety_need"
-    assert get_matches_from_md(section_text, section_expression)
+    assert get_matches_from_md(section_text.split("\n"), section_expression)
 
     content = (bad_link_data_path / "complete_spec.md").read_text()
-    all_sections = get_matches_from_md(content, section_expression)
+    all_sections = get_matches_from_md(content.split("\n"), section_expression)
     assert any(section == "BDLNK_STK_NEED_have_a_safety_need" for section in all_sections), all_sections
 
 
 def test_get_matches_from_md(test_data_path: Path) -> None:
     """Test the get_matches_from_md function can get all valid refs."""
     content = test_data_path / "md_links" / "simple.md"
-    found = get_matches_from_md(content.read_text(), get_section_pattern_from_prefix("PRE"))
+    found = get_matches_from_md(content.read_text().split("\n"), get_section_pattern_from_prefix("PRE"))
     expected = [
         "PRE_first_heading",
         "PRE_second_heading",
@@ -57,7 +57,7 @@ def test_check_markdown_refs(test_data_path: Path, tmpdir: Path) -> None:
     work_dir = Path(tmpdir / "mutable_md")
     shutil.copytree(test_data_path / "md_links", work_dir, dirs_exist_ok=True)
 
-    def check_a_file(file_names: list[str], fix_refs: bool = False) -> list[str]:
+    def check_a_file(file_names: list[str], fix_refs: bool = False, helpful: bool = False) -> list[str]:
         paths = [work_dir / file_name for file_name in file_names]
         return check_markdown_refs(
             paths,
@@ -65,6 +65,7 @@ def test_check_markdown_refs(test_data_path: Path, tmpdir: Path) -> None:
             prefix="PRE",
             fix_refs=fix_refs,
             ignored_refs=[],
+            helpful=helpful,
         )
 
     # no links, no issues
@@ -75,11 +76,25 @@ def test_check_markdown_refs(test_data_path: Path, tmpdir: Path) -> None:
     issues = check_a_file(["simple.md", "correct.md"])
     assert not issues
 
-    # invalid links, copmlain about them
+    # invalid links, complain about them
     issues = check_a_file(["simple.md", "invalid.md"])
     assert issues
     assert len(issues) == 1
     assert "Reference has bad link" in issues[0]
+    assert "Did you mean" not in issues[0]
+
+    # links to unexpected get different complaints
+    issues = check_a_file(["simple.md", "inaccurate.md"])
+    assert issues
+    assert len(issues) == 1
+    assert "Bad reference found" in issues[0]
+    assert "Did you mean" not in issues[0]
+
+    issues = check_a_file(["simple.md", "inaccurate.md"], helpful=True)
+    assert issues
+    assert len(issues) == 1
+    assert "Bad reference found" in issues[0]
+    assert "Did you mean" in issues[0]
 
     # but not if we fix them
     issues = check_a_file(["simple.md", "invalid.md"], fix_refs=True)

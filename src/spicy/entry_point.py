@@ -42,12 +42,19 @@ def get_spec_files(root_path: Path | None = None) -> list[Path]:
     default=False,
     help="Check for correct markdown reference links in content and report issues.",
 )
-def run(
+@click.option(
+    "--helpful",
+    is_flag=True,
+    default=False,
+    help="When checking refs, offer a suggestion for a correct link.",
+)
+def run(  # noqa: PLR0913
     path_override: Path | None,
     project_prefix: str | None,
     verbose: bool,  # noqa: FBT001
     fix_refs: bool,  # noqa: FBT001
     check_refs: bool,  # noqa: FBT001
+    helpful: bool,  # noqa: FBT001
 ) -> None:
     """Parse and analyze markdown spec files, optionally checking and/or fixing reference links.
 
@@ -79,6 +86,7 @@ def run(
             prefix=project_prefix,
             fix_refs=fix_refs,
             ignored_refs=spicy_config.get("ignored_refs", []),
+            helpful=helpful,
         )
         if result:
             click.echo("Found issues during markdown link checking.")

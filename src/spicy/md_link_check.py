@@ -19,16 +19,18 @@ class Edit:
     replacement: str
 
 
-def check_markdown_refs(
+def check_markdown_refs(  # noqa: PLR0913, PLR0912 - yeah, this is big.
     file_list: list[Path],
     *,
     base_path: Path,
     prefix: str,
     fix_refs: bool,
     ignored_refs: list[str],
+    helpful: bool = False,
 ) -> list[str]:
     """Check matching refs are correctly linked, optionally fixing them."""
-    targets, references = gather_markdown_sections_and_refs(file_list, prefix, ignored_refs)
+    files = {path: path.read_text().split("\n") for path in file_list}
+    targets, references = gather_markdown_sections_and_refs(files, prefix, ignored_refs)
 
     absolute_links = {
         target: f"[{target}](/{path.relative_to(base_path)}#{target.lower()})" for target, (path, _) in targets.items()
@@ -41,11 +43,12 @@ def check_markdown_refs(
 
     # check for completely invalid references
     for ref, list_of_locations in references.items():
+        re_link = get_link_pattern_from_reference(ref)
         for path, line in list_of_locations:
             if ref not in targets:
-                best_alternative = f"Did you mean {closest_string(ref, valid_targets)}"
+                best_alternative = f" Did you mean {closest_string(ref, valid_targets)}" if helpful else ""
                 issue = f"Bad reference found: {ref} in {path}({line + 1}) has no matching section."
-                issue_list.append(f"{issue} {best_alternative}")
+                issue_list.append(f"{issue}{best_alternative}")
             else:
                 # all supported link possibilties
                 target_path, _ = targets[ref]
@@ -58,8 +61,7 @@ def check_markdown_refs(
 
                 expected = local_link if path == targets[ref][0] else relative_link
 
-                line_content = path.read_text().split("\n")[line]
-                re_link = get_link_pattern_from_reference(ref)
+                line_content = files[path][line]
                 m = re_link.search(line_content)
                 # check that all references have links
                 if not m:
@@ -98,7 +100,7 @@ def closest_string(needle: str, haystack: list[str]) -> str:
 
 
 def gather_markdown_sections_and_refs(
-    file_list: list[Path],
+    file_dict: dict[Path, list[str]],
     prefix: str,
     ignored_refs: list[str],
 ) -> tuple[TARGETS_DICT, REFS_DICT]:
@@ -109,15 +111,14 @@ def gather_markdown_sections_and_refs(
     re_reference = get_section_reference_pattern_from_prefix(prefix)
     ignored = [re.compile(ref) for ref in ignored_refs]
 
-    for path in file_list:
-        content = path.read_text()
-        for target, lines in get_matches_from_md(content, re_section).items():
+    for path, content_lines in file_dict.items():
+        for target, lines in get_matches_from_md(content_lines, re_section).items():
             # Ignore any duplicate sections. Take the first one as valid.
             line, *_ = lines
             if any(ig.fullmatch(target) for ig in ignored):
                 continue
             targets[target] = (path, line)
-        for reference, lines in get_matches_from_md(content, re_reference).items():
+        for reference, lines in get_matches_from_md(content_lines, re_reference).items():
             for line in lines:
                 # skip any that are actually sections
                 if (path, line) in targets.values():
@@ -155,10 +156,10 @@ def get_link_pattern_from_reference(reference: str) -> re.Pattern[str]:
     return re.compile(rf"(\[{reference}\]\([\w\-\./#]+\))")
 
 
-def get_matches_from_md(md_content: str, section_matcher: re.Pattern[str]) -> dict[str, list[int]]:
+def get_matches_from_md(md_content_lines: list[str], section_matcher: re.Pattern[str]) -> dict[str, list[int]]:
     """Get a dictionary of targets to line numbers from a file."""
     targets: dict[str, list[int]] = defaultdict(list)
-    for line_number, text in enumerate(md_content.split("\n")):
+    for line_number, text in enumerate(md_content_lines):
         for m in section_matcher.finditer(text):
             targets[m.group(1)].append(line_number)
     return targets
