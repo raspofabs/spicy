@@ -132,7 +132,7 @@ class SpecElement:
                 issues.append(f"Missing links for [{link} {target}]")
 
         if issues:
-            issues = [f"{self.variant}({self.name}):", *issues]
+            issues = [f"{self.variant}({self.name} in {self.file_path}):", *issues]
         return issues
 
     def get_use_case_issues(self) -> list[str]:
