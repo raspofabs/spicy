@@ -106,7 +106,8 @@ def render_spec_simple_linkage_issues(
                 any_errors = True
                 disconnected_list = ", ".join(sorted(disconnected))
                 render_function(
-                    f"{spec_type_to_inspect} {inspected_spec.name} {link} unexpected {target} {disconnected_list}",
+                    f"{spec_type_to_inspect} {inspected_spec.name} in {inspected_spec.file_path}: "
+                    f"{link} unexpected {target} {disconnected_list}",
                 )
     return any_errors
 

@@ -53,7 +53,8 @@ CASE_LIST = [
     (
         "simple/unexpected_links.md",
         [
-            r"SystemRequirement TD_SYS_REQ_unexpected Derived from unexpected StakeholderRequirement TD_STK_REQ_oops",
+            r"SystemRequirement TD_SYS_REQ_unexpected in [\w./]+: "
+            r"Derived from unexpected StakeholderRequirement TD_STK_REQ_oops",
         ],
     ),
 ]
