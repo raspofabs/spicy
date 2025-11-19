@@ -26,10 +26,20 @@ spicy --prefix PRJPREF docs/path
 spicy docs/path
 ```
 
-The configuration is currently only the prefix.
+The configuration file's only mandatory field is the prefix.
 Examples can be found in the test data, but also in the Spicy
 docs directory.
 
 ```yaml
+----
 prefix: PROJ
+ignored_refs: # ignore references to things that aren't actually specs
+  - PROJ_ENV_VAR
+  - PROJ_VAL_TEST_.* # use regular expressions
+ignored_links:
+  SoftwareUnitTest:
+    - Tests SoftwareUnit # we can ingore specific links
+ignored_dependencies:
+  SoftwareUnit:
+    - SoftareUnitTest Tests # we can ignore specific dependencies
 ```
