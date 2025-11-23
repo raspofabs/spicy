@@ -45,6 +45,7 @@ def test_get_matches_from_md(test_data_path: Path) -> None:
     expected = [
         "PRE_first_heading",
         "PRE_second_heading",
+        "PRE_third_heading",
     ]
     assert len(found) == len(expected)
     assert sorted(expected) == sorted(found)
@@ -105,6 +106,38 @@ def test_check_markdown_refs(test_data_path: Path, tmpdir: Path) -> None:
     assert issues
     assert "Reference without a link" in issues[0]
     assert len(issues) > 1
+
+
+def test_check_markdown_refs_in_subdirectories(test_data_path: Path, tmpdir: Path) -> None:
+    """Test the markdown link checker can find issues with links in subdirectories."""
+    work_dir = Path(tmpdir / "mutable_md")
+    shutil.copytree(test_data_path / "md_links", work_dir, dirs_exist_ok=True)
+
+    def check_a_file(file_names: list[str], fix_refs: bool = False, helpful: bool = False) -> list[str]:
+        paths = [work_dir / file_name for file_name in file_names]
+        return check_markdown_refs(
+            paths,
+            base_path=work_dir,
+            prefix="PRE",
+            fix_refs=fix_refs,
+            ignored_refs=[],
+            helpful=helpful,
+        )
+
+    # some issues
+    issues = check_a_file(["simple.md", "sub/deeper_refs.md"])
+    assert issues
+    assert not any("PRE_second_heading" in issue for issue in issues)
+    third_issue, *_ = [issue for issue in issues if "PRE_third_heading" in issue]
+    # complain about relative, replace with absolute
+    assert "(simple" in third_issue
+    assert "(/simple" in third_issue
+
+    # some issues
+    issues = check_a_file(["simple.md", "sub/deeper.md", "deep_refs.md"])
+    expected = ["PRE_deep_second", "PRE_deep_third"]
+    for heading in expected:
+        assert any(heading in issue for issue in issues)
 
 
 def test_fixing_markdown_refs_real_data_bad(bad_link_data_path: Path, tmpdir: Path) -> None:

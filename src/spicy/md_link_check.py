@@ -52,14 +52,14 @@ def check_markdown_refs(  # noqa: PLR0913, PLR0912 - yeah, this is big.
             else:
                 # all supported link possibilties
                 target_path, _ = targets[ref]
-                local_link = f"[{ref}](#{ref.lower()})"
+                local_link = f"[{ref}](#{ref.lower()})" if path == targets[ref][0] else None
                 absolute_link = absolute_links[ref]
                 if path.parent in target_path.parents:
                     relative_link = f"[{ref}]({target_path.relative_to(path.parent)}#{ref.lower()})"
                 else:
                     relative_link = absolute_link
 
-                expected = local_link if path == targets[ref][0] else relative_link
+                expected = local_link or relative_link
 
                 line_content = files[path][line]
                 m = re_link.search(line_content)
@@ -72,7 +72,7 @@ def check_markdown_refs(  # noqa: PLR0913, PLR0912 - yeah, this is big.
                     continue
                 actual = m.group(1)
                 # check that all links are valid
-                if actual not in [relative_link, local_link, absolute_link]:
+                if actual not in [relative_link, expected, absolute_link]:
                     # or update if fix_refs is True
                     if fix_refs:
                         edits[path].append(Edit(line, actual, expected))

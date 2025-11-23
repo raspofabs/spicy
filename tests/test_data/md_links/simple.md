@@ -10,6 +10,10 @@ some content for the actual spec thing
 
 some content for another spec thing
 
+## PRE_third_heading
+
+some content for another spec thing
+
 # Tail section that is not a spec
 
 tail text
