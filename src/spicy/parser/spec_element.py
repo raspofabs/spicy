@@ -30,6 +30,7 @@ class SpecElement:
 
         self.qualification_related: bool | None = None
         self.software_requirement: bool | None = None
+        self.non_functional_requirement: bool | None = None
 
         self.title = ""
         self.content: dict[str, list[str]] = {}
@@ -83,6 +84,14 @@ class SpecElement:
             return True
         return self.software_requirement
 
+    @property
+    def is_non_functional_requirement(self) -> bool:
+        """Return whether this element is a non-functional requirement."""
+        # by default, we assume all requirements are functional
+        if self.non_functional_requirement is None:
+            return False
+        return self.non_functional_requirement
+
     def verification_criteria(self) -> list[str]:
         """Return a list of qualification criteria."""
         return self.content.get("verification_criteria", [])
@@ -123,7 +132,7 @@ class SpecElement:
         issues = []
         # TODO: make this use a helper.
         ignored_links = dict(line.lower().split(" ") for line in config.get("ignored_links", {}).get(self.variant, []))
-        required_links = expected_links_for_variant(self.variant)
+        required_links = expected_links_for_variant(self.variant, non_functional=self.is_non_functional_requirement)
         for link, target in required_links:
             if ignored_links.get(link.lower()) == target.lower():
                 continue

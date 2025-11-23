@@ -102,7 +102,12 @@ _spec_link_optional_mapping: MappingType = {
 
 
 @lru_cache
-def expected_links_for_variant(variant: str, *, include_optional: bool = False) -> list[tuple[str, str]]:
+def expected_links_for_variant(
+    variant: str,
+    *,
+    include_optional: bool = False,
+    non_functional: bool = False,
+) -> list[tuple[str, str]]:
     """Return a list of (link-name, target-variant) tuples.
 
     These are the links that should be present in the spec.
@@ -112,6 +117,9 @@ def expected_links_for_variant(variant: str, *, include_optional: bool = False) 
     incomplete.
     """
     extra: list[tuple[str, str]] = _spec_link_optional_mapping.get(variant, []) if include_optional else []
+    # non_functional requirements don't have main links, only backlinks
+    if non_functional:
+        return extra
     return _spec_link_mapping.get(variant, []) + extra
 
 
@@ -155,6 +163,8 @@ def _get_section_mapping() -> dict[str, str]:
         "Fulfilled by": "fulfilled_by",
         "Software element": "software_requirement",
         "Implies software": "software_requirement",
+        "Non functional": "non_functional_requirement",
+        "Non-functional": "non_functional_requirement",
         "Implements": "implements",
         "Implemented by": "implemented_by",
         "Realises": "realises",

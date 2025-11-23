@@ -48,24 +48,34 @@ def test_render_issues_with_elements(test_data_path: Path) -> None:
 
 
 CASE_LIST = [
-    ("simple/duped.md", [r"Non unique name TD_SYS_REQ_dupe.*"]),
-    ("simple/missing_links.md", [r"Missing links for \[Derived from StakeholderRequirement\]"]),
+    ("simple/duped.md", [r"Non unique name TD_SYS_REQ_dupe.*"], []),
+    ("simple/missing_links.md", [r"Missing links for \[Derived from StakeholderRequirement\]"], []),
     (
         "simple/unexpected_links.md",
         [
             r"SystemRequirement TD_SYS_REQ_unexpected in [\w./]+: "
             r"Derived from unexpected StakeholderRequirement TD_STK_REQ_oops",
         ],
+        [],
+    ),
+    (
+        "linkage/non_functional_software_requirement.md",
+        [],
+        [
+            r"Missing links for \[Decomposes SystemElement\]",
+            r"Missing links for \[Realises SystemRequirement\]",
+        ],
     ),
 ]
 
 
-@pytest.mark.parametrize(("specific_file", "expected_errors"), CASE_LIST)
+@pytest.mark.parametrize(("specific_file", "expected_errors", "unexpected_errors"), CASE_LIST)
 def test_render_issues_with_elements_expected_errors(
     test_data_path: Path,
     caplog: pytest.LogCaptureFixture,
     specific_file: str,
     expected_errors: list[str],
+    unexpected_errors: list[str],
 ) -> None:
     """Test we can detect all expected errors in files."""
     spec_elements = gather_all_elements("TD", test_data_path / specific_file)
@@ -75,6 +85,8 @@ def test_render_issues_with_elements_expected_errors(
     assert lines
     for expected_error in expected_errors:
         assert any(re.search(expected_error, line) for line in lines), lines
+    for unexpected_error in unexpected_errors:
+        assert not any(re.search(unexpected_error, line) for line in lines), lines
 
 
 LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
@@ -93,6 +105,14 @@ LINKAGE_CASES: list[tuple[str, list[str], list[str]]] = [
             "TD_STK_REQ_safe_stakeholder_requirement",
         ],
         ["Qualification relevant"],
+    ),
+    (
+        "non_functional_software_requirement.md",
+        [],
+        [
+            "Missing links for [Decomposes SystemElement]",
+            "Missing links for [Realises SystemRequirement]",
+        ],
     ),
 ]
 

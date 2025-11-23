@@ -44,6 +44,14 @@ def spec_element_for_non_software() -> SpecElement:
     return spec
 
 
+@pytest.fixture
+def spec_element_for_non_functional() -> SpecElement:
+    """Fixture for basic spec element which is not software relevant."""
+    spec = SpecElement(TEST_NAME, TEST_VARIANT, ARBITRARY_NTH, TEST_PATH)
+    spec.non_functional_requirement = True
+    return spec
+
+
 def test_spec_element_construction(basic_spec_element: SpecElement) -> None:
     """Test the basic spec element construction."""
     assert not basic_spec_element.is_qualification_related
@@ -87,6 +95,15 @@ def test_spec_element_software_relevance(
     """Test a qualification relevant spec."""
     assert basic_spec_element.is_software_element
     assert not spec_element_for_non_software.is_software_element
+
+
+def test_spec_element_functional_relevance(
+    basic_spec_element: SpecElement,
+    spec_element_for_non_functional: SpecElement,
+) -> None:
+    """Test a qualification relevant spec."""
+    assert not basic_spec_element.is_non_functional_requirement
+    assert spec_element_for_non_functional.is_non_functional_requirement
 
 
 def test_spec_element_as_use_case() -> None:

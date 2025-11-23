@@ -166,17 +166,8 @@ class SpecParser:
         # Parse a SyntaxTreeNode for common features.
         logger.debug("Handle %s: %s", node.type, get_text_from_node(node))
 
-        if value := get_if_single_line_section(node):
-            section_name, content = value
-            section_key = section_name_to_key(section_name)
-            logger.debug("Single line section: %s/%s -- %s", section_name, section_key, content)
-            if section_key == "qualification_related" and self.builder is not None:
-                self.builder.qualification_related = parse_yes_no(content)
-                return
-            if section_key == "software_requirement" and self.builder is not None:
-                self.builder.software_requirement = parse_yes_no(content)
-                return
-
+        if self._parse_single_line_section(node):
+            return
         if self._is_use_case(node):
             logger.debug("Consume as UseCase")
             self._handle_use_case_node(node)
@@ -193,6 +184,24 @@ class SpecParser:
                 self._handle_code_block(node)
             else:
                 logger.debug("Unhandled %s\n%s", node.type, node.pretty())
+
+    def _parse_single_line_section(self, node: SyntaxTreeNode) -> bool:
+        value: tuple[str, str] | None = get_if_single_line_section(node)
+        if not value:
+            return False
+        section_name, content = value
+        section_key = section_name_to_key(section_name)
+        logger.debug("Single line section: %s/%s -- %s", section_name, section_key, content)
+        if section_key == "qualification_related" and self.builder is not None:
+            self.builder.qualification_related = parse_yes_no(content)
+            return True
+        if section_key == "software_requirement" and self.builder is not None:
+            self.builder.software_requirement = parse_yes_no(content)
+            return True
+        if section_key == "non_functional_requirement" and self.builder is not None:
+            self.builder.non_functional_requirement = parse_yes_no(content)
+            return True
+        return False
 
 
 def parse_syntax_tree_to_spec_elements(project_prefix: str, node: SyntaxTreeNode, from_file: Path) -> list[SpecElement]:
